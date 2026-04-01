@@ -8,7 +8,7 @@ import { CertificationsSection } from "@/components/sections/certifications-sect
 import { TestimonialsSection } from "@/components/sections/testimonials-section";
 import { BlogSection } from "@/components/sections/blog-section";
 import { ContactSection } from "@/components/sections/contact-section";
-import { Header } from "@/components/layout/header";
+import { FloatingNav } from "@/components/layout/floating-nav";
 import { Footer } from "@/components/layout/footer";
 import type {
   Profile,
@@ -75,7 +75,7 @@ export default async function HomePage() {
     id: "",
     name: "Your Name",
     title: "Full Stack Developer",
-    bio: "Welcome to my portfolio! I'm a passionate developer who loves building modern web applications.",
+    bio: "Welcome to my portfolio!",
     avatarUrl: "",
     resumeUrl: "",
     socialLinks: {},
@@ -95,39 +95,109 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen">
-      <Header />
+      {/* Floating side navigation */}
+      <FloatingNav />
+
       <main>
+        {/* Hero - dark gradient (standalone) */}
         <section id="home">
           <HeroSection profile={p} />
         </section>
-        <section id="about">
+
+        {/* About - subtle warm gradient */}
+        <section
+          id="about"
+          className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-orange-50/30 to-amber-50/20 dark:from-slate-950 dark:via-orange-950/10 dark:to-slate-900"
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(251,146,60,0.08),transparent_50%)]" />
           <AboutSection profile={p} />
         </section>
-        <section id="skills">
-          <SkillsSection skills={skills} />
+
+        {/* Skills - cool blue gradient */}
+        <section
+          id="skills"
+          className="relative overflow-hidden bg-gradient-to-br from-blue-950 via-slate-900 to-indigo-950"
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(59,130,246,0.15),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(139,92,246,0.1),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:3rem_3rem]" />
+          <div className="relative [&_*]:text-slate-200 [&_h2]:text-white [&_.text-muted-foreground]:text-slate-400">
+            <SkillsSection skills={skills} />
+          </div>
         </section>
-        <section id="projects">
+
+        {/* Projects - light gradient with pattern */}
+        <section
+          id="projects"
+          className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-violet-50/20 to-purple-50/30 dark:from-slate-950 dark:via-violet-950/10 dark:to-slate-900"
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.06),transparent_70%)]" />
           <ProjectsSection projects={projects} />
         </section>
-        <section id="experience">
-          <ExperienceSection experiences={experiences} />
+
+        {/* Experience - dark slate with blue accent */}
+        <section
+          id="experience"
+          className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950"
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(59,130,246,0.12),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:1.5rem_1.5rem]" />
+          <div className="relative [&_*]:text-slate-200 [&_h2]:text-white [&_.text-muted-foreground]:text-slate-400">
+            <ExperienceSection experiences={experiences} />
+          </div>
         </section>
-        <section id="education">
+
+        {/* Education - warm light gradient */}
+        <section
+          id="education"
+          className="relative overflow-hidden bg-gradient-to-br from-amber-50/40 via-slate-50 to-emerald-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/10"
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(16,185,129,0.06),transparent_60%)]" />
           <EducationSection education={education} />
         </section>
-        <section id="certifications">
-          <CertificationsSection certifications={certifications} />
+
+        {/* Certifications - dark purple/gold gradient */}
+        <section
+          id="certifications"
+          className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-950/50 to-slate-900"
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(234,179,8,0.08),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(168,85,247,0.1),transparent_50%)]" />
+          <div className="relative [&_*]:text-slate-200 [&_h2]:text-white [&_.text-muted-foreground]:text-slate-400">
+            <CertificationsSection certifications={certifications} />
+          </div>
         </section>
-        <section id="testimonials">
+
+        {/* Testimonials - light pink/rose gradient */}
+        <section
+          id="testimonials"
+          className="relative overflow-hidden bg-gradient-to-br from-rose-50/40 via-slate-50 to-pink-50/30 dark:from-slate-950 dark:via-rose-950/5 dark:to-slate-900"
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(244,63,94,0.05),transparent_60%)]" />
           <TestimonialsSection testimonials={testimonials} />
         </section>
-        <section id="blog">
+
+        {/* Blog - subtle gradient */}
+        <section
+          id="blog"
+          className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-sky-50/20 to-slate-50 dark:from-slate-950 dark:via-sky-950/5 dark:to-slate-900"
+        >
           <BlogSection posts={blogPosts.slice(0, 3)} />
         </section>
-        <section id="contact">
-          <ContactSection />
+
+        {/* Contact - dark gradient */}
+        <section
+          id="contact"
+          className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950"
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(59,130,246,0.15),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:2rem_2rem]" />
+          <div className="relative [&_*]:text-slate-200 [&_h2]:text-white [&_.text-muted-foreground]:text-slate-400 [&_label]:text-slate-300 [&_input]:bg-white/5 [&_input]:border-white/10 [&_input]:text-white [&_textarea]:bg-white/5 [&_textarea]:border-white/10 [&_textarea]:text-white">
+            <ContactSection />
+          </div>
         </section>
       </main>
+
       <Footer />
     </div>
   );
