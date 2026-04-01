@@ -105,7 +105,7 @@ function ProjectCard({
   exp: Experience;
   delay: number;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const parsed = parseDescription(exp.description || "");
   const parts = exp.position.split(" - ");
   const role = parts[0];
