@@ -121,7 +121,7 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(59,130,246,0.15),transparent_60%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(139,92,246,0.1),transparent_50%)]" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:3rem_3rem]" />
-          <div className="relative [&_*]:text-slate-200 [&_h2]:text-white [&_.text-muted-foreground]:text-slate-400">
+          <div className="dark relative">
             <SkillsSection skills={skills} />
           </div>
         </section>
@@ -142,7 +142,7 @@ export default async function HomePage() {
         >
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(59,130,246,0.12),transparent_60%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:1.5rem_1.5rem]" />
-          <div className="relative [&_*]:text-slate-200 [&_h2]:text-white [&_.text-muted-foreground]:text-slate-400">
+          <div className="dark relative">
             <ExperienceSection experiences={experiences} />
           </div>
         </section>
@@ -163,7 +163,7 @@ export default async function HomePage() {
         >
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(234,179,8,0.08),transparent_50%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(168,85,247,0.1),transparent_50%)]" />
-          <div className="relative [&_*]:text-slate-200 [&_h2]:text-white [&_.text-muted-foreground]:text-slate-400">
+          <div className="dark relative">
             <CertificationsSection certifications={certifications} />
           </div>
         </section>
@@ -192,7 +192,7 @@ export default async function HomePage() {
         >
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(59,130,246,0.15),transparent_60%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:2rem_2rem]" />
-          <div className="relative [&_*]:text-slate-200 [&_h2]:text-white [&_.text-muted-foreground]:text-slate-400 [&_label]:text-slate-300 [&_input]:bg-white/5 [&_input]:border-white/10 [&_input]:text-white [&_textarea]:bg-white/5 [&_textarea]:border-white/10 [&_textarea]:text-white">
+          <div className="dark relative">
             <ContactSection />
           </div>
         </section>
