@@ -352,14 +352,15 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
             >
               {/* Company header */}
               <div className="relative flex items-start gap-4 pb-4 sm:gap-5">
-                <div className="relative z-10 flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border-2 border-blue-500/40 bg-slate-800 shadow-lg shadow-blue-500/10 sm:h-16 sm:w-16">
+                <div className="relative z-10 flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border-2 border-blue-500/40 bg-white shadow-lg shadow-blue-500/10 sm:h-[72px] sm:w-[72px]">
                   {group.logoUrl ? (
                     <Image
                       src={group.logoUrl}
                       alt={group.company}
-                      width={48}
-                      height={48}
-                      className="h-full w-full object-cover"
+                      width={64}
+                      height={64}
+                      className="h-[80%] w-[80%] object-contain"
+                      unoptimized
                     />
                   ) : (
                     <span className="text-lg font-bold text-blue-400">
