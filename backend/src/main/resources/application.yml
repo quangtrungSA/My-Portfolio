@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: portfolio-backend
+
+  datasource:
+    url: ${NEON_JDBC_URL:jdbc:postgresql://localhost:5432/portfolio}
+    username: ${NEON_USERNAME:postgres}
+    password: ${NEON_PASSWORD:postgres}
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-timeout: 20000
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+server:
+  port: 8080
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:myDefaultSuperSecretKeyThatIsAtLeast256BitsLongForHS512Algorithm123456}
+    expiration-ms: 86400000
+    cookie-name: portfolio_token
+  admin:
+    email: ${ADMIN_EMAIL:admin@portfolio.com}
+
+logging:
+  level:
+    com.portfolio: DEBUG
+    org.springframework.security: DEBUG

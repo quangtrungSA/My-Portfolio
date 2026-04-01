@@ -1,0 +1,41 @@
+# Environment / Secrets
+.env
+.env.local
+.env.production
+*.env
+backend/.env
+
+# SSH Keys & Certificates
+*.pem
+*.key
+id_rsa
+id_ed25519
+id_rsa.pub
+id_ed25519.pub
+
+# Backend
+backend/build/
+backend/.gradle/
+backend/bin/
+backend/out/
+
+# Frontend
+frontend/.next/
+frontend/node_modules/
+frontend/out/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+seed-data.sh
+*.log
+node_modules/

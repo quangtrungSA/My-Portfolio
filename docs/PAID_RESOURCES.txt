@@ -1,0 +1,109 @@
+============================================================
+PAID RESOURCES & USAGE LIMITS
+============================================================
+Project: Portfolio Application
+Date:    April 2026
+============================================================
+
+This file documents all resources in the project that have
+free tiers with usage limits or may require payment when
+those limits are exceeded.
+
+============================================================
+1. NEON POSTGRESQL (Database Hosting)
+============================================================
+
+Service:     Neon (https://neon.tech)
+Purpose:     Cloud-hosted PostgreSQL database
+Current Plan: Free Tier
+
+FREE TIER LIMITS:
+  - Storage:        0.5 GB per project
+  - Compute:        5 compute hours per month (on 0.25 vCPU)
+  - Branches:       10 branches
+  - Projects:       1 project (10 with organization)
+  - History:        24 hours of point-in-time restore
+
+WHAT HAPPENS WHEN LIMITS ARE EXCEEDED:
+  - Compute hours: database becomes read-only until next
+    billing cycle or plan upgrade
+  - Storage: inserts/updates will fail when 0.5 GB is reached
+
+PAID PLANS START AT:
+  - Launch: $19/month (10 GB storage, 100 compute hours)
+  - Scale:  $69/month (50 GB storage, 750 compute hours)
+  - See: https://neon.tech/pricing
+
+FREE ALTERNATIVE:
+  - Run PostgreSQL locally (docker or brew install postgresql)
+  - Use Supabase free tier (500 MB, 2 projects)
+  - Use Railway free tier (1 GB, $5 credit/month)
+
+HOW TO SWITCH TO LOCAL:
+  Update backend/src/main/resources/application.yml:
+    spring.datasource.url: jdbc:postgresql://localhost:5432/portfolio
+    spring.datasource.username: postgres
+    spring.datasource.password: postgres
+
+============================================================
+2. EMAIL SENDING (SMTP)
+============================================================
+
+Service:     Gmail SMTP / Any SMTP provider
+Purpose:     Sending contact form notification emails
+Current:     Not configured (optional feature)
+
+IF USING GMAIL SMTP:
+  - Limit: 500 emails/day (free Google account)
+  - Limit: 2,000 emails/day (Google Workspace, paid)
+  - Requires: App Password (2FA must be enabled)
+
+FREE ALTERNATIVES:
+  - Mailtrap free tier (1,000 emails/month)
+  - Mailgun free tier (100 emails/day)
+  - Resend free tier (3,000 emails/month)
+  - SendGrid free tier (100 emails/day)
+  - Skip email entirely (contacts stored in DB, viewable
+    in admin panel regardless of email config)
+
+============================================================
+3. DEPLOYMENT (Not Yet Configured)
+============================================================
+
+If deploying to production, these services have free tiers:
+
+FRONTEND (Next.js):
+  - Vercel: Free for personal projects
+    Limits: 100 GB bandwidth/month, 1,000 images/month
+  - Netlify: Free tier with 100 GB bandwidth
+  - Cloudflare Pages: Free, unlimited bandwidth
+
+BACKEND (Spring Boot):
+  - Railway: $5 free credit/month, then pay-as-you-go
+  - Render: Free tier (spins down after 15 min inactivity)
+  - Fly.io: Free tier (3 shared VMs, 256 MB each)
+
+============================================================
+4. SUMMARY
+============================================================
+
+REQUIRED FOR DEVELOPMENT (all free):
+  - Node.js 22+          : Free, MIT license
+  - Java 21 (OpenJDK)    : Free, GPL+CE license
+  - Gradle               : Free, Apache-2.0 license
+  - pnpm                 : Free, MIT license
+
+REQUIRED FOR RUNNING (free tier available):
+  - PostgreSQL database  : Free if local; Neon free tier
+                           has limits (see section 1)
+
+OPTIONAL (not required for core functionality):
+  - SMTP email service   : Only for contact notifications
+  - Deployment hosting   : Only for production
+
+NO RESOURCES IN THIS PROJECT REQUIRE MANDATORY PAYMENT
+FOR LOCAL DEVELOPMENT AND TESTING.
+
+============================================================
+END OF DOCUMENT
+============================================================
