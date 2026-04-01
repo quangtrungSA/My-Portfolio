@@ -8,6 +8,7 @@ import { CertificationsSection } from "@/components/sections/certifications-sect
 import { TestimonialsSection } from "@/components/sections/testimonials-section";
 import { BlogSection } from "@/components/sections/blog-section";
 import { ContactSection } from "@/components/sections/contact-section";
+import { Header } from "@/components/layout/header";
 import { FloatingNav } from "@/components/layout/floating-nav";
 import { Footer } from "@/components/layout/footer";
 import type {
@@ -95,7 +96,9 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Floating side navigation */}
+      {/* Top header: Home, Blog, Piano, Language + Sections dropdown */}
+      <Header />
+      {/* Floating side dots navigation */}
       <FloatingNav />
 
       <main>

@@ -110,7 +110,12 @@ export function HeroSection({ profile }: HeroSectionProps) {
           Hi, I&apos;m{" "}
           <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
             {profile.name}
+          </span>{" "}
+          <span className="text-slate-400">(</span>
+          <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+            DaeMyn
           </span>
+          <span className="text-slate-400">)</span>
         </motion.h1>
 
         {/* Title */}
