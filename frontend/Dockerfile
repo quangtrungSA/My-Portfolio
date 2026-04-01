@@ -22,6 +22,7 @@ COPY . .
 
 # Build-time env vars
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV DOCKER=true
 
 RUN pnpm build
 
