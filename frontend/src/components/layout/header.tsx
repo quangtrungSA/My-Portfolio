@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 const mainNav = [
   { label: "Home", href: "/" },
   { label: "Blog", href: "/blog" },
+  { label: "LeetCode", href: "https://leetcode.com/quangtrungleetcode/", external: true },
   { label: "Piano", href: "/piano" },
   { label: "Language", href: "/language" },
 ];
@@ -88,6 +89,22 @@ export function Header() {
         <nav className="hidden items-center gap-1 md:flex">
           {/* Main nav items */}
           {mainNav.map((item) => (
+            "external" in item && item.external ? (
+            <a
+              key={item.label}
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                scrolled
+                  ? "text-slate-300 hover:bg-white/10 hover:text-white"
+                  : "text-white/70 hover:bg-white/10 hover:text-white"
+              )}
+            >
+              {item.label}
+            </a>
+            ) : (
             <Link
               key={item.label}
               href={item.href}
@@ -100,6 +117,7 @@ export function Header() {
             >
               {item.label}
             </Link>
+            )
           ))}
 
           {/* Sections dropdown */}
@@ -173,16 +191,29 @@ export function Header() {
           <nav className="mx-auto max-w-7xl px-4 py-4">
             {/* Main links */}
             <div className="mb-3 border-b border-white/10 pb-3">
-              {mainNav.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {mainNav.map((item) =>
+                "external" in item && item.external ? (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMobileOpen(false)}
+                    className="block rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="block rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    {item.label}
+                  </Link>
+                )
+              )}
             </div>
 
             {/* Section links */}
