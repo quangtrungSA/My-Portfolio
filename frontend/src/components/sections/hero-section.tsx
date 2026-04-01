@@ -105,7 +105,7 @@ export function HeroSection({ profile }: HeroSectionProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.15 }}
-          className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl"
+          className="whitespace-nowrap text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl"
         >
           Hi, I&apos;m{" "}
           <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
