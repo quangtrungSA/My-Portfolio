@@ -15,54 +15,59 @@ function formatDate(dateStr: string): string {
   return format(new Date(dateStr), "MMM yyyy");
 }
 
-// Each card gets a UNIQUE color so all 4 look visually distinct
+// 4 distinct dark-base palettes — subtle color tint, not blinding
 const CARD_PALETTE = [
   {
-    topBg:   "bg-gradient-to-br from-red-500 via-red-600 to-rose-700",
-    border:  "border-red-500/50",
-    ring:    "hover:ring-red-400/40",
-    pill:    "bg-red-950/70 text-red-300 border border-red-600/50",
-    btn:     "bg-red-600/25 hover:bg-red-600/45 border border-red-500/50 text-red-300",
-    glow:    "hover:shadow-red-900/60",
-    shimmer: "from-red-400/10",
+    // Card 1 — dark crimson tint
+    topBg:  "bg-gradient-to-br from-slate-900 via-red-950 to-slate-900",
+    accent: "border-l-4 border-l-red-500",
+    border: "border-red-900/60",
+    ring:   "hover:ring-red-500/30",
+    pill:   "bg-red-900/50 text-red-300 border border-red-700/60",
+    btn:    "bg-red-500/20 hover:bg-red-500/35 border border-red-500/40 text-red-300",
+    glow:   "hover:shadow-red-950/80",
+    dot:    "bg-red-400",
   },
   {
-    topBg:   "bg-gradient-to-br from-blue-500 via-indigo-600 to-violet-700",
-    border:  "border-blue-500/50",
-    ring:    "hover:ring-blue-400/40",
-    pill:    "bg-blue-950/70 text-blue-300 border border-blue-600/50",
-    btn:     "bg-blue-600/25 hover:bg-blue-600/45 border border-blue-500/50 text-blue-300",
-    glow:    "hover:shadow-blue-900/60",
-    shimmer: "from-blue-400/10",
+    // Card 2 — dark navy/blue tint
+    topBg:  "bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900",
+    accent: "border-l-4 border-l-blue-500",
+    border: "border-blue-900/60",
+    ring:   "hover:ring-blue-500/30",
+    pill:   "bg-blue-900/50 text-blue-300 border border-blue-700/60",
+    btn:    "bg-blue-500/20 hover:bg-blue-500/35 border border-blue-500/40 text-blue-300",
+    glow:   "hover:shadow-blue-950/80",
+    dot:    "bg-blue-400",
   },
   {
-    topBg:   "bg-gradient-to-br from-amber-500 via-yellow-600 to-orange-600",
-    border:  "border-amber-500/50",
-    ring:    "hover:ring-amber-400/40",
-    pill:    "bg-amber-950/70 text-amber-300 border border-amber-600/50",
-    btn:     "bg-amber-600/25 hover:bg-amber-600/45 border border-amber-500/50 text-amber-300",
-    glow:    "hover:shadow-amber-900/60",
-    shimmer: "from-amber-400/10",
+    // Card 3 — dark amber/gold tint
+    topBg:  "bg-gradient-to-br from-slate-900 via-amber-950 to-slate-900",
+    accent: "border-l-4 border-l-amber-400",
+    border: "border-amber-900/60",
+    ring:   "hover:ring-amber-400/30",
+    pill:   "bg-amber-900/50 text-amber-300 border border-amber-700/60",
+    btn:    "bg-amber-500/20 hover:bg-amber-500/35 border border-amber-500/40 text-amber-300",
+    glow:   "hover:shadow-amber-950/80",
+    dot:    "bg-amber-400",
   },
   {
-    topBg:   "bg-gradient-to-br from-teal-500 via-emerald-600 to-cyan-700",
-    border:  "border-teal-500/50",
-    ring:    "hover:ring-teal-400/40",
-    pill:    "bg-teal-950/70 text-teal-300 border border-teal-600/50",
-    btn:     "bg-teal-600/25 hover:bg-teal-600/45 border border-teal-500/50 text-teal-300",
-    glow:    "hover:shadow-teal-900/60",
-    shimmer: "from-teal-400/10",
+    // Card 4 — dark teal/emerald tint
+    topBg:  "bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900",
+    accent: "border-l-4 border-l-teal-400",
+    border: "border-teal-900/60",
+    ring:   "hover:ring-teal-400/30",
+    pill:   "bg-teal-900/50 text-teal-300 border border-teal-700/60",
+    btn:    "bg-teal-500/20 hover:bg-teal-500/35 border border-teal-500/40 text-teal-300",
+    glow:   "hover:shadow-teal-950/80",
+    dot:    "bg-teal-400",
   },
 ];
 
-// Map org name → local logo path
-function getLocalLogo(org: string): string | null {
-  const map: Record<string, string> = {
-    "Oracle":                      "/images/corporation/oracle.png",
-    "Linux Professional Institute": "/images/corporation/linux.png",
-  };
-  return map[org] ?? null;
-}
+// Explicit local logos from /public/images/corporation/
+const LOCAL_LOGOS: Record<string, string> = {
+  "Oracle":                       "/images/corporation/oracle.png",
+  "Linux Professional Institute": "/images/corporation/linux.png",
+};
 
 export function CertificationsSection({ certifications }: CertificationsSectionProps) {
   if (certifications.length === 0) return null;
@@ -98,11 +103,11 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
           </span>
         </motion.div>
 
-        {/* Cards — each gets a unique color from CARD_PALETTE */}
+        {/* Cards */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {certifications.map((cert, index) => {
             const pal = CARD_PALETTE[index % CARD_PALETTE.length];
-            const localLogo = getLocalLogo(cert.issuingOrg);
+            const logoSrc = LOCAL_LOGOS[cert.issuingOrg] ?? null;
 
             return (
               <motion.div
@@ -114,40 +119,31 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
                 whileHover={{ y: -6, scale: 1.01 }}
                 className="h-full"
               >
-                <div className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border ${pal.border} bg-slate-800/90 ring-1 ring-transparent transition-all duration-300 hover:shadow-2xl ${pal.glow} ${pal.ring} backdrop-blur-sm`}>
+                <div className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border ${pal.border} ${pal.accent} bg-slate-900 ring-1 ring-transparent transition-all duration-300 hover:shadow-2xl ${pal.glow} ${pal.ring} backdrop-blur-sm`}>
 
-                  {/* ── Colored top banner ── */}
+                  {/* ── Top banner — dark with subtle color tint ── */}
                   <div className={`relative ${pal.topBg} px-5 pb-6 pt-5`}>
-                    {/* Diagonal shimmer */}
-                    <div className={`absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.12)_0%,transparent_55%,rgba(255,255,255,0.05)_100%)]`} />
+                    {/* Subtle light streak */}
+                    <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.06)_0%,transparent_60%)]" />
 
-                    {/* Verified tick top-right */}
+                    {/* Verified tick */}
                     <div className="absolute right-3 top-3 z-10">
-                      <BadgeCheck className="size-5 text-white/90 drop-shadow" />
+                      <BadgeCheck className="size-5 text-white/70 drop-shadow" />
                     </div>
 
-                    {/* Logo on white circle */}
-                    <div className="relative z-10 flex justify-start">
-                      <div className="flex h-[68px] w-[68px] items-center justify-center overflow-hidden rounded-2xl bg-white p-2 shadow-xl ring-2 ring-white/40">
-                        {localLogo ? (
+                    {/* Logo — white rounded square */}
+                    <div className="relative z-10">
+                      <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-white p-2 shadow-lg ring-2 ring-white/20">
+                        {logoSrc ? (
                           <Image
-                            src={localLogo}
+                            src={logoSrc}
                             alt={cert.issuingOrg}
-                            width={52}
-                            height={52}
+                            width={48}
+                            height={48}
                             className="h-full w-full object-contain"
-                          />
-                        ) : cert.badgeUrl ? (
-                          <Image
-                            src={cert.badgeUrl}
-                            alt={cert.issuingOrg}
-                            width={52}
-                            height={52}
-                            className="h-full w-full object-contain"
-                            unoptimized
                           />
                         ) : (
-                          <Award className="size-8 text-slate-600" />
+                          <Award className="size-8 text-slate-500" />
                         )}
                       </div>
                     </div>
@@ -156,17 +152,18 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
                   {/* ── Card body ── */}
                   <div className="flex flex-1 flex-col p-5">
                     {/* Org pill */}
-                    <span className={`mb-3 inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest ${pal.pill}`}>
+                    <span className={`mb-3 inline-flex w-fit items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest ${pal.pill}`}>
+                      <span className={`size-1.5 rounded-full ${pal.dot}`} />
                       {cert.issuingOrg}
                     </span>
 
-                    {/* Cert name — white, bold, readable */}
-                    <h3 className="mb-4 flex-1 text-sm font-bold leading-snug text-white">
+                    {/* ── Cert name — PROMINENT ── */}
+                    <h3 className="mb-4 flex-1 text-base font-extrabold leading-snug tracking-tight text-white drop-shadow-sm">
                       {cert.name}
                     </h3>
 
                     {/* Date box */}
-                    <div className="mb-4 space-y-2 rounded-xl bg-slate-900/60 p-3">
+                    <div className="mb-4 space-y-2 rounded-xl bg-black/30 p-3">
                       <div className="flex items-center gap-2 text-xs text-slate-400">
                         <Calendar className="size-3.5 shrink-0 text-slate-500" />
                         <span>
@@ -204,7 +201,7 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
                         View Credential
                       </a>
                     ) : (
-                      <div className="mt-auto flex items-center justify-center gap-2 rounded-xl border border-slate-700/50 bg-slate-900/40 px-3 py-2.5 text-xs text-slate-500">
+                      <div className="mt-auto flex items-center justify-center gap-2 rounded-xl border border-slate-800 bg-black/20 px-3 py-2.5 text-xs text-slate-500">
                         <BadgeCheck className="size-3.5 text-emerald-500" />
                         Verified
                       </div>
