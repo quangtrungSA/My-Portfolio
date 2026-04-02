@@ -155,8 +155,17 @@ export const STATIC_EXPERIENCES: Experience[] = [
     position: "Software Engineer",
     startDate: "2024-01-01",
     endDate: null,
-    description:
-      "• Developed and maintained Java Spring Boot microservices for a large-scale enterprise client\n• Built RESTful APIs consumed by web and mobile applications (10k+ daily active users)\n• Optimised slow SQL queries, reducing average response time by 40%\n• Participated in Agile sprints, code reviews, and on-call production support\n• Collaborated with overseas teams across Vietnam, Japan, and Singapore",
+    description: `[GOAL] Develop and maintain enterprise Java Spring Boot microservices for large-scale B2B clients in the financial and logistics sectors.
+[TECH] Java 21, Spring Boot 3, PostgreSQL, Redis, Docker, REST API, JUnit 5, Mockito, Agile/Scrum
+[PHASE:Enterprise Portal] Jan 2024 - Jun 2024 | 8 members
+[ROLE] Built and maintained RESTful APIs consumed by web & mobile apps (10k+ DAU)
+[ROLE] Optimised slow SQL queries and indexes, reducing average response time by 40%
+[ROLE] Wrote unit and integration tests (JUnit 5 + Mockito), raising coverage from 45% to 78%
+[PHASE:Microservices Migration] Jul 2024 - Present | 12 members
+[ROLE] Participated in decomposing a monolith into 6 Spring Boot microservices
+[ROLE] Implemented JWT-based auth service shared across all services
+[ROLE] Collaborated with teams in Vietnam, Japan, and Singapore in Agile sprints
+[ROLE] On-call production support: resolved 3 P1 incidents with RCA documentation`,
     logoUrl: "/images/logos/fpt-software.svg",
     sortOrder: 1,
   },
@@ -166,8 +175,16 @@ export const STATIC_EXPERIENCES: Experience[] = [
     position: "Junior Software Engineer",
     startDate: "2022-07-01",
     endDate: "2023-12-31",
-    description:
-      "• Implemented full-stack features for SaaS products using React and Node.js\n• Designed and wrote PostgreSQL database schemas and migrations\n• Built CI/CD pipelines with GitHub Actions and Docker\n• Mentored two junior interns on coding standards and Git workflows",
+    description: `[GOAL] Build and ship full-stack features for a B2B SaaS product used by 200+ companies across Southeast Asia.
+[TECH] React, TypeScript, Node.js, Express, PostgreSQL, Docker, GitHub Actions, Tailwind CSS
+[PHASE:SaaS Platform v2] Jul 2022 - Apr 2023 | 6 members
+[ROLE] Implemented 15+ full-stack features across React frontend and Node.js backend
+[ROLE] Designed PostgreSQL schemas and wrote migration scripts for 4 new modules
+[ROLE] Reduced frontend bundle size by 25% via code-splitting and lazy loading
+[PHASE:DevOps & Tooling] May 2023 - Dec 2023 | 4 members
+[ROLE] Built CI/CD pipelines with GitHub Actions and multi-stage Docker builds
+[ROLE] Cut deployment time from 25 minutes to 8 minutes via pipeline optimisation
+[ROLE] Mentored 2 junior interns on Git workflow, code review, and testing practices`,
     logoUrl: "/images/logos/hybrid-technologies.svg",
     sortOrder: 2,
   },
@@ -177,8 +194,13 @@ export const STATIC_EXPERIENCES: Experience[] = [
     position: "Full-Stack Developer",
     startDate: "2021-06-01",
     endDate: "2022-06-30",
-    description:
-      "• Delivered 5+ web applications for small businesses across Vietnam\n• Built Laravel + Vue.js e-commerce sites with PayPal and VNPay integration\n• Provided ongoing maintenance, hosting, and SEO optimisation",
+    description: `[GOAL] Deliver full-stack web applications for small businesses in Vietnam — on time, on budget, and built to last.
+[TECH] PHP, Laravel, Vue.js, MySQL, PayPal API, VNPay, Nginx, Ubuntu VPS
+[PHASE:Client Projects] Jun 2021 - Jun 2022 | Solo developer
+[ROLE] Delivered 5 production web applications for retail, food & beverage, and service clients
+[ROLE] Built e-commerce stores with shopping cart, order management, and VNPay/PayPal checkout
+[ROLE] Set up Linux VPS hosting (Nginx + MySQL) with SSL and automated backups
+[ROLE] Provided ongoing maintenance, performance tuning, and SEO optimisation`,
     logoUrl: "/images/logos/freelance.svg",
     sortOrder: 3,
   },
