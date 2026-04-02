@@ -22,6 +22,16 @@ import type {
   BlogPost,
   ApiResponse,
 } from "@/types";
+import {
+  STATIC_PROFILE,
+  STATIC_SKILLS,
+  STATIC_PROJECTS,
+  STATIC_EXPERIENCES,
+  STATIC_EDUCATION,
+  STATIC_CERTIFICATIONS,
+  STATIC_TESTIMONIALS,
+} from "@/lib/static-data";
+import { STATIC_BLOG_POSTS } from "@/lib/blog-data";
 
 const API_BASE = process.env.API_URL || "http://localhost:8080";
 
@@ -72,27 +82,15 @@ export default async function HomePage() {
     fetchData<BlogPost>("/api/blog-posts"),
   ]);
 
-  const defaultProfile: Profile = {
-    id: "",
-    name: "Your Name",
-    title: "Full Stack Developer",
-    bio: "Welcome to my portfolio!",
-    avatarUrl: "",
-    resumeUrl: "",
-    socialLinks: {},
-    location: "Vietnam",
-    email: "hello@example.com",
-    phone: "",
-    metaTitle: "",
-    metaDescription: "",
-    ogImageUrl: "",
-    tagline: "",
-    availableForHire: false,
-    createdAt: "",
-    updatedAt: "",
-  };
-
-  const p = profile || defaultProfile;
+  // Use static fallback data when API is unreachable / returns empty
+  const p              = profile         || STATIC_PROFILE;
+  const skillsData     = skills.length         > 0 ? skills         : STATIC_SKILLS;
+  const projectsData   = projects.length       > 0 ? projects       : STATIC_PROJECTS;
+  const expData        = experiences.length    > 0 ? experiences    : STATIC_EXPERIENCES;
+  const eduData        = education.length      > 0 ? education      : STATIC_EDUCATION;
+  const certsData      = certifications.length > 0 ? certifications : STATIC_CERTIFICATIONS;
+  const testimonialsData = testimonials.length > 0 ? testimonials   : STATIC_TESTIMONIALS;
+  const blogData       = blogPosts.length      > 0 ? blogPosts      : STATIC_BLOG_POSTS;
 
   return (
     <div className="min-h-screen">
@@ -125,7 +123,7 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(139,92,246,0.1),transparent_50%)]" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:3rem_3rem]" />
           <div className="dark relative">
-            <SkillsSection skills={skills} />
+            <SkillsSection skills={skillsData} />
           </div>
         </section>
 
@@ -135,7 +133,7 @@ export default async function HomePage() {
           className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-violet-50/20 to-purple-50/30 dark:from-slate-950 dark:via-violet-950/10 dark:to-slate-900"
         >
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.06),transparent_70%)]" />
-          <ProjectsSection projects={projects} />
+          <ProjectsSection projects={projectsData} />
         </section>
 
         {/* Experience - dark slate with blue accent */}
@@ -146,7 +144,7 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(59,130,246,0.12),transparent_60%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:1.5rem_1.5rem]" />
           <div className="dark relative">
-            <ExperienceSection experiences={experiences} />
+            <ExperienceSection experiences={expData} />
           </div>
         </section>
 
@@ -156,7 +154,7 @@ export default async function HomePage() {
           className="relative overflow-hidden bg-gradient-to-br from-amber-50/40 via-slate-50 to-emerald-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/10"
         >
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(16,185,129,0.06),transparent_60%)]" />
-          <EducationSection education={education} />
+          <EducationSection education={eduData} />
         </section>
 
         {/* Certifications - dark purple/gold gradient */}
@@ -167,7 +165,7 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(234,179,8,0.08),transparent_50%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(168,85,247,0.1),transparent_50%)]" />
           <div className="dark relative">
-            <CertificationsSection certifications={certifications} />
+            <CertificationsSection certifications={certsData} />
           </div>
         </section>
 
@@ -177,7 +175,7 @@ export default async function HomePage() {
           className="relative overflow-hidden bg-gradient-to-br from-rose-50/40 via-slate-50 to-pink-50/30 dark:from-slate-950 dark:via-rose-950/5 dark:to-slate-900"
         >
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(244,63,94,0.05),transparent_60%)]" />
-          <TestimonialsSection testimonials={testimonials} />
+          <TestimonialsSection testimonials={testimonialsData} />
         </section>
 
         {/* Blog - subtle gradient */}
@@ -185,7 +183,7 @@ export default async function HomePage() {
           id="blog"
           className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-sky-50/20 to-slate-50 dark:from-slate-950 dark:via-sky-950/5 dark:to-slate-900"
         >
-          <BlogSection posts={blogPosts.slice(0, 3)} />
+          <BlogSection posts={blogData.slice(0, 3)} />
         </section>
 
         {/* Contact - dark gradient */}
