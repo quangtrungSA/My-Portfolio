@@ -62,10 +62,12 @@ const CARD_PALETTE = [
   },
 ];
 
-// Explicit local logos from /public/images/corporation/
+// Explicit local logos — keys match exact issuingOrg from DB
 const LOCAL_LOGOS: Record<string, string> = {
   "Oracle":                       "/images/corporation/oracle.png",
+  "Oracle Corporation":           "/images/corporation/oracle.png",
   "Linux Professional Institute": "/images/corporation/linux.png",
+  "LPI":                          "/images/corporation/linux.png",
 };
 
 export function CertificationsSection({ certifications }: CertificationsSectionProps) {
