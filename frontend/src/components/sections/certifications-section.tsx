@@ -2,9 +2,8 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { Award, ExternalLink, Calendar, ShieldCheck, BadgeCheck, Building2 } from "lucide-react";
+import { Award, ExternalLink, Calendar, ShieldCheck, BadgeCheck, Building2, GraduationCap } from "lucide-react";
 import { format } from "date-fns";
-import { SectionHeading } from "@/components/shared/section-heading";
 import type { Certification } from "@/types";
 
 interface CertificationsSectionProps {
@@ -77,10 +76,48 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
   return (
     <section id="certifications" className="py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          title="Certifications"
-          subtitle="Professional certifications and credentials I have earned."
-        />
+        {/* ── Custom heading (dark-aware, explicit white) ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mb-12 text-center"
+        >
+          {/* Icon badge */}
+          <div className="mb-4 flex justify-center">
+            <div className="flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-4 py-1.5">
+              <GraduationCap className="size-4 text-yellow-400" />
+              <span className="text-xs font-bold uppercase tracking-widest text-yellow-400">
+                Certifications
+              </span>
+            </div>
+          </div>
+
+          {/* Title — always white */}
+          <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+            My{" "}
+            <span className="bg-gradient-to-r from-yellow-300 via-amber-400 to-orange-400 bg-clip-text text-transparent">
+              Credentials
+            </span>
+          </h2>
+
+          {/* Animated underline — gold/purple */}
+          <div className="mt-4 flex justify-center">
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: 100 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="h-1 rounded-full bg-gradient-to-r from-yellow-400 via-amber-400 to-purple-500"
+            />
+          </div>
+
+          {/* Subtitle — always light */}
+          <p className="mx-auto mt-4 max-w-2xl text-base text-slate-400">
+            Professional certifications and credentials I have earned.
+          </p>
+        </motion.div>
 
         {/* Stats pills */}
         <motion.div
