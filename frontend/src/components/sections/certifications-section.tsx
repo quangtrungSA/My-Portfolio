@@ -15,52 +15,53 @@ function formatDate(dateStr: string): string {
   return format(new Date(dateStr), "MMM yyyy");
 }
 
-// Per-org color config
-const ORG_CONFIG: Record<string, {
-  topBg: string;       // card top banner background
-  border: string;      // card border
-  ring: string;        // hover ring
-  orgPill: string;     // org name pill
-  btnBg: string;       // CTA button background
-  btnText: string;     // CTA button text
-  iconBg: string;      // logo circle background
-  glow: string;        // hover shadow color
-}> = {
-  Oracle: {
-    topBg:    "bg-gradient-to-br from-red-700 via-red-800 to-rose-900",
-    border:   "border-red-700/40",
-    ring:     "hover:ring-red-500/30",
-    orgPill:  "bg-red-900/60 text-red-300 border border-red-700/50",
-    btnBg:    "bg-red-700/30 hover:bg-red-700/50 border border-red-600/40",
-    btnText:  "text-red-300",
-    iconBg:   "bg-white",
-    glow:     "hover:shadow-red-900/50",
+// Each card gets a UNIQUE color so all 4 look visually distinct
+const CARD_PALETTE = [
+  {
+    topBg:   "bg-gradient-to-br from-red-500 via-red-600 to-rose-700",
+    border:  "border-red-500/50",
+    ring:    "hover:ring-red-400/40",
+    pill:    "bg-red-950/70 text-red-300 border border-red-600/50",
+    btn:     "bg-red-600/25 hover:bg-red-600/45 border border-red-500/50 text-red-300",
+    glow:    "hover:shadow-red-900/60",
+    shimmer: "from-red-400/10",
   },
-  "Linux Professional Institute": {
-    topBg:    "bg-gradient-to-br from-amber-600 via-yellow-700 to-amber-900",
-    border:   "border-amber-600/40",
-    ring:     "hover:ring-amber-500/30",
-    orgPill:  "bg-amber-900/60 text-amber-300 border border-amber-700/50",
-    btnBg:    "bg-amber-700/30 hover:bg-amber-700/50 border border-amber-600/40",
-    btnText:  "text-amber-300",
-    iconBg:   "bg-white",
-    glow:     "hover:shadow-amber-900/50",
+  {
+    topBg:   "bg-gradient-to-br from-blue-500 via-indigo-600 to-violet-700",
+    border:  "border-blue-500/50",
+    ring:    "hover:ring-blue-400/40",
+    pill:    "bg-blue-950/70 text-blue-300 border border-blue-600/50",
+    btn:     "bg-blue-600/25 hover:bg-blue-600/45 border border-blue-500/50 text-blue-300",
+    glow:    "hover:shadow-blue-900/60",
+    shimmer: "from-blue-400/10",
   },
-};
+  {
+    topBg:   "bg-gradient-to-br from-amber-500 via-yellow-600 to-orange-600",
+    border:  "border-amber-500/50",
+    ring:    "hover:ring-amber-400/40",
+    pill:    "bg-amber-950/70 text-amber-300 border border-amber-600/50",
+    btn:     "bg-amber-600/25 hover:bg-amber-600/45 border border-amber-500/50 text-amber-300",
+    glow:    "hover:shadow-amber-900/60",
+    shimmer: "from-amber-400/10",
+  },
+  {
+    topBg:   "bg-gradient-to-br from-teal-500 via-emerald-600 to-cyan-700",
+    border:  "border-teal-500/50",
+    ring:    "hover:ring-teal-400/40",
+    pill:    "bg-teal-950/70 text-teal-300 border border-teal-600/50",
+    btn:     "bg-teal-600/25 hover:bg-teal-600/45 border border-teal-500/50 text-teal-300",
+    glow:    "hover:shadow-teal-900/60",
+    shimmer: "from-teal-400/10",
+  },
+];
 
-const DEFAULT_CONFIG = {
-  topBg:    "bg-gradient-to-br from-violet-700 via-purple-800 to-indigo-900",
-  border:   "border-violet-600/40",
-  ring:     "hover:ring-violet-500/30",
-  orgPill:  "bg-violet-900/60 text-violet-300 border border-violet-700/50",
-  btnBg:    "bg-violet-700/30 hover:bg-violet-700/50 border border-violet-600/40",
-  btnText:  "text-violet-300",
-  iconBg:   "bg-white",
-  glow:     "hover:shadow-violet-900/50",
-};
-
-function getConfig(org: string) {
-  return ORG_CONFIG[org] ?? DEFAULT_CONFIG;
+// Map org name → local logo path
+function getLocalLogo(org: string): string | null {
+  const map: Record<string, string> = {
+    "Oracle":                      "/images/corporation/oracle.png",
+    "Linux Professional Institute": "/images/corporation/linux.png",
+  };
+  return map[org] ?? null;
 }
 
 export function CertificationsSection({ certifications }: CertificationsSectionProps) {
@@ -97,10 +98,12 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
           </span>
         </motion.div>
 
-        {/* Cards */}
+        {/* Cards — each gets a unique color from CARD_PALETTE */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {certifications.map((cert, index) => {
-            const cfg = getConfig(cert.issuingOrg);
+            const pal = CARD_PALETTE[index % CARD_PALETTE.length];
+            const localLogo = getLocalLogo(cert.issuingOrg);
+
             return (
               <motion.div
                 key={cert.id}
@@ -111,32 +114,40 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
                 whileHover={{ y: -6, scale: 1.01 }}
                 className="h-full"
               >
-                <div className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border ${cfg.border} bg-slate-800/80 ring-1 ring-transparent transition-all duration-300 hover:shadow-2xl ${cfg.glow} ${cfg.ring} backdrop-blur-sm`}>
+                <div className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border ${pal.border} bg-slate-800/90 ring-1 ring-transparent transition-all duration-300 hover:shadow-2xl ${pal.glow} ${pal.ring} backdrop-blur-sm`}>
 
                   {/* ── Colored top banner ── */}
-                  <div className={`relative ${cfg.topBg} px-5 pb-5 pt-5`}>
-                    {/* Shimmer overlay */}
-                    <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08)_0%,transparent_50%,rgba(255,255,255,0.04)_100%)]" />
+                  <div className={`relative ${pal.topBg} px-5 pb-6 pt-5`}>
+                    {/* Diagonal shimmer */}
+                    <div className={`absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.12)_0%,transparent_55%,rgba(255,255,255,0.05)_100%)]`} />
 
-                    {/* Verified tick */}
-                    <div className="absolute right-3 top-3">
-                      <BadgeCheck className="size-5 text-white/80 drop-shadow" />
+                    {/* Verified tick top-right */}
+                    <div className="absolute right-3 top-3 z-10">
+                      <BadgeCheck className="size-5 text-white/90 drop-shadow" />
                     </div>
 
-                    {/* Logo circle */}
-                    <div className="relative flex justify-start">
-                      <div className={`flex h-16 w-16 items-center justify-center rounded-2xl ${cfg.iconBg} p-2 shadow-lg ring-2 ring-white/30`}>
-                        {cert.badgeUrl ? (
+                    {/* Logo on white circle */}
+                    <div className="relative z-10 flex justify-start">
+                      <div className="flex h-[68px] w-[68px] items-center justify-center overflow-hidden rounded-2xl bg-white p-2 shadow-xl ring-2 ring-white/40">
+                        {localLogo ? (
+                          <Image
+                            src={localLogo}
+                            alt={cert.issuingOrg}
+                            width={52}
+                            height={52}
+                            className="h-full w-full object-contain"
+                          />
+                        ) : cert.badgeUrl ? (
                           <Image
                             src={cert.badgeUrl}
                             alt={cert.issuingOrg}
-                            width={48}
-                            height={48}
+                            width={52}
+                            height={52}
                             className="h-full w-full object-contain"
                             unoptimized
                           />
                         ) : (
-                          <Award className="size-8 text-slate-700" />
+                          <Award className="size-8 text-slate-600" />
                         )}
                       </div>
                     </div>
@@ -145,30 +156,38 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
                   {/* ── Card body ── */}
                   <div className="flex flex-1 flex-col p-5">
                     {/* Org pill */}
-                    <span className={`mb-3 inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest ${cfg.orgPill}`}>
+                    <span className={`mb-3 inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest ${pal.pill}`}>
                       {cert.issuingOrg}
                     </span>
 
-                    {/* Cert name */}
-                    <h3 className="mb-4 flex-1 text-sm font-semibold leading-snug text-slate-100">
+                    {/* Cert name — white, bold, readable */}
+                    <h3 className="mb-4 flex-1 text-sm font-bold leading-snug text-white">
                       {cert.name}
                     </h3>
 
-                    {/* Dates */}
-                    <div className="mb-4 space-y-2 rounded-xl bg-slate-900/50 p-3">
+                    {/* Date box */}
+                    <div className="mb-4 space-y-2 rounded-xl bg-slate-900/60 p-3">
                       <div className="flex items-center gap-2 text-xs text-slate-400">
                         <Calendar className="size-3.5 shrink-0 text-slate-500" />
-                        <span>Issued <span className="font-medium text-slate-300">{formatDate(cert.issueDate)}</span></span>
+                        <span>
+                          Issued{" "}
+                          <span className="font-semibold text-slate-200">
+                            {formatDate(cert.issueDate)}
+                          </span>
+                        </span>
                       </div>
                       <div className="flex items-center gap-2 text-xs">
-                        <ShieldCheck className="size-3.5 shrink-0 text-emerald-500" />
-                        <span className="font-medium text-emerald-400">
-                          {cert.expiryDate ? `Expires ${formatDate(cert.expiryDate)}` : "No Expiry"}
+                        <ShieldCheck className="size-3.5 shrink-0 text-emerald-400" />
+                        <span className="font-semibold text-emerald-400">
+                          {cert.expiryDate
+                            ? `Expires ${formatDate(cert.expiryDate)}`
+                            : "No Expiry"}
                         </span>
                       </div>
                       {cert.credentialId && (
-                        <div className="truncate pt-0.5 text-[10px] text-slate-600">
-                          ID: <span className="text-slate-500">{cert.credentialId}</span>
+                        <div className="truncate pt-0.5 text-[10px]">
+                          <span className="text-slate-600">ID: </span>
+                          <span className="text-slate-500">{cert.credentialId}</span>
                         </div>
                       )}
                     </div>
@@ -179,14 +198,14 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
                         href={cert.credentialUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`mt-auto flex items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-semibold transition-all duration-200 ${cfg.btnBg} ${cfg.btnText}`}
+                        className={`mt-auto flex items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-semibold transition-all duration-200 ${pal.btn}`}
                       >
                         <ExternalLink className="size-3.5" />
                         View Credential
                       </a>
                     ) : (
                       <div className="mt-auto flex items-center justify-center gap-2 rounded-xl border border-slate-700/50 bg-slate-900/40 px-3 py-2.5 text-xs text-slate-500">
-                        <BadgeCheck className="size-3.5 text-emerald-600" />
+                        <BadgeCheck className="size-3.5 text-emerald-500" />
                         Verified
                       </div>
                     )}
