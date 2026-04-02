@@ -7,7 +7,7 @@ Personal portfolio web application with admin CMS dashboard for **Ly Van Quang T
 - **Frontend:** Next.js 14 (App Router) + shadcn/ui + Tailwind CSS + Framer Motion
 - **Backend:** Java Spring Boot 3.4.5 + Spring Security + JWT
 - **Database:** PostgreSQL on Neon (cloud, Singapore region)
-- **Deployment:** Vercel (frontend) + Fly.io (backend)
+- **Deployment:** Vercel (frontend) + Render (backend)
 - **CI/CD:** GitHub Actions
 - **Package Managers:** pnpm (frontend), Gradle (backend)
 
@@ -17,7 +17,7 @@ Personal portfolio web application with admin CMS dashboard for **Ly Van Quang T
 |-------------|-----|
 | **Portfolio (Production)** | https://frontend-two-tan-77.vercel.app |
 | **Admin CMS** | https://frontend-two-tan-77.vercel.app/admin/login |
-| **Backend API** | https://portfolio-backend-trung.fly.dev/api/ |
+| **Backend API** | https://portfolio-backend.onrender.com/api/ |
 | **GitHub Repo** | https://github.com/quangtrungSA/My-Portfolio |
 
 ## Project Structure
@@ -28,7 +28,6 @@ My-Portfolio/
 │   └── ci.yml            Test + Build + Docker check
 ├── backend/              Spring Boot API (port 8080)
 │   ├── Dockerfile        Multi-stage Docker build
-│   ├── fly.toml          Fly.io deployment config
 │   ├── build.gradle      Gradle dependencies
 │   └── src/              Java source code
 ├── frontend/             Next.js app (port 3000)
@@ -37,7 +36,7 @@ My-Portfolio/
 │   └── src/              TypeScript source code
 ├── docs/                 Project documentation (8 files)
 ├── docker-compose.yml    Local Docker orchestration
-├── render.yaml           Render deployment config (alternative)
+├── render.yaml           Render deployment config
 └── CLAUDE.md             This file
 ```
 
@@ -70,7 +69,7 @@ docker compose up --build
 ## Architecture
 
 ```
-Browser → Vercel (Next.js) ──API proxy──→ Fly.io (Spring Boot) ──JDBC──→ Neon (PostgreSQL)
+Browser → Vercel (Next.js) ──API proxy──→ Render (Spring Boot) ──JDBC──→ Neon (PostgreSQL)
               :3000                            :8080                    Singapore region
 ```
 
@@ -197,12 +196,12 @@ Hero → About → Skills → Projects → Experience → Education → Certific
 | Service | Platform | Region | Config |
 |---------|----------|--------|--------|
 | Frontend | **Vercel** | Edge (global) | Auto-deploy from `main` |
-| Backend | **Fly.io** | Singapore (`sin`) | `backend/fly.toml` |
+| Backend | **Render** | Oregon (free tier) | `render.yaml` |
 | Database | **Neon** | Singapore | Cloud PostgreSQL |
 
 ### Auto-Deploy
 Push to `main` → GitHub Actions CI runs → Vercel auto-deploys frontend.
-Backend: `cd backend && fly deploy`
+Backend: Auto-deploy on Render via `render.yaml` or manual deploy from Render dashboard.
 
 Full guide: [docs/Deployment_Guide.md](docs/Deployment_Guide.md)
 
@@ -225,7 +224,7 @@ Full guide: [docs/Deployment_Guide.md](docs/Deployment_Guide.md)
 | [docs/Certifications_Icons.md](docs/Certifications_Icons.md) | Certification icon/badge reference (Oracle, LPI) |
 | [docs/Experience_Icons.md](docs/Experience_Icons.md) | Company logo/icon reference (FPT, Hybrid, Freelance) |
 | [docs/Security_Push_Checklist.md](docs/Security_Push_Checklist.md) | **MUST READ** - Security checklist before pushing code |
-| [docs/Deployment_Guide.md](docs/Deployment_Guide.md) | Step-by-step deploy guide (Vercel + Render/Fly.io) |
+| [docs/Deployment_Guide.md](docs/Deployment_Guide.md) | Step-by-step deploy guide (Vercel + Render) |
 
 ## Dependencies
 
