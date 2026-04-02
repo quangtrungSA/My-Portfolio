@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { Award, ExternalLink, Calendar, ShieldCheck, BadgeCheck } from "lucide-react";
+import { Award, ExternalLink, Calendar, ShieldCheck, BadgeCheck, Building2 } from "lucide-react";
 import { format } from "date-fns";
 import { SectionHeading } from "@/components/shared/section-heading";
 import type { Certification } from "@/types";
@@ -15,34 +15,52 @@ function formatDate(dateStr: string): string {
   return format(new Date(dateStr), "MMM yyyy");
 }
 
-// Color theme per issuing org
-const ORG_THEME: Record<string, { border: string; glow: string; badge: string; text: string; bg: string }> = {
+// Per-org color config
+const ORG_CONFIG: Record<string, {
+  topBg: string;       // card top banner background
+  border: string;      // card border
+  ring: string;        // hover ring
+  orgPill: string;     // org name pill
+  btnBg: string;       // CTA button background
+  btnText: string;     // CTA button text
+  iconBg: string;      // logo circle background
+  glow: string;        // hover shadow color
+}> = {
   Oracle: {
-    border: "border-red-500/30",
-    glow: "hover:shadow-red-500/20",
-    badge: "bg-red-500/15 text-red-400 border-red-500/30",
-    text: "text-red-400",
-    bg: "from-red-500/10 to-transparent",
+    topBg:    "bg-gradient-to-br from-red-700 via-red-800 to-rose-900",
+    border:   "border-red-700/40",
+    ring:     "hover:ring-red-500/30",
+    orgPill:  "bg-red-900/60 text-red-300 border border-red-700/50",
+    btnBg:    "bg-red-700/30 hover:bg-red-700/50 border border-red-600/40",
+    btnText:  "text-red-300",
+    iconBg:   "bg-white",
+    glow:     "hover:shadow-red-900/50",
   },
   "Linux Professional Institute": {
-    border: "border-yellow-500/30",
-    glow: "hover:shadow-yellow-500/20",
-    badge: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30",
-    text: "text-yellow-400",
-    bg: "from-yellow-500/10 to-transparent",
+    topBg:    "bg-gradient-to-br from-amber-600 via-yellow-700 to-amber-900",
+    border:   "border-amber-600/40",
+    ring:     "hover:ring-amber-500/30",
+    orgPill:  "bg-amber-900/60 text-amber-300 border border-amber-700/50",
+    btnBg:    "bg-amber-700/30 hover:bg-amber-700/50 border border-amber-600/40",
+    btnText:  "text-amber-300",
+    iconBg:   "bg-white",
+    glow:     "hover:shadow-amber-900/50",
   },
 };
 
-const DEFAULT_THEME = {
-  border: "border-purple-500/30",
-  glow: "hover:shadow-purple-500/20",
-  badge: "bg-purple-500/15 text-purple-400 border-purple-500/30",
-  text: "text-purple-400",
-  bg: "from-purple-500/10 to-transparent",
+const DEFAULT_CONFIG = {
+  topBg:    "bg-gradient-to-br from-violet-700 via-purple-800 to-indigo-900",
+  border:   "border-violet-600/40",
+  ring:     "hover:ring-violet-500/30",
+  orgPill:  "bg-violet-900/60 text-violet-300 border border-violet-700/50",
+  btnBg:    "bg-violet-700/30 hover:bg-violet-700/50 border border-violet-600/40",
+  btnText:  "text-violet-300",
+  iconBg:   "bg-white",
+  glow:     "hover:shadow-violet-900/50",
 };
 
-function getTheme(org: string) {
-  return ORG_THEME[org] ?? DEFAULT_THEME;
+function getConfig(org: string) {
+  return ORG_CONFIG[org] ?? DEFAULT_CONFIG;
 }
 
 export function CertificationsSection({ certifications }: CertificationsSectionProps) {
@@ -58,106 +76,102 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
           subtitle="Professional certifications and credentials I have earned."
         />
 
-        {/* Stats bar */}
+        {/* Stats pills */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="mb-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm"
+          className="mb-12 flex flex-wrap gap-3"
         >
-          <span className="font-semibold text-white">
-            {certifications.length} Certifications
+          <span className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold text-white">
+            🏅 {certifications.length} Certifications
           </span>
-          <span className="text-slate-600">·</span>
-          <span className="text-slate-400">{orgs.length} Issuing Organizations</span>
-          <span className="text-slate-600">·</span>
-          <span className="flex items-center gap-1.5 text-emerald-400">
+          <span className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-slate-300">
+            <Building2 className="size-3.5" />
+            {orgs.length} Organizations
+          </span>
+          <span className="flex items-center gap-2 rounded-full bg-emerald-500/20 px-4 py-1.5 text-sm font-medium text-emerald-400">
             <ShieldCheck className="size-3.5" />
             All Verified
           </span>
         </motion.div>
 
-        {/* Cards grid */}
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Cards */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {certifications.map((cert, index) => {
-            const theme = getTheme(cert.issuingOrg);
+            const cfg = getConfig(cert.issuingOrg);
             return (
               <motion.div
                 key={cert.id}
-                initial={{ opacity: 0, y: 24 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: index * 0.08 }}
-                whileHover={{ y: -4 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -6, scale: 1.01 }}
+                className="h-full"
               >
-                <div
-                  className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border ${theme.border} bg-white/[0.03] backdrop-blur-sm transition-all duration-300 hover:bg-white/[0.06] hover:shadow-xl ${theme.glow}`}
-                >
-                  {/* Top glow gradient */}
-                  <div className={`absolute inset-x-0 top-0 h-32 bg-gradient-to-b ${theme.bg} opacity-60`} />
+                <div className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border ${cfg.border} bg-slate-800/80 ring-1 ring-transparent transition-all duration-300 hover:shadow-2xl ${cfg.glow} ${cfg.ring} backdrop-blur-sm`}>
 
-                  {/* Verified badge */}
-                  <div className="absolute right-3 top-3 z-10">
-                    <BadgeCheck className={`size-5 ${theme.text}`} />
-                  </div>
+                  {/* ── Colored top banner ── */}
+                  <div className={`relative ${cfg.topBg} px-5 pb-5 pt-5`}>
+                    {/* Shimmer overlay */}
+                    <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08)_0%,transparent_50%,rgba(255,255,255,0.04)_100%)]" />
 
-                  {/* Badge / Logo */}
-                  <div className="relative flex items-center justify-center px-6 pb-2 pt-8">
-                    <div className="relative flex h-20 w-20 items-center justify-center">
-                      {cert.badgeUrl ? (
-                        <Image
-                          src={cert.badgeUrl}
-                          alt={cert.issuingOrg}
-                          width={80}
-                          height={80}
-                          className="h-full w-full object-contain drop-shadow-lg"
-                          unoptimized
-                        />
-                      ) : (
-                        <div className={`flex h-full w-full items-center justify-center rounded-2xl border ${theme.border} bg-white/5`}>
-                          <Award className={`size-8 ${theme.text}`} />
-                        </div>
-                      )}
+                    {/* Verified tick */}
+                    <div className="absolute right-3 top-3">
+                      <BadgeCheck className="size-5 text-white/80 drop-shadow" />
+                    </div>
+
+                    {/* Logo circle */}
+                    <div className="relative flex justify-start">
+                      <div className={`flex h-16 w-16 items-center justify-center rounded-2xl ${cfg.iconBg} p-2 shadow-lg ring-2 ring-white/30`}>
+                        {cert.badgeUrl ? (
+                          <Image
+                            src={cert.badgeUrl}
+                            alt={cert.issuingOrg}
+                            width={48}
+                            height={48}
+                            className="h-full w-full object-contain"
+                            unoptimized
+                          />
+                        ) : (
+                          <Award className="size-8 text-slate-700" />
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="relative flex flex-1 flex-col px-5 pb-5 pt-3">
-                    {/* Org badge */}
-                    <div className="mb-3">
-                      <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${theme.badge}`}>
-                        {cert.issuingOrg}
-                      </span>
-                    </div>
+                  {/* ── Card body ── */}
+                  <div className="flex flex-1 flex-col p-5">
+                    {/* Org pill */}
+                    <span className={`mb-3 inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest ${cfg.orgPill}`}>
+                      {cert.issuingOrg}
+                    </span>
 
-                    {/* Name */}
-                    <h3 className="mb-3 flex-1 text-sm font-semibold leading-snug text-white">
+                    {/* Cert name */}
+                    <h3 className="mb-4 flex-1 text-sm font-semibold leading-snug text-slate-100">
                       {cert.name}
                     </h3>
 
                     {/* Dates */}
-                    <div className="mb-4 space-y-1.5">
-                      <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                        <Calendar className="size-3 shrink-0" />
-                        <span>Issued {formatDate(cert.issueDate)}</span>
+                    <div className="mb-4 space-y-2 rounded-xl bg-slate-900/50 p-3">
+                      <div className="flex items-center gap-2 text-xs text-slate-400">
+                        <Calendar className="size-3.5 shrink-0 text-slate-500" />
+                        <span>Issued <span className="font-medium text-slate-300">{formatDate(cert.issueDate)}</span></span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <ShieldCheck className="size-3 shrink-0 text-emerald-500" />
-                        <span className="text-xs text-emerald-400">
-                          {cert.expiryDate
-                            ? `Expires ${formatDate(cert.expiryDate)}`
-                            : "No Expiry"}
+                      <div className="flex items-center gap-2 text-xs">
+                        <ShieldCheck className="size-3.5 shrink-0 text-emerald-500" />
+                        <span className="font-medium text-emerald-400">
+                          {cert.expiryDate ? `Expires ${formatDate(cert.expiryDate)}` : "No Expiry"}
                         </span>
                       </div>
+                      {cert.credentialId && (
+                        <div className="truncate pt-0.5 text-[10px] text-slate-600">
+                          ID: <span className="text-slate-500">{cert.credentialId}</span>
+                        </div>
+                      )}
                     </div>
-
-                    {/* Credential ID */}
-                    {cert.credentialId && (
-                      <p className="mb-4 truncate text-[10px] text-slate-600">
-                        ID: {cert.credentialId}
-                      </p>
-                    )}
 
                     {/* CTA */}
                     {cert.credentialUrl ? (
@@ -165,15 +179,15 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
                         href={cert.credentialUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`mt-auto flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition-all ${theme.border} ${theme.text} hover:bg-white/10`}
+                        className={`mt-auto flex items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-semibold transition-all duration-200 ${cfg.btnBg} ${cfg.btnText}`}
                       >
-                        <ExternalLink className="size-3" />
+                        <ExternalLink className="size-3.5" />
                         View Credential
                       </a>
                     ) : (
-                      <div className="mt-auto flex items-center justify-center gap-1.5 rounded-xl border border-white/5 px-3 py-2 text-xs text-slate-600">
-                        <BadgeCheck className="size-3" />
-                        Verified Credential
+                      <div className="mt-auto flex items-center justify-center gap-2 rounded-xl border border-slate-700/50 bg-slate-900/40 px-3 py-2.5 text-xs text-slate-500">
+                        <BadgeCheck className="size-3.5 text-emerald-600" />
+                        Verified
                       </div>
                     )}
                   </div>
