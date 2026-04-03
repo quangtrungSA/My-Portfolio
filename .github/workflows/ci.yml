@@ -124,28 +124,75 @@ jobs:
           cache-to: type=gha,mode=max
 
   # ============================
-  # Deploy Backend → Render.com
+  # Deploy Backend → Oracle Cloud VM
   # Runs only on push to main (not PRs)
-  # Requires secrets: RENDER_API_KEY, RENDER_SERVICE_ID
+  # Requires secrets: ORACLE_VM_IP, ORACLE_SSH_USER, ORACLE_SSH_PRIVATE_KEY
   # ============================
   deploy-backend:
-    name: Deploy Backend to Render
+    name: Deploy Backend to Oracle Cloud
     runs-on: ubuntu-latest
     needs: [docker-build]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
-      - name: Trigger Render deploy
-        run: |
-          if [[ -z "${{ secrets.RENDER_API_KEY }}" || -z "${{ secrets.RENDER_SERVICE_ID }}" ]]; then
-            echo "⚠️  RENDER_API_KEY or RENDER_SERVICE_ID not set – skipping backend deploy."
-            exit 0
-          fi
-          echo "🚀 Triggering Render deploy..."
-          RESPONSE=$(curl -sf -X POST \
-            "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
-            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{"clearCache":false}')
-          echo "✅ Deploy triggered: $RESPONSE"
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.ORACLE_VM_IP }}
+          username: ${{ secrets.ORACLE_SSH_USER }}
+          key: ${{ secrets.ORACLE_SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            set -e
+            APP_DIR=~/portfolio-backend
+
+            # Clone or pull latest code
+            if [ -d "$APP_DIR/.git" ]; then
+              cd "$APP_DIR"
+              git pull origin main
+            else
+              git clone https://github.com/${{ github.repository }}.git "$APP_DIR"
+              cd "$APP_DIR"
+            fi
+
+            # Build and restart backend container
+            cd "$APP_DIR/backend"
+            cat > docker-compose.yml << 'DEOF'
+            services:
+              backend:
+                build:
+                  context: .
+                  dockerfile: Dockerfile
+                ports:
+                  - "127.0.0.1:8080:8080"
+                env_file:
+                  - .env
+                restart: unless-stopped
+                healthcheck:
+                  test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/api/profiles"]
+                  interval: 30s
+                  timeout: 5s
+                  start_period: 60s
+                  retries: 3
+            DEOF
+
+            docker compose down --remove-orphans 2>/dev/null || true
+            docker compose up --build -d
+
+            # Wait and health check
+            echo "⏳ Waiting for backend to start..."
+            sleep 30
+            HTTP_CODE=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/api/profiles || echo "000")
+            echo "Health check: HTTP $HTTP_CODE"
+            if [ "$HTTP_CODE" != "200" ]; then
+              echo "⚠️  Backend may still be starting. Check: docker compose logs -f"
+            else
+              echo "✅ Backend is healthy!"
+            fi
+
+            # Prune old Docker images
+            docker image prune -f
 

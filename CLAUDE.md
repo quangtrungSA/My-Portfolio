@@ -7,7 +7,7 @@ Personal portfolio web application with admin CMS dashboard for **Ly Van Quang T
 - **Frontend:** Next.js 14 (App Router) + shadcn/ui + Tailwind CSS + Framer Motion
 - **Backend:** Java Spring Boot 3.4.5 + Spring Security + JWT
 - **Database:** PostgreSQL on Neon (cloud, Singapore region)
-- **Deployment:** Vercel (frontend) + Render (backend)
+- **Deployment:** Vercel (frontend) + Oracle Cloud Always Free VM (backend)
 - **CI/CD:** GitHub Actions
 - **Package Managers:** pnpm (frontend), Gradle (backend)
 
@@ -17,7 +17,7 @@ Personal portfolio web application with admin CMS dashboard for **Ly Van Quang T
 |-------------|-----|
 | **Portfolio (Production)** | https://frontend-two-tan-77.vercel.app |
 | **Admin CMS** | https://frontend-two-tan-77.vercel.app/admin/login |
-| **Backend API** | https://portfolio-backend.onrender.com/api/ |
+| **Backend API** | Oracle Cloud VM (see Deployment Guide) |
 | **GitHub Repo** | https://github.com/quangtrungSA/My-Portfolio |
 
 ## Project Structure
@@ -36,7 +36,8 @@ My-Portfolio/
 │   └── src/              TypeScript source code
 ├── docs/                 Project documentation (8 files)
 ├── docker-compose.yml    Local Docker orchestration
-├── render.yaml           Render deployment config
+├── scripts/              Deploy & dev scripts
+│   └── deploy-oracle.sh  Oracle Cloud VM deploy script
 └── CLAUDE.md             This file
 ```
 
@@ -69,11 +70,11 @@ docker compose up --build
 ## Architecture
 
 ```
-Browser → Vercel (Next.js) ──API proxy──→ Render (Spring Boot) ──JDBC──→ Neon (PostgreSQL)
-              :3000                            :8080                    Singapore region
+Browser → Vercel (Next.js) ──middleware proxy──→ Oracle Cloud (Spring Boot) ──JDBC──→ Neon (PostgreSQL)
+              :3000                                    :8080                         Singapore region
 ```
 
-- API proxy via `next.config.mjs` rewrites (`/api/*` → backend) eliminates CORS
+- API proxy via `middleware.ts` (`/api/*` → backend, `/api/auth/*` → Next.js API routes)
 - JWT stored in httpOnly cookie (not localStorage)
 - Server Components for public pages, Client Components for admin
 - `spring.jpa.hibernate.ddl-auto: none` - schema managed by `schema.sql`
@@ -196,12 +197,12 @@ Hero → About → Skills → Projects → Experience → Education → Certific
 | Service | Platform | Region | Config |
 |---------|----------|--------|--------|
 | Frontend | **Vercel** | Edge (global) | Auto-deploy from `main` |
-| Backend | **Render** | Oregon (free tier) | `render.yaml` |
+| Backend | **Oracle Cloud** | Always Free VM (ARM) | Docker + Nginx + SSH deploy |
 | Database | **Neon** | Singapore | Cloud PostgreSQL |
 
 ### Auto-Deploy
 Push to `main` → GitHub Actions CI runs → Vercel auto-deploys frontend.
-Backend: Auto-deploy on Render via `render.yaml` or manual deploy from Render dashboard.
+Backend: GitHub Actions SSH into Oracle Cloud VM → `git pull` + `docker compose up --build -d`.
 
 Full guide: [docs/Deployment_Guide.md](docs/Deployment_Guide.md)
 
@@ -212,6 +213,7 @@ Full guide: [docs/Deployment_Guide.md](docs/Deployment_Guide.md)
 1. **test-backend** - Java 21, Gradle build + test
 2. **test-frontend** - Node 22, pnpm install + build
 3. **docker-build** - Build both Docker images (after tests pass)
+4. **deploy-backend** - SSH into Oracle Cloud VM, rebuild container (on push to main)
 
 ## Documentation
 
@@ -224,7 +226,7 @@ Full guide: [docs/Deployment_Guide.md](docs/Deployment_Guide.md)
 | [docs/Certifications_Icons.md](docs/Certifications_Icons.md) | Certification icon/badge reference (Oracle, LPI) |
 | [docs/Experience_Icons.md](docs/Experience_Icons.md) | Company logo/icon reference (FPT, Hybrid, Freelance) |
 | [docs/Security_Push_Checklist.md](docs/Security_Push_Checklist.md) | **MUST READ** - Security checklist before pushing code |
-| [docs/Deployment_Guide.md](docs/Deployment_Guide.md) | Step-by-step deploy guide (Vercel + Render) |
+| [docs/Deployment_Guide.md](docs/Deployment_Guide.md) | Step-by-step deploy guide (Vercel + Oracle Cloud) |
 
 ## Dependencies
 
