@@ -79,9 +79,17 @@ export default function AdminProfilePage() {
         phone: data.phone,
         location: data.location,
       });
-      const links = Object.entries(data.socialLinks || {}).map(
-        ([key, value]) => ({ key, value })
-      );
+      // Build social links array from individual fields
+      const links: SocialLink[] = [];
+      if (data.githubUrl) links.push({ key: "github", value: data.githubUrl });
+      if (data.linkedinUrl) links.push({ key: "linkedin", value: data.linkedinUrl });
+      if (data.leetcodeUrl) links.push({ key: "leetcode", value: data.leetcodeUrl });
+      if (data.facebookUrl) links.push({ key: "facebook", value: data.facebookUrl });
+      if (data.instagramUrl) links.push({ key: "instagram", value: data.instagramUrl });
+      if (data.dailydevUrl) links.push({ key: "dailydev", value: data.dailydevUrl });
+      if (data.redditUrl) links.push({ key: "reddit", value: data.redditUrl });
+      if (data.twitterUrl) links.push({ key: "twitter", value: data.twitterUrl });
+      if (data.websiteUrl) links.push({ key: "website", value: data.websiteUrl });
       setSocialLinks(links.length > 0 ? links : [{ key: "", value: "" }]);
     } catch {
       toast.error("Failed to load profile");
@@ -116,17 +124,41 @@ export default function AdminProfilePage() {
     if (!profile) return;
     setSaving(true);
 
-    const socialLinksObj: Record<string, string> = {};
+    // Build individual social link fields from array
+    const socialData: Record<string, string | undefined> = {
+      githubUrl: undefined,
+      linkedinUrl: undefined,
+      leetcodeUrl: undefined,
+      facebookUrl: undefined,
+      instagramUrl: undefined,
+      dailydevUrl: undefined,
+      redditUrl: undefined,
+      twitterUrl: undefined,
+      websiteUrl: undefined,
+    };
+    
     socialLinks.forEach((link) => {
       if (link.key.trim() && link.value.trim()) {
-        socialLinksObj[link.key.trim()] = link.value.trim();
+        const key = link.key.trim().toLowerCase();
+        const fieldName = `${key}Url` as keyof typeof socialData;
+        if (fieldName in socialData) {
+          socialData[fieldName] = link.value.trim();
+        }
       }
     });
 
     try {
       await updateProfile({
         ...data,
-        socialLinks: socialLinksObj,
+        githubUrl: socialData.githubUrl,
+        linkedinUrl: socialData.linkedinUrl,
+        leetcodeUrl: socialData.leetcodeUrl,
+        facebookUrl: socialData.facebookUrl,
+        instagramUrl: socialData.instagramUrl,
+        dailydevUrl: socialData.dailydevUrl,
+        redditUrl: socialData.redditUrl,
+        twitterUrl: socialData.twitterUrl,
+        websiteUrl: socialData.websiteUrl,
       });
       toast.success("Profile updated successfully");
     } catch (err) {

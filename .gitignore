@@ -35,6 +35,14 @@ frontend/out/
 .DS_Store
 Thumbs.db
 
+# One-time migration scripts
+scripts/*.sql
+backend/migrate.java
+backend/src/main/resources/migrations/
+
+# Frontend auto-generated
+frontend/README.md
+
 # Misc
 seed-data.sh
 *.log

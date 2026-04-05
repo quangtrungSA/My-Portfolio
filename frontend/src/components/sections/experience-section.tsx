@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   Eye,
   EyeOff,
+  Briefcase,
 } from "lucide-react";
 import { format } from "date-fns";
 import type { Experience } from "@/types";
@@ -21,58 +22,6 @@ interface ExperienceSectionProps {
   experiences: Experience[];
 }
 
-interface ParsedProject {
-  goal: string;
-  tech: string[];
-  phases: { name: string; period: string; team: string; roles: string[] }[];
-}
-
-function parseDescription(desc: string): ParsedProject {
-  const result: ParsedProject = { goal: "", tech: [], phases: [] };
-  if (!desc) return result;
-
-  const lines = desc.split("\n");
-  let currentPhase: (typeof result.phases)[0] | null = null;
-
-  lines.forEach((line) => {
-    const trimmed = line.trim();
-    if (trimmed.startsWith("[GOAL]")) {
-      result.goal = trimmed.replace("[GOAL]", "").trim();
-    } else if (trimmed.startsWith("[TECH]")) {
-      result.tech = trimmed
-        .replace("[TECH]", "")
-        .trim()
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean);
-    } else if (trimmed.startsWith("[PHASE:")) {
-      const match = trimmed.match(/\[PHASE:(.+?)\]\s*(.*)/);
-      if (match) {
-        const parts = (match[2] || "").split("|").map((p) => p.trim());
-        currentPhase = {
-          name: match[1],
-          period: parts[0] || "",
-          team: parts[1] || "",
-          roles: [],
-        };
-        result.phases.push(currentPhase);
-      }
-    } else if (trimmed.startsWith("[ROLE]")) {
-      const role = trimmed.replace("[ROLE]", "").trim();
-      if (currentPhase) {
-        currentPhase.roles.push(role);
-      } else {
-        if (result.phases.length === 0) {
-          currentPhase = { name: "Main", period: "", team: "", roles: [] };
-          result.phases.push(currentPhase);
-        }
-        result.phases[result.phases.length - 1].roles.push(role);
-      }
-    }
-  });
-
-  return result;
-}
 
 function formatDate(dateStr: string): string {
   return format(new Date(dateStr), "MMM yyyy");
@@ -106,11 +55,14 @@ function ProjectCard({
   delay: number;
 }) {
   const [expanded, setExpanded] = useState(true);
-  const parsed = parseDescription(exp.description || "");
-  const parts = exp.position.split(" - ");
-  const role = parts[0];
-  const project = parts.length > 1 ? parts.slice(1).join(" - ") : null;
-  const hasDetails = parsed.goal || parsed.tech.length > 0 || parsed.phases.length > 0;
+  // Use projectName from API, fallback to parsing from position for backward compatibility
+  const project = exp.projectName || (exp.position.includes(" - ") ? exp.position.split(" - ").slice(1).join(" - ") : null);
+  const role = exp.position.split(" - ")[0];
+  const technologies = exp.technologies || [];
+  const goal = exp.goal || "";
+  // Use phases from API (sorted by sortOrder)
+  const phases = (exp.phases || []).sort((a, b) => a.sortOrder - b.sortOrder);
+  const hasDetails = goal || technologies.length > 0 || phases.length > 0;
 
   return (
     <motion.div
@@ -180,9 +132,9 @@ function ProjectCard({
           </div>
 
           {/* Tech badges - always visible as summary */}
-          {parsed.tech.length > 0 && (
+          {technologies.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1">
-              {parsed.tech.slice(0, expanded ? undefined : 5).map((t) => (
+              {technologies.slice(0, expanded ? undefined : 5).map((t) => (
                 <span
                   key={t}
                   className="rounded-md border border-cyan-500/20 bg-cyan-500/10 px-1.5 py-0.5 text-[10px] font-medium text-cyan-400"
@@ -190,9 +142,9 @@ function ProjectCard({
                   {t}
                 </span>
               ))}
-              {!expanded && parsed.tech.length > 5 && (
+              {!expanded && technologies.length > 5 && (
                 <span className="rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] text-slate-500">
-                  +{parsed.tech.length - 5} more
+                  +{technologies.length - 5} more
                 </span>
               )}
             </div>
@@ -211,27 +163,27 @@ function ProjectCard({
             >
               <div className="border-t border-white/[0.06] px-4 py-3 space-y-3">
                 {/* Goal */}
-                {parsed.goal && (
+                {goal && (
                   <div className="flex gap-2">
                     <Target className="mt-0.5 size-3.5 flex-shrink-0 text-amber-400" />
                     <p className="text-xs leading-relaxed text-slate-400">
-                      {parsed.goal}
+                      {goal}
                     </p>
                   </div>
                 )}
 
-                {/* Phases tree */}
-                {parsed.phases.length > 0 && (
+                {/* Phases tree from API */}
+                {phases.length > 0 && (
                   <div className="relative ml-1">
-                    {parsed.phases.map((phase, pi) => (
+                    {phases.map((phase, pi) => (
                       <div
-                        key={pi}
+                        key={phase.id || pi}
                         className="relative pb-3 pl-5 last:pb-0"
                       >
                         {/* Phase branch */}
                         <div className="absolute left-0 top-2 h-px w-3 bg-slate-600/40" />
                         <div className="absolute left-[-1px] top-[6px] h-1.5 w-1.5 rounded-full bg-purple-500/70" />
-                        {pi < parsed.phases.length - 1 && (
+                        {pi < phases.length - 1 && (
                           <div className="absolute left-0 top-[7px] bottom-0 w-px bg-slate-700/30" />
                         )}
 
@@ -241,30 +193,36 @@ function ProjectCard({
                           <span className="text-[11px] font-semibold text-purple-400">
                             {phase.name}
                           </span>
-                          {phase.period && (
+                          {(phase.startDate || phase.endDate) && (
                             <span className="text-[10px] text-slate-600">
-                              {phase.period}
+                              {phase.startDate ? formatDate(phase.startDate) : ""} 
+                              {phase.startDate && phase.endDate ? " - " : ""}
+                              {phase.endDate ? formatDate(phase.endDate) : phase.startDate ? " - Present" : ""}
                             </span>
                           )}
-                          {phase.team && (
+                          {phase.teamSize && (
                             <span className="rounded-full bg-slate-800 px-1.5 py-0.5 text-[9px] text-slate-500">
-                              {phase.team}
+                              {phase.teamSize} members
                             </span>
                           )}
                         </div>
 
-                        {/* Roles */}
-                        <ul className="space-y-0.5">
-                          {phase.roles.map((r, ri) => (
-                            <li
-                              key={ri}
-                              className="flex items-start gap-1.5 text-[11px] leading-relaxed text-slate-500"
-                            >
-                              <CheckCircle2 className="mt-[2px] size-2.5 flex-shrink-0 text-emerald-500/50" />
-                              {r}
-                            </li>
-                          ))}
-                        </ul>
+                        {/* Roles from API (sorted by sortOrder) */}
+                        {phase.roles && phase.roles.length > 0 && (
+                          <ul className="space-y-0.5">
+                            {phase.roles
+                              .sort((a, b) => a.sortOrder - b.sortOrder)
+                              .map((r, ri) => (
+                              <li
+                                key={r.id || ri}
+                                className="flex items-start gap-1.5 text-[11px] leading-relaxed text-slate-500"
+                              >
+                                <CheckCircle2 className="mt-[2px] size-2.5 flex-shrink-0 text-emerald-500/50" />
+                                {r.name}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -322,15 +280,36 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
           transition={{ duration: 0.5 }}
           className="mb-14 text-center"
         >
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Work Experience
+          {/* Icon badge */}
+          <motion.div
+            className="mb-4 flex justify-center"
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+          >
+            <div className="flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/5 px-4 py-1.5">
+              <Briefcase className="size-4 text-blue-400/70" />
+              <span className="text-xs font-semibold uppercase tracking-widest text-blue-400/70">
+                Career Journey
+              </span>
+            </div>
+          </motion.div>
+
+          {/* Title */}
+          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+            Work{" "}
+            <span className="bg-gradient-to-r from-blue-200 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
+              Experience
+            </span>
           </h2>
+
           <motion.div
             initial={{ width: 0 }}
             whileInView={{ width: 80 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="mx-auto mt-3 h-1 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500"
+            className="mx-auto mt-4 h-1 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500"
           />
           <p className="mx-auto mt-4 max-w-2xl text-slate-400">
             My professional journey across companies and projects

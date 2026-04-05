@@ -21,9 +21,9 @@ public class SkillController {
 
     @GetMapping("/api/skills")
     public ResponseEntity<ApiResponse<List<Skill>>> getAll(
-            @RequestParam(required = false) String category) {
-        List<Skill> skills = category != null
-                ? skillService.getByCategory(category)
+            @RequestParam(required = false) UUID categoryId) {
+        List<Skill> skills = categoryId != null
+                ? skillService.getByCategoryId(categoryId)
                 : skillService.getAll();
         return ResponseEntity.ok(ApiResponse.success(skills));
     }
@@ -46,3 +46,4 @@ public class SkillController {
         return ResponseEntity.noContent().build();
     }
 }
+

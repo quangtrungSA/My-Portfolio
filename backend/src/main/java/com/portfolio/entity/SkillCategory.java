@@ -10,27 +10,20 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "skills")
+@Table(name = "skill_categories")
 @EntityListeners(AuditingEntityListener.class)
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class Skill {
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
+public class SkillCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, unique = true, length = 50)
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id")
-    private SkillCategory category;
-
-    @Column(length = 100)
-    private String icon;
+    @Column(length = 50)
+    private String color;
 
     @Column(name = "sort_order")
     @Builder.Default
@@ -44,4 +37,3 @@ public class Skill {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 }
-

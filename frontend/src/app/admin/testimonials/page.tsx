@@ -104,6 +104,15 @@ export default function AdminTestimonialsPage() {
     formState: { errors },
   } = useForm<TestimonialFormData>({
     resolver: zodResolver(testimonialSchema) as Resolver<TestimonialFormData>,
+    defaultValues: {
+      authorName: "",
+      authorTitle: "",
+      authorAvatar: "",
+      content: "",
+      rating: 5,
+      featured: false,
+      sortOrder: 0,
+    },
   });
 
   const featuredValue = watch("featured");

@@ -89,6 +89,16 @@ export default function AdminEducationPage() {
     formState: { errors },
   } = useForm<EducationFormData>({
     resolver: zodResolver(educationSchema) as Resolver<EducationFormData>,
+    defaultValues: {
+      institution: "",
+      degree: "",
+      field: "",
+      startDate: "",
+      endDate: "",
+      description: "",
+      logoUrl: "",
+      sortOrder: 0,
+    },
   });
 
   const loadEducation = useCallback(async () => {

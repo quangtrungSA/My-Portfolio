@@ -8,6 +8,7 @@ import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import {
   Card,
   CardContent,
@@ -42,12 +43,19 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import type { Skill } from "@/types";
-import { fetchSkills, createSkill, updateSkill, deleteSkill } from "@/lib/api";
+import type { Skill, SkillCategory } from "@/types";
+import {
+  fetchSkills,
+  fetchSkillCategories,
+  createSkill,
+  updateSkill,
+  deleteSkill,
+  type SkillInput,
+} from "@/lib/api";
 
 const skillSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  category: z.string().min(1, "Category is required"),
+  categoryId: z.string().min(1, "Category is required"),
   proficiencyLevel: z.coerce.number().min(0).max(100),
   icon: z.string().optional().default(""),
   sortOrder: z.coerce.number().optional().default(0),
@@ -55,7 +63,7 @@ const skillSchema = z.object({
 
 type SkillFormData = {
   name: string;
-  category: string;
+  categoryId: string;
   proficiencyLevel: number;
   icon: string;
   sortOrder: number;
@@ -63,6 +71,7 @@ type SkillFormData = {
 
 export default function AdminSkillsPage() {
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [categories, setCategories] = useState<SkillCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
@@ -75,26 +84,43 @@ export default function AdminSkillsPage() {
     formState: { errors },
   } = useForm<SkillFormData>({
     resolver: zodResolver(skillSchema) as Resolver<SkillFormData>,
+    defaultValues: {
+      name: "",
+      categoryId: "",
+      proficiencyLevel: 50,
+      icon: "",
+      sortOrder: 0,
+    },
   });
 
-  const loadSkills = useCallback(async () => {
+  const loadData = useCallback(async () => {
     try {
-      const res = await fetchSkills();
-      setSkills(res.data ?? []);
+      const [skillsRes, categoriesRes] = await Promise.all([
+        fetchSkills(),
+        fetchSkillCategories(),
+      ]);
+      setSkills(skillsRes.data ?? []);
+      setCategories(categoriesRes.data ?? []);
     } catch {
-      toast.error("Failed to load skills");
+      toast.error("Failed to load data");
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    loadSkills();
-  }, [loadSkills]);
+    loadData();
+  }, [loadData]);
 
   const openCreateDialog = () => {
     setEditingSkill(null);
-    reset({ name: "", category: "", proficiencyLevel: 80, icon: "", sortOrder: 0 });
+    reset({
+      name: "",
+      categoryId: categories[0]?.id ?? "",
+      proficiencyLevel: 80,
+      icon: "",
+      sortOrder: 0,
+    });
     setDialogOpen(true);
   };
 
@@ -102,7 +128,7 @@ export default function AdminSkillsPage() {
     setEditingSkill(skill);
     reset({
       name: skill.name,
-      category: skill.category,
+      categoryId: skill.category?.id ?? "",
       proficiencyLevel: skill.proficiencyLevel,
       icon: skill.icon,
       sortOrder: skill.sortOrder,
@@ -112,16 +138,23 @@ export default function AdminSkillsPage() {
 
   const onSubmit = async (data: SkillFormData) => {
     setSaving(true);
+    const payload: SkillInput = {
+      name: data.name,
+      categoryId: data.categoryId,
+      proficiencyLevel: data.proficiencyLevel,
+      icon: data.icon,
+      sortOrder: data.sortOrder,
+    };
     try {
       if (editingSkill) {
-        await updateSkill(editingSkill.id, data);
+        await updateSkill(editingSkill.id, payload);
         toast.success("Skill updated successfully");
       } else {
-        await createSkill(data as Omit<Skill, "id">);
+        await createSkill(payload);
         toast.success("Skill created successfully");
       }
       setDialogOpen(false);
-      await loadSkills();
+      await loadData();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to save skill");
     } finally {
@@ -133,7 +166,7 @@ export default function AdminSkillsPage() {
     try {
       await deleteSkill(id);
       toast.success("Skill deleted successfully");
-      await loadSkills();
+      await loadData();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to delete skill");
     }
@@ -182,15 +215,22 @@ export default function AdminSkillsPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Input
-                  id="category"
-                  placeholder="e.g. Frontend"
-                  {...register("category")}
-                />
-                {errors.category && (
+                <Label htmlFor="categoryId">Category</Label>
+                <NativeSelect
+                  id="categoryId"
+                  className="w-full"
+                  {...register("categoryId")}
+                >
+                  <NativeSelectOption value="">Select a category…</NativeSelectOption>
+                  {categories.map((cat) => (
+                    <NativeSelectOption key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </NativeSelectOption>
+                  ))}
+                </NativeSelect>
+                {errors.categoryId && (
                   <p className="text-xs text-destructive">
-                    {errors.category.message}
+                    {errors.categoryId.message}
                   </p>
                 )}
               </div>
@@ -263,7 +303,7 @@ export default function AdminSkillsPage() {
                 {skills.map((skill) => (
                   <TableRow key={skill.id}>
                     <TableCell className="font-medium">{skill.name}</TableCell>
-                    <TableCell>{skill.category}</TableCell>
+                    <TableCell>{skill.category?.name ?? "—"}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <div className="h-2 w-24 rounded-full bg-muted">
@@ -323,3 +363,4 @@ export default function AdminSkillsPage() {
     </div>
   );
 }
+

@@ -11,8 +11,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -45,17 +43,14 @@ public class DataSeeder implements CommandLineRunner {
 
         // Seed default profile
         if (profileRepository.count() == 0) {
-            Map<String, String> socialLinks = new HashMap<>();
-            socialLinks.put("github", "https://github.com");
-            socialLinks.put("linkedin", "https://linkedin.com");
-
             Profile profile = Profile.builder()
                     .name("Your Name")
                     .title("Full Stack Developer")
                     .bio("Welcome to my portfolio! I'm a passionate developer who loves building modern web applications.")
                     .location("Vietnam")
                     .email("hello@portfolio.com")
-                    .socialLinks(socialLinks)
+                    .githubUrl("https://github.com")
+                    .linkedinUrl("https://linkedin.com")
                     .build();
             profileRepository.save(profile);
             logger.info("Default profile created");

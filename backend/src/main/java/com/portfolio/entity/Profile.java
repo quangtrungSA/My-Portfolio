@@ -1,16 +1,12 @@
 package com.portfolio.entity;
 
-import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Entity
@@ -41,10 +37,33 @@ public class Profile {
     @Column(name = "resume_url", length = 500)
     private String resumeUrl;
 
-    @Type(JsonType.class)
-    @Column(name = "social_links", columnDefinition = "jsonb")
-    @Builder.Default
-    private Map<String, String> socialLinks = new HashMap<>();
+    // Individual social link columns
+    @Column(name = "github_url", length = 500)
+    private String githubUrl;
+
+    @Column(name = "linkedin_url", length = 500)
+    private String linkedinUrl;
+
+    @Column(name = "facebook_url", length = 500)
+    private String facebookUrl;
+
+    @Column(name = "instagram_url", length = 500)
+    private String instagramUrl;
+
+    @Column(name = "leetcode_url", length = 500)
+    private String leetcodeUrl;
+
+    @Column(name = "dailydev_url", length = 500)
+    private String dailydevUrl;
+
+    @Column(name = "reddit_url", length = 500)
+    private String redditUrl;
+
+    @Column(name = "twitter_url", length = 500)
+    private String twitterUrl;
+
+    @Column(name = "website_url", length = 500)
+    private String websiteUrl;
 
     @Column(length = 200)
     private String location;
@@ -70,6 +89,13 @@ public class Profile {
     @Column(name = "available_for_hire")
     @Builder.Default
     private Boolean availableForHire = false;
+
+    @Column(name = "career_summary", columnDefinition = "TEXT")
+    private String careerSummary;
+
+    @Column(name = "international_clients", columnDefinition = "jsonb")
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
+    private String internationalClients;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

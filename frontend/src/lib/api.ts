@@ -10,6 +10,7 @@ import type {
   Project,
   SiteSetting,
   Skill,
+  SkillCategory,
   Tag,
   Testimonial,
 } from "@/types";
@@ -55,6 +56,12 @@ export async function fetchProfile(): Promise<ApiResponse<Profile>> {
 
 export async function fetchSkills(): Promise<ApiResponse<Skill[]>> {
   return fetchApi<Skill[]>("/api/skills");
+}
+
+export async function fetchSkillCategories(): Promise<
+  ApiResponse<SkillCategory[]>
+> {
+  return fetchApi<SkillCategory[]>("/api/skill-categories");
 }
 
 // ---------------------------------------------------------------------------
@@ -142,8 +149,16 @@ export async function updateProfile(
 // Admin – Skills
 // ---------------------------------------------------------------------------
 
+export type SkillInput = {
+  name: string;
+  categoryId: string;
+  proficiencyLevel: number;
+  icon?: string;
+  sortOrder?: number;
+};
+
 export async function createSkill(
-  data: Omit<Skill, "id">
+  data: SkillInput
 ): Promise<ApiResponse<Skill>> {
   return fetchApi<Skill>("/api/admin/skills", {
     method: "POST",
@@ -153,7 +168,7 @@ export async function createSkill(
 
 export async function updateSkill(
   id: string,
-  data: Partial<Skill>
+  data: SkillInput
 ): Promise<ApiResponse<Skill>> {
   return fetchApi<Skill>(`/api/admin/skills/${id}`, {
     method: "PUT",
@@ -164,6 +179,44 @@ export async function updateSkill(
 export async function deleteSkill(id: string): Promise<ApiResponse<void>> {
   return fetchApi<void>(`/api/admin/skills/${id}`, { method: "DELETE" });
 }
+
+// ---------------------------------------------------------------------------
+// Admin – Skill Categories
+// ---------------------------------------------------------------------------
+
+export type SkillCategoryInput = {
+  name: string;
+  color?: string;
+  sortOrder?: number;
+};
+
+export async function createSkillCategory(
+  data: SkillCategoryInput
+): Promise<ApiResponse<SkillCategory>> {
+  return fetchApi<SkillCategory>("/api/admin/skill-categories", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateSkillCategory(
+  id: string,
+  data: SkillCategoryInput
+): Promise<ApiResponse<SkillCategory>> {
+  return fetchApi<SkillCategory>(`/api/admin/skill-categories/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteSkillCategory(
+  id: string
+): Promise<ApiResponse<void>> {
+  return fetchApi<void>(`/api/admin/skill-categories/${id}`, {
+    method: "DELETE",
+  });
+}
+
 
 // ---------------------------------------------------------------------------
 // Admin – Projects

@@ -6,6 +6,7 @@
 import type {
   Profile,
   Skill,
+  SkillCategory,
   Project,
   Experience,
   Education,
@@ -21,17 +22,21 @@ export const STATIC_PROFILE: Profile = {
   name: "Ly Van Quang Trung",
   title: "Software Engineer",
   tagline: "Building scalable full-stack applications with Java & Next.js",
-  bio: "I'm a Software Engineer with hands-on experience building full-stack web applications using Java Spring Boot and Next.js. I care about clean architecture, performance, and shipping products that work reliably in production. Currently open to exciting backend or full-stack opportunities.",
+  bio: "A result-oriented Software Engineer with over five years of hands-on experience in the IT industry. Holding 8 internationally recognized certifications from Oracle and Linux Professional Institute, I specialize in building scalable, high-quality software solutions. My career has spanned roles from Back-end Developer to Full-stack Developer, and I am currently working as a DevOps Engineer at mgm Technology Partners — a leading German IT company. I have collaborated with cross-functional teams across multiple countries, delivering production-grade systems for clients in Japan, Switzerland, and Germany.",
   avatarUrl: "/images/Image.jpeg",
   resumeUrl: "",
   location: "Ho Chi Minh City, Vietnam",
   email: "lyvanquangtrung@gmail.com",
   phone: "",
   availableForHire: true,
-  socialLinks: {
-    github: "https://github.com/quangtrungSA",
-    linkedin: "https://linkedin.com/in/quangtrung",
-  },
+  // Individual social links
+  githubUrl: "https://github.com/quangtrungSA",
+  linkedinUrl: "https://www.linkedin.com/in/quangtrungsadev",
+  leetcodeUrl: "https://leetcode.com/quangtrungleetcode/",
+  facebookUrl: "https://www.facebook.com/quangtrungsadev",
+  instagramUrl: "https://www.instagram.com/quangtrung_1999",
+  dailydevUrl: "https://app.daily.dev/quangtrung27",
+  redditUrl: "https://reddit.com/user/Bubbly_Kiwi_5882",
   metaTitle: "Ly Van Quang Trung – Software Engineer",
   metaDescription:
     "Personal portfolio of Ly Van Quang Trung – Software Engineer specialising in Java Spring Boot and Next.js.",
@@ -41,34 +46,46 @@ export const STATIC_PROFILE: Profile = {
 };
 
 // ─────────────────────────────────────────────
+// SKILL CATEGORIES (static fallback)
+// ─────────────────────────────────────────────
+const mkCat = (id: string, name: string, color: string, sortOrder: number): SkillCategory => ({
+  id, name, color, sortOrder, createdAt: "2025-01-01T00:00:00Z", updatedAt: "2025-01-01T00:00:00Z",
+});
+const CAT_BACKEND        = mkCat("cat-1", "Backend",        "blue",    0);
+const CAT_FRONTEND       = mkCat("cat-2", "Frontend",       "purple",  1);
+const CAT_DATABASE       = mkCat("cat-3", "Database",       "amber",   2);
+const CAT_INFRASTRUCTURE = mkCat("cat-4", "Infrastructure", "emerald", 3);
+const CAT_TOOLS          = mkCat("cat-5", "Tools",          "rose",    4);
+
+// ─────────────────────────────────────────────
 // SKILLS
 // ─────────────────────────────────────────────
 export const STATIC_SKILLS: Skill[] = [
   // Backend
-  { id: "1",  name: "Java",          category: "Backend",        proficiencyLevel: 90, icon: "☕", sortOrder: 1 },
-  { id: "2",  name: "Spring Boot",   category: "Backend",        proficiencyLevel: 88, icon: "🍃", sortOrder: 2 },
-  { id: "3",  name: "Spring Security", category: "Backend",      proficiencyLevel: 82, icon: "🔐", sortOrder: 3 },
-  { id: "4",  name: "REST APIs",     category: "Backend",        proficiencyLevel: 90, icon: "🔗", sortOrder: 4 },
-  { id: "5",  name: "JUnit / Mockito", category: "Backend",      proficiencyLevel: 75, icon: "🧪", sortOrder: 5 },
+  { id: "1",  name: "Java",             category: CAT_BACKEND,        proficiencyLevel: 90, icon: "☕", sortOrder: 1 },
+  { id: "2",  name: "Spring Boot",      category: CAT_BACKEND,        proficiencyLevel: 88, icon: "🍃", sortOrder: 2 },
+  { id: "3",  name: "Spring Security",  category: CAT_BACKEND,        proficiencyLevel: 82, icon: "🔐", sortOrder: 3 },
+  { id: "4",  name: "REST APIs",        category: CAT_BACKEND,        proficiencyLevel: 90, icon: "🔗", sortOrder: 4 },
+  { id: "5",  name: "JUnit / Mockito",  category: CAT_BACKEND,        proficiencyLevel: 75, icon: "🧪", sortOrder: 5 },
   // Frontend
-  { id: "6",  name: "Next.js",       category: "Frontend",       proficiencyLevel: 85, icon: "▲", sortOrder: 6 },
-  { id: "7",  name: "React",         category: "Frontend",       proficiencyLevel: 85, icon: "⚛️", sortOrder: 7 },
-  { id: "8",  name: "TypeScript",    category: "Frontend",       proficiencyLevel: 80, icon: "📘", sortOrder: 8 },
-  { id: "9",  name: "Tailwind CSS",  category: "Frontend",       proficiencyLevel: 85, icon: "🎨", sortOrder: 9 },
-  { id: "10", name: "Framer Motion", category: "Frontend",       proficiencyLevel: 70, icon: "✨", sortOrder: 10 },
+  { id: "6",  name: "Next.js",          category: CAT_FRONTEND,       proficiencyLevel: 85, icon: "▲",  sortOrder: 6 },
+  { id: "7",  name: "React",            category: CAT_FRONTEND,       proficiencyLevel: 85, icon: "⚛️", sortOrder: 7 },
+  { id: "8",  name: "TypeScript",       category: CAT_FRONTEND,       proficiencyLevel: 80, icon: "📘", sortOrder: 8 },
+  { id: "9",  name: "Tailwind CSS",     category: CAT_FRONTEND,       proficiencyLevel: 85, icon: "🎨", sortOrder: 9 },
+  { id: "10", name: "Framer Motion",    category: CAT_FRONTEND,       proficiencyLevel: 70, icon: "✨", sortOrder: 10 },
   // Database
-  { id: "11", name: "PostgreSQL",    category: "Database",       proficiencyLevel: 85, icon: "🐘", sortOrder: 11 },
-  { id: "12", name: "MySQL",         category: "Database",       proficiencyLevel: 80, icon: "🗄️", sortOrder: 12 },
-  { id: "13", name: "Redis",         category: "Database",       proficiencyLevel: 65, icon: "🔴", sortOrder: 13 },
+  { id: "11", name: "PostgreSQL",       category: CAT_DATABASE,       proficiencyLevel: 85, icon: "🐘", sortOrder: 11 },
+  { id: "12", name: "MySQL",            category: CAT_DATABASE,       proficiencyLevel: 80, icon: "🗄️", sortOrder: 12 },
+  { id: "13", name: "Redis",            category: CAT_DATABASE,       proficiencyLevel: 65, icon: "🔴", sortOrder: 13 },
   // Infrastructure
-  { id: "14", name: "Docker",        category: "Infrastructure", proficiencyLevel: 80, icon: "🐳", sortOrder: 14 },
-  { id: "15", name: "GitHub Actions", category: "Infrastructure",proficiencyLevel: 78, icon: "⚙️", sortOrder: 15 },
-  { id: "16", name: "Linux",         category: "Infrastructure", proficiencyLevel: 75, icon: "🐧", sortOrder: 16 },
-  { id: "17", name: "Fly.io / Render", category: "Infrastructure",proficiencyLevel: 70,icon: "☁️", sortOrder: 17 },
+  { id: "14", name: "Docker",           category: CAT_INFRASTRUCTURE, proficiencyLevel: 80, icon: "🐳", sortOrder: 14 },
+  { id: "15", name: "GitHub Actions",   category: CAT_INFRASTRUCTURE, proficiencyLevel: 78, icon: "⚙️", sortOrder: 15 },
+  { id: "16", name: "Linux",            category: CAT_INFRASTRUCTURE, proficiencyLevel: 75, icon: "🐧", sortOrder: 16 },
+  { id: "17", name: "Fly.io / Render",  category: CAT_INFRASTRUCTURE, proficiencyLevel: 70, icon: "☁️", sortOrder: 17 },
   // Tools
-  { id: "18", name: "Git",           category: "Tools",          proficiencyLevel: 90, icon: "🔀", sortOrder: 18 },
-  { id: "19", name: "IntelliJ IDEA", category: "Tools",          proficiencyLevel: 88, icon: "💡", sortOrder: 19 },
-  { id: "20", name: "Postman",       category: "Tools",          proficiencyLevel: 85, icon: "📮", sortOrder: 20 },
+  { id: "18", name: "Git",              category: CAT_TOOLS,          proficiencyLevel: 90, icon: "🔀", sortOrder: 18 },
+  { id: "19", name: "IntelliJ IDEA",    category: CAT_TOOLS,          proficiencyLevel: 88, icon: "💡", sortOrder: 19 },
+  { id: "20", name: "Postman",          category: CAT_TOOLS,          proficiencyLevel: 85, icon: "📮", sortOrder: 20 },
 ];
 
 // ─────────────────────────────────────────────
@@ -204,56 +221,110 @@ export const STATIC_EXPERIENCES: Experience[] = [
     id: "1",
     company: "FPT Software",
     position: "Software Engineer",
+    projectName: "Enterprise Microservices Platform",
     startDate: "2024-01-01",
     endDate: null,
-    description: `[GOAL] Develop and maintain enterprise Java Spring Boot microservices for large-scale B2B clients in the financial and logistics sectors.
-[TECH] Java 21, Spring Boot 3, PostgreSQL, Redis, Docker, REST API, JUnit 5, Mockito, Agile/Scrum
-[PHASE:Enterprise Portal] Jan 2024 - Jun 2024 | 8 members
-[ROLE] Built and maintained RESTful APIs consumed by web & mobile apps (10k+ DAU)
-[ROLE] Optimised slow SQL queries and indexes, reducing average response time by 40%
-[ROLE] Wrote unit and integration tests (JUnit 5 + Mockito), raising coverage from 45% to 78%
-[PHASE:Microservices Migration] Jul 2024 - Present | 12 members
-[ROLE] Participated in decomposing a monolith into 6 Spring Boot microservices
-[ROLE] Implemented JWT-based auth service shared across all services
-[ROLE] Collaborated with teams in Vietnam, Japan, and Singapore in Agile sprints
-[ROLE] On-call production support: resolved 3 P1 incidents with RCA documentation`,
+    goal: "Develop and maintain enterprise Java Spring Boot microservices for large-scale B2B clients in the financial and logistics sectors.",
+    technologies: ["Java 21", "Spring Boot 3", "PostgreSQL", "Redis", "Docker", "REST API", "JUnit 5", "Mockito", "Agile/Scrum"],
     logoUrl: "/images/logos/fpt-software.svg",
     sortOrder: 1,
+    phases: [
+      {
+        id: "p1",
+        name: "Enterprise Portal",
+        startDate: "2024-01-01",
+        endDate: "2024-06-30",
+        teamSize: 8,
+        sortOrder: 0,
+        roles: [
+          { id: "r1", name: "Built and maintained RESTful APIs consumed by web & mobile apps (10k+ DAU)", description: "", sortOrder: 0 },
+          { id: "r2", name: "Optimised slow SQL queries and indexes, reducing average response time by 40%", description: "", sortOrder: 1 },
+          { id: "r3", name: "Wrote unit and integration tests (JUnit 5 + Mockito), raising coverage from 45% to 78%", description: "", sortOrder: 2 },
+        ],
+      },
+      {
+        id: "p2",
+        name: "Microservices Migration",
+        startDate: "2024-07-01",
+        endDate: null,
+        teamSize: 12,
+        sortOrder: 1,
+        roles: [
+          { id: "r4", name: "Participated in decomposing a monolith into 6 Spring Boot microservices", description: "", sortOrder: 0 },
+          { id: "r5", name: "Implemented JWT-based auth service shared across all services", description: "", sortOrder: 1 },
+          { id: "r6", name: "Collaborated with teams in Vietnam, Japan, and Singapore in Agile sprints", description: "", sortOrder: 2 },
+          { id: "r7", name: "On-call production support: resolved 3 P1 incidents with RCA documentation", description: "", sortOrder: 3 },
+        ],
+      },
+    ],
   },
   {
     id: "2",
     company: "Hybrid Technologies",
     position: "Junior Software Engineer",
+    projectName: "B2B SaaS Platform",
     startDate: "2022-07-01",
     endDate: "2023-12-31",
-    description: `[GOAL] Build and ship full-stack features for a B2B SaaS product used by 200+ companies across Southeast Asia.
-[TECH] React, TypeScript, Node.js, Express, PostgreSQL, Docker, GitHub Actions, Tailwind CSS
-[PHASE:SaaS Platform v2] Jul 2022 - Apr 2023 | 6 members
-[ROLE] Implemented 15+ full-stack features across React frontend and Node.js backend
-[ROLE] Designed PostgreSQL schemas and wrote migration scripts for 4 new modules
-[ROLE] Reduced frontend bundle size by 25% via code-splitting and lazy loading
-[PHASE:DevOps & Tooling] May 2023 - Dec 2023 | 4 members
-[ROLE] Built CI/CD pipelines with GitHub Actions and multi-stage Docker builds
-[ROLE] Cut deployment time from 25 minutes to 8 minutes via pipeline optimisation
-[ROLE] Mentored 2 junior interns on Git workflow, code review, and testing practices`,
+    goal: "Build and ship full-stack features for a B2B SaaS product used by 200+ companies across Southeast Asia.",
+    technologies: ["React", "TypeScript", "Node.js", "Express", "PostgreSQL", "Docker", "GitHub Actions", "Tailwind CSS"],
     logoUrl: "/images/logos/hybrid-technologies.svg",
     sortOrder: 2,
+    phases: [
+      {
+        id: "p3",
+        name: "SaaS Platform v2",
+        startDate: "2022-07-01",
+        endDate: "2023-04-30",
+        teamSize: 6,
+        sortOrder: 0,
+        roles: [
+          { id: "r8", name: "Implemented 15+ full-stack features across React frontend and Node.js backend", description: "", sortOrder: 0 },
+          { id: "r9", name: "Designed PostgreSQL schemas and wrote migration scripts for 4 new modules", description: "", sortOrder: 1 },
+          { id: "r10", name: "Reduced frontend bundle size by 25% via code-splitting and lazy loading", description: "", sortOrder: 2 },
+        ],
+      },
+      {
+        id: "p4",
+        name: "DevOps & Tooling",
+        startDate: "2023-05-01",
+        endDate: "2023-12-31",
+        teamSize: 4,
+        sortOrder: 1,
+        roles: [
+          { id: "r11", name: "Built CI/CD pipelines with GitHub Actions and multi-stage Docker builds", description: "", sortOrder: 0 },
+          { id: "r12", name: "Cut deployment time from 25 minutes to 8 minutes via pipeline optimisation", description: "", sortOrder: 1 },
+          { id: "r13", name: "Mentored 2 junior interns on Git workflow, code review, and testing practices", description: "", sortOrder: 2 },
+        ],
+      },
+    ],
   },
   {
     id: "3",
     company: "Freelance",
     position: "Full-Stack Developer",
+    projectName: "Client Web Applications",
     startDate: "2021-06-01",
     endDate: "2022-06-30",
-    description: `[GOAL] Deliver full-stack web applications for small businesses in Vietnam — on time, on budget, and built to last.
-[TECH] PHP, Laravel, Vue.js, MySQL, PayPal API, VNPay, Nginx, Ubuntu VPS
-[PHASE:Client Projects] Jun 2021 - Jun 2022 | Solo developer
-[ROLE] Delivered 5 production web applications for retail, food & beverage, and service clients
-[ROLE] Built e-commerce stores with shopping cart, order management, and VNPay/PayPal checkout
-[ROLE] Set up Linux VPS hosting (Nginx + MySQL) with SSL and automated backups
-[ROLE] Provided ongoing maintenance, performance tuning, and SEO optimisation`,
+    goal: "Deliver full-stack web applications for small businesses in Vietnam — on time, on budget, and built to last.",
+    technologies: ["PHP", "Laravel", "Vue.js", "MySQL", "PayPal API", "VNPay", "Nginx", "Ubuntu VPS"],
     logoUrl: "/images/logos/freelance.svg",
     sortOrder: 3,
+    phases: [
+      {
+        id: "p5",
+        name: "Client Projects",
+        startDate: "2021-06-01",
+        endDate: "2022-06-30",
+        teamSize: 1,
+        sortOrder: 0,
+        roles: [
+          { id: "r14", name: "Delivered 5 production web applications for retail, food & beverage, and service clients", description: "", sortOrder: 0 },
+          { id: "r15", name: "Built e-commerce stores with shopping cart, order management, and VNPay/PayPal checkout", description: "", sortOrder: 1 },
+          { id: "r16", name: "Set up Linux VPS hosting (Nginx + MySQL) with SSL and automated backups", description: "", sortOrder: 2 },
+          { id: "r17", name: "Provided ongoing maintenance, performance tuning, and SEO optimisation", description: "", sortOrder: 3 },
+        ],
+      },
+    ],
   },
 ];
 

@@ -1,10 +1,9 @@
 package com.portfolio.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import io.hypersistence.utils.hibernate.type.array.StringArrayType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -16,54 +15,47 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "experiences")
+@Table(name = "experience_phases")
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Experience {
+public class ExperiencePhase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, length = 200)
-    private String company;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "experience_id", nullable = false)
+    @JsonBackReference
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Experience experience;
 
     @Column(nullable = false, length = 200)
-    private String position;
+    private String name;
 
-    @Column(name = "project_name", length = 300)
-    private String projectName;
-
-    @Column(name = "start_date", nullable = false)
+    @Column(name = "start_date")
     private LocalDate startDate;
 
     @Column(name = "end_date")
     private LocalDate endDate;
 
-
-    @Column(columnDefinition = "TEXT")
-    private String goal;
-
-    @Type(StringArrayType.class)
-    @Column(name = "technologies", columnDefinition = "text[]")
-    private String[] technologies;
-
-    @Column(name = "logo_url", length = 500)
-    private String logoUrl;
+    @Column(name = "team_size")
+    private Integer teamSize;
 
     @Column(name = "sort_order")
     @Builder.Default
     private Integer sortOrder = 0;
 
-    @OneToMany(mappedBy = "experience", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "phase", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     @Builder.Default
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private List<ExperiencePhase> phases = new ArrayList<>();
+    private List<ExperienceRole> roles = new ArrayList<>();
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -73,18 +65,14 @@ public class Experience {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    public void addPhase(ExperiencePhase phase) {
-        phases.add(phase);
-        phase.setExperience(this);
+    public void addRole(ExperienceRole role) {
+        roles.add(role);
+        role.setPhase(this);
     }
 
-    public void removePhase(ExperiencePhase phase) {
-        phases.remove(phase);
-        phase.setExperience(null);
-    }
-
-    public void clearPhases() {
-        phases.forEach(p -> p.setExperience(null));
-        phases.clear();
+    public void removeRole(ExperienceRole role) {
+        roles.remove(role);
+        role.setPhase(null);
     }
 }
+

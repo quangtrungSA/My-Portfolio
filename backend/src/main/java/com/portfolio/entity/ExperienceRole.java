@@ -1,5 +1,6 @@
 package com.portfolio.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -10,27 +11,30 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "skills")
+@Table(name = "experience_roles")
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Skill {
+public class ExperienceRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, length = 100)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "phase_id", nullable = false)
+    @JsonBackReference
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private ExperiencePhase phase;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id")
-    private SkillCategory category;
-
-    @Column(length = 100)
-    private String icon;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     @Column(name = "sort_order")
     @Builder.Default

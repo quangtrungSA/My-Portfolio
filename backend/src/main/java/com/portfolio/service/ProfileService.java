@@ -32,7 +32,16 @@ public class ProfileService {
         profile.setBio(request.getBio());
         profile.setAvatarUrl(request.getAvatarUrl());
         profile.setResumeUrl(request.getResumeUrl());
-        profile.setSocialLinks(request.getSocialLinks());
+        // Individual social links
+        profile.setGithubUrl(request.getGithubUrl());
+        profile.setLinkedinUrl(request.getLinkedinUrl());
+        profile.setFacebookUrl(request.getFacebookUrl());
+        profile.setInstagramUrl(request.getInstagramUrl());
+        profile.setLeetcodeUrl(request.getLeetcodeUrl());
+        profile.setDailydevUrl(request.getDailydevUrl());
+        profile.setRedditUrl(request.getRedditUrl());
+        profile.setTwitterUrl(request.getTwitterUrl());
+        profile.setWebsiteUrl(request.getWebsiteUrl());
         profile.setLocation(request.getLocation());
         profile.setEmail(request.getEmail());
         profile.setPhone(request.getPhone());
@@ -41,6 +50,8 @@ public class ProfileService {
         profile.setOgImageUrl(request.getOgImageUrl());
         profile.setTagline(request.getTagline());
         profile.setAvailableForHire(request.getAvailableForHire());
+        profile.setCareerSummary(request.getCareerSummary());
+        profile.setInternationalClients(request.getInternationalClients());
         return repository.save(profile);
     }
 }

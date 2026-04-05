@@ -5,7 +5,16 @@ export interface Profile {
   bio: string;
   avatarUrl: string;
   resumeUrl: string;
-  socialLinks: Record<string, string>;
+  // Individual social link fields
+  githubUrl?: string;
+  linkedinUrl?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
+  leetcodeUrl?: string;
+  dailydevUrl?: string;
+  redditUrl?: string;
+  twitterUrl?: string;
+  websiteUrl?: string;
   location: string;
   email: string;
   phone: string;
@@ -14,6 +23,17 @@ export interface Profile {
   ogImageUrl: string;
   tagline: string;
   availableForHire: boolean;
+  careerSummary?: string;
+  internationalClients?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SkillCategory {
+  id: string;
+  name: string;
+  color: string;
+  sortOrder: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -21,7 +41,7 @@ export interface Profile {
 export interface Skill {
   id: string;
   name: string;
-  category: string;
+  category: SkillCategory;
   proficiencyLevel: number;
   icon: string;
   sortOrder: number;
@@ -44,15 +64,35 @@ export interface Project {
   clientName: string;
 }
 
+export interface ExperienceRole {
+  id?: string;
+  name: string;
+  description: string;
+  sortOrder: number;
+}
+
+export interface ExperiencePhase {
+  id?: string;
+  name: string;
+  startDate: string | null;
+  endDate: string | null;
+  teamSize: number | null;
+  sortOrder: number;
+  roles: ExperienceRole[];
+}
+
 export interface Experience {
   id: string;
   company: string;
   position: string;
+  projectName: string | null;
   startDate: string;
   endDate: string | null;
-  description: string;
+  goal: string | null;
+  technologies: string[];
   logoUrl: string;
   sortOrder: number;
+  phases: ExperiencePhase[];
 }
 
 export interface Education {

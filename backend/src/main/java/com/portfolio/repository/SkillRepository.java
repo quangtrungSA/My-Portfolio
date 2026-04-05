@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface SkillRepository extends JpaRepository<Skill, UUID> {
     List<Skill> findAllByOrderBySortOrder();
-    List<Skill> findByCategoryOrderBySortOrder(String category);
+    List<Skill> findByCategoryIdOrderBySortOrder(UUID categoryId);
 }

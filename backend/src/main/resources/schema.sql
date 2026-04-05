@@ -17,7 +17,16 @@ CREATE TABLE IF NOT EXISTS profiles (
     bio           TEXT,
     avatar_url    VARCHAR(500),
     resume_url    VARCHAR(500),
-    social_links  JSONB         DEFAULT '{}',
+    -- Individual social link columns
+    github_url    VARCHAR(500),
+    linkedin_url  VARCHAR(500),
+    facebook_url  VARCHAR(500),
+    instagram_url VARCHAR(500),
+    leetcode_url  VARCHAR(500),
+    dailydev_url  VARCHAR(500),
+    reddit_url    VARCHAR(500),
+    twitter_url   VARCHAR(500),
+    website_url   VARCHAR(500),
     location      VARCHAR(200),
     email         VARCHAR(255),
     phone         VARCHAR(50),
@@ -25,16 +34,66 @@ CREATE TABLE IF NOT EXISTS profiles (
     updated_at    TIMESTAMPTZ   NOT NULL DEFAULT NOW()
 );
 
+-- Add social link columns if not exists (for existing tables)
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS github_url VARCHAR(500);
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS linkedin_url VARCHAR(500);
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS facebook_url VARCHAR(500);
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS instagram_url VARCHAR(500);
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS leetcode_url VARCHAR(500);
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS dailydev_url VARCHAR(500);
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS reddit_url VARCHAR(500);
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS twitter_url VARCHAR(500);
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS website_url VARCHAR(500);
+
+-- Drop deprecated social_links JSONB column
+ALTER TABLE profiles DROP COLUMN IF EXISTS social_links;
+
+-- Skill categories (normalized from skills.category)
+CREATE TABLE IF NOT EXISTS skill_categories (
+    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name       VARCHAR(50)  NOT NULL UNIQUE,
+    color      VARCHAR(50),
+    sort_order INTEGER      DEFAULT 0,
+    created_at TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+
+-- Seed default categories (idempotent)
+INSERT INTO skill_categories (name, color, sort_order) VALUES
+    ('Backend',        'blue',    0),
+    ('Frontend',       'purple',  1),
+    ('Database',       'amber',   2),
+    ('Infrastructure', 'emerald', 3),
+    ('Tools',          'rose',    4),
+    ('Other',          'gray',    5)
+ON CONFLICT (name) DO NOTHING;
+
 CREATE TABLE IF NOT EXISTS skills (
     id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name              VARCHAR(100)  NOT NULL,
-    category          VARCHAR(50)   NOT NULL,
-    proficiency_level INTEGER       NOT NULL CHECK (proficiency_level BETWEEN 1 AND 100),
+    category_id       UUID          NOT NULL REFERENCES skill_categories(id),
     icon              VARCHAR(100),
     sort_order        INTEGER       DEFAULT 0,
     created_at        TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
     updated_at        TIMESTAMPTZ   NOT NULL DEFAULT NOW()
 );
+
+-- Migrate any extra categories from existing skills rows (idempotent)
+INSERT INTO skill_categories (name, sort_order)
+SELECT DISTINCT category, 99 FROM skills WHERE category IS NOT NULL
+ON CONFLICT (name) DO NOTHING;
+
+-- Add category_id FK column if not yet present
+ALTER TABLE skills ADD COLUMN IF NOT EXISTS category_id UUID REFERENCES skill_categories(id);
+
+-- Back-fill category_id from legacy category string
+UPDATE skills s
+SET category_id = sc.id
+FROM skill_categories sc
+WHERE s.category = sc.name AND s.category_id IS NULL;
+
+-- Drop legacy category column once back-filled
+ALTER TABLE skills DROP COLUMN IF EXISTS category;
 
 CREATE TABLE IF NOT EXISTS projects (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -51,17 +110,26 @@ CREATE TABLE IF NOT EXISTS projects (
 );
 
 CREATE TABLE IF NOT EXISTS experiences (
-    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    company     VARCHAR(200)  NOT NULL,
-    position    VARCHAR(200)  NOT NULL,
-    start_date  DATE          NOT NULL,
-    end_date    DATE,
-    description TEXT,
-    logo_url    VARCHAR(500),
-    sort_order  INTEGER       DEFAULT 0,
-    created_at  TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
-    updated_at  TIMESTAMPTZ   NOT NULL DEFAULT NOW()
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company      VARCHAR(200)  NOT NULL,
+    position     VARCHAR(200)  NOT NULL,
+    project_name VARCHAR(300),
+    start_date   DATE          NOT NULL,
+    end_date     DATE,
+    goal         TEXT,
+    technologies TEXT[]       DEFAULT '{}',
+    logo_url     VARCHAR(500),
+    sort_order   INTEGER       DEFAULT 0,
+    created_at   TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
+    updated_at   TIMESTAMPTZ   NOT NULL DEFAULT NOW()
 );
+
+-- Add goal column to existing experiences table if not exists
+ALTER TABLE experiences ADD COLUMN IF NOT EXISTS goal TEXT;
+-- Add project_name column to existing experiences table if not exists
+ALTER TABLE experiences ADD COLUMN IF NOT EXISTS project_name VARCHAR(300);
+-- Drop description column (data migrated to phases/roles)
+ALTER TABLE experiences DROP COLUMN IF EXISTS description;
 
 CREATE TABLE IF NOT EXISTS education (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -187,11 +255,16 @@ ALTER TABLE projects ADD COLUMN IF NOT EXISTS start_date DATE;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS end_date DATE;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS client_name VARCHAR(200);
 
+-- experiences: technologies array
+ALTER TABLE experiences ADD COLUMN IF NOT EXISTS technologies TEXT[] DEFAULT '{}';
+
 -- =====================================================
 -- INDEXES
 -- =====================================================
 
 CREATE INDEX IF NOT EXISTS idx_skills_category ON skills(category);
+CREATE INDEX IF NOT EXISTS idx_skills_category_id ON skills(category_id);
+CREATE INDEX IF NOT EXISTS idx_skill_categories_sort ON skill_categories(sort_order);
 CREATE INDEX IF NOT EXISTS idx_projects_featured ON projects(featured);
 CREATE INDEX IF NOT EXISTS idx_projects_category ON projects(category);
 CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);
@@ -204,3 +277,42 @@ CREATE INDEX IF NOT EXISTS idx_testimonials_featured ON testimonials(featured);
 CREATE INDEX IF NOT EXISTS idx_project_images_project ON project_images(project_id);
 CREATE INDEX IF NOT EXISTS idx_blog_post_tags_tag ON blog_post_tags(tag_id);
 CREATE INDEX IF NOT EXISTS idx_site_settings_key ON site_settings(key);
+
+-- =====================================================
+-- EXPERIENCE PHASES & ROLES (v1.2)
+-- =====================================================
+
+CREATE TABLE IF NOT EXISTS experience_phases (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    experience_id   UUID          NOT NULL REFERENCES experiences(id) ON DELETE CASCADE,
+    name            VARCHAR(200)  NOT NULL,
+    start_date      DATE,
+    end_date        DATE,
+    team_size       INTEGER,
+    sort_order      INTEGER       DEFAULT 0,
+    created_at      TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ   NOT NULL DEFAULT NOW()
+);
+
+-- Add team_size column if not exists
+ALTER TABLE experience_phases ADD COLUMN IF NOT EXISTS team_size INTEGER;
+
+CREATE TABLE IF NOT EXISTS experience_roles (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    phase_id        UUID          NOT NULL REFERENCES experience_phases(id) ON DELETE CASCADE,
+    name            TEXT          NOT NULL,
+    description     TEXT,
+    sort_order      INTEGER       DEFAULT 0,
+    created_at      TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ   NOT NULL DEFAULT NOW()
+);
+
+-- Alter existing column if needed
+ALTER TABLE experience_roles ALTER COLUMN name TYPE TEXT;
+
+CREATE INDEX IF NOT EXISTS idx_experience_phases_exp ON experience_phases(experience_id);
+CREATE INDEX IF NOT EXISTS idx_experience_roles_phase ON experience_roles(phase_id);
+
+-- profiles: career journey data (v1.2)
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS career_summary TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS international_clients JSONB DEFAULT '[]'::jsonb;

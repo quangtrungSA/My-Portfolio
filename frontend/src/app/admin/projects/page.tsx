@@ -90,6 +90,16 @@ export default function AdminProjectsPage() {
     formState: { errors },
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema) as Resolver<ProjectFormData>,
+    defaultValues: {
+      title: "",
+      description: "",
+      imageUrl: "",
+      techStack: "",
+      githubUrl: "",
+      liveUrl: "",
+      featured: false,
+      sortOrder: 0,
+    },
   });
 
   const loadProjects = useCallback(async () => {

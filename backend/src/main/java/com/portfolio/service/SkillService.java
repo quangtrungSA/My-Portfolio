@@ -2,7 +2,9 @@ package com.portfolio.service;
 
 import com.portfolio.dto.request.SkillRequest;
 import com.portfolio.entity.Skill;
+import com.portfolio.entity.SkillCategory;
 import com.portfolio.exception.ResourceNotFoundException;
+import com.portfolio.repository.SkillCategoryRepository;
 import com.portfolio.repository.SkillRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,13 +17,14 @@ import java.util.UUID;
 public class SkillService {
 
     private final SkillRepository repository;
+    private final SkillCategoryRepository categoryRepository;
 
     public List<Skill> getAll() {
         return repository.findAllByOrderBySortOrder();
     }
 
-    public List<Skill> getByCategory(String category) {
-        return repository.findByCategoryOrderBySortOrder(category);
+    public List<Skill> getByCategoryId(UUID categoryId) {
+        return repository.findByCategoryIdOrderBySortOrder(categoryId);
     }
 
     public Skill getById(UUID id) {
@@ -30,9 +33,11 @@ public class SkillService {
     }
 
     public Skill create(SkillRequest request) {
+        SkillCategory category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("SkillCategory", "id", request.getCategoryId()));
         Skill skill = Skill.builder()
                 .name(request.getName())
-                .category(request.getCategory())
+                .category(category)
                 .proficiencyLevel(request.getProficiencyLevel())
                 .icon(request.getIcon())
                 .sortOrder(request.getSortOrder() != null ? request.getSortOrder() : 0)
@@ -42,8 +47,10 @@ public class SkillService {
 
     public Skill update(UUID id, SkillRequest request) {
         Skill skill = getById(id);
+        SkillCategory category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("SkillCategory", "id", request.getCategoryId()));
         skill.setName(request.getName());
-        skill.setCategory(request.getCategory());
+        skill.setCategory(category);
         skill.setProficiencyLevel(request.getProficiencyLevel());
         skill.setIcon(request.getIcon());
         if (request.getSortOrder() != null) skill.setSortOrder(request.getSortOrder());
@@ -57,3 +64,4 @@ public class SkillService {
         repository.deleteById(id);
     }
 }
+

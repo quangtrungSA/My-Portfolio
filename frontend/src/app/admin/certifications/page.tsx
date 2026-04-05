@@ -92,6 +92,16 @@ export default function AdminCertificationsPage() {
     formState: { errors },
   } = useForm<CertificationFormData>({
     resolver: zodResolver(certificationSchema) as Resolver<CertificationFormData>,
+    defaultValues: {
+      name: "",
+      issuingOrg: "",
+      credentialId: "",
+      credentialUrl: "",
+      badgeUrl: "",
+      issueDate: "",
+      expiryDate: "",
+      sortOrder: 0,
+    },
   });
 
   const loadCertifications = useCallback(async () => {
