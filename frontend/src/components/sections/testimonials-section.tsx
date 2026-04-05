@@ -42,7 +42,7 @@ export function TestimonialsSection({
   if (testimonials.length === 0) return null;
 
   return (
-    <section id="testimonials" className="py-20 sm:py-28">
+    <section id="testimonials" className="py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <motion.div
@@ -113,15 +113,25 @@ export function TestimonialsSection({
                   </p>
 
                   <div className="flex items-center gap-3 border-t pt-4">
-                    <Avatar className="size-10">
-                      <AvatarImage
-                        src={testimonial.authorAvatar}
-                        alt={testimonial.authorName}
-                      />
-                      <AvatarFallback>
-                        {getInitials(testimonial.authorName)}
-                      </AvatarFallback>
-                    </Avatar>
+                    {testimonial.authorAvatar?.includes("/company/") ? (
+                      <div className="flex h-10 w-auto max-w-[100px] flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-white px-1.5">
+                        <img
+                          src={testimonial.authorAvatar}
+                          alt={testimonial.authorName}
+                          className="h-auto max-h-[28px] w-auto max-w-full object-contain"
+                        />
+                      </div>
+                    ) : (
+                      <Avatar className="size-10">
+                        <AvatarImage
+                          src={testimonial.authorAvatar}
+                          alt={testimonial.authorName}
+                        />
+                        <AvatarFallback>
+                          {getInitials(testimonial.authorName)}
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
                     <div>
                       <p className="text-sm font-semibold">
                         {testimonial.authorName}

@@ -50,17 +50,34 @@ const techLogos: Record<string, React.ReactNode> = {
   // Git / GitHub (DB: "Git / GitHub")
   "git / github": <svg viewBox="0 0 128 128" className="w-5 h-5"><path fill="#F34F29" d="M124.737 58.378L69.621 3.264c-3.172-3.174-8.32-3.174-11.497 0L46.68 14.71l14.518 14.518c3.375-1.139 7.243-.375 9.932 2.314 2.703 2.706 3.461 6.607 2.294 9.993l13.992 13.993c3.385-1.167 7.292-.413 9.994 2.295 3.78 3.777 3.78 9.9 0 13.679a9.673 9.673 0 01-13.683 0 9.677 9.677 0 01-2.105-10.521L68.574 47.933l-.002 34.341a9.708 9.708 0 012.559 1.828c3.778 3.777 3.778 9.898 0 13.683-3.779 3.777-9.904 3.777-13.679 0-3.778-3.784-3.778-9.905 0-13.683a9.65 9.65 0 013.167-2.11V47.333a9.581 9.581 0 01-3.167-2.111c-2.862-2.86-3.551-7.06-2.083-10.576L41.056 20.333 3.264 58.123a8.133 8.133 0 000 11.5l55.117 55.114c3.174 3.174 8.32 3.174 11.499 0l54.858-54.858a8.135 8.135 0 00-.001-11.501z"/></svg>,
   "git": <svg viewBox="0 0 128 128" className="w-5 h-5"><path fill="#F34F29" d="M124.737 58.378L69.621 3.264c-3.172-3.174-8.32-3.174-11.497 0L46.68 14.71l14.518 14.518c3.375-1.139 7.243-.375 9.932 2.314 2.703 2.706 3.461 6.607 2.294 9.993l13.992 13.993c3.385-1.167 7.292-.413 9.994 2.295 3.78 3.777 3.78 9.9 0 13.679a9.673 9.673 0 01-13.683 0 9.677 9.677 0 01-2.105-10.521L68.574 47.933l-.002 34.341a9.708 9.708 0 012.559 1.828c3.778 3.777 3.778 9.898 0 13.683-3.779 3.777-9.904 3.777-13.679 0-3.778-3.784-3.778-9.905 0-13.683a9.65 9.65 0 013.167-2.11V47.333a9.581 9.581 0 01-3.167-2.111c-2.862-2.86-3.551-7.06-2.083-10.576L41.056 20.333 3.264 58.123a8.133 8.133 0 000 11.5l55.117 55.114c3.174 3.174 8.32 3.174 11.499 0l54.858-54.858a8.135 8.135 0 00-.001-11.501z"/></svg>,
-  // Selenium WebDriver (DB: "Selenium WebDriver")
-  "selenium webdriver": <svg viewBox="0 0 128 128" className="w-5 h-5"><path fill="#43B02A" d="M64 8C33.1 8 8 33.1 8 64s25.1 56 56 56 56-25.1 56-56S94.9 8 64 8zm0 100c-24.3 0-44-19.7-44-44s19.7-44 44-44 44 19.7 44 44-19.7 44-44 44z"/><circle fill="#43B02A" cx="64" cy="64" r="20"/></svg>,
-  "selenium": <svg viewBox="0 0 128 128" className="w-5 h-5"><path fill="#43B02A" d="M64 8C33.1 8 8 33.1 8 64s25.1 56 56 56 56-25.1 56-56S94.9 8 64 8zm0 100c-24.3 0-44-19.7-44-44s19.7-44 44-44 44 19.7 44 44-19.7 44-44 44z"/><circle fill="#43B02A" cx="64" cy="64" r="20"/></svg>,
-  // Linux (DB: "Linux (Ubuntu/CentOS)")
-  "linux (ubuntu/centos)": <svg viewBox="0 0 128 128" className="w-5 h-5"><path fill="#E95420" d="M64 4C30.9 4 4 30.9 4 64s26.9 60 60 60 60-26.9 60-60S97.1 4 64 4zm0 112c-28.7 0-52-23.3-52-52s23.3-52 52-52 52 23.3 52 52-23.3 52-52 52z"/><circle fill="#E95420" cx="64" cy="64" r="32"/></svg>,
-  "linux": <svg viewBox="0 0 128 128" className="w-5 h-5"><path fill="#E95420" d="M64 4C30.9 4 4 30.9 4 64s26.9 60 60 60 60-26.9 60-60S97.1 4 64 4zm0 112c-28.7 0-52-23.3-52-52s23.3-52 52-52 52 23.3 52 52-23.3 52-52 52z"/><circle fill="#E95420" cx="64" cy="64" r="32"/></svg>,
-  // Jenkins
-  "jenkins": <svg viewBox="0 0 128 128" className="w-5 h-5"><path fill="#D33833" d="M64 4C30.9 4 4 30.9 4 64s26.9 60 60 60 60-26.9 60-60S97.1 4 64 4z"/><circle fill="#fff" cx="64" cy="64" r="32"/></svg>,
-  // Maven / Gradle (DB: "Maven / Gradle")
-  "maven / gradle": <svg viewBox="0 0 128 128" className="w-5 h-5"><path fill="#C71A36" d="M64 0L0 32v64l64 32 64-32V32z"/><path fill="#fff" d="M64 20l40 20v48L64 108 24 88V40z"/></svg>,
-  "maven": <svg viewBox="0 0 128 128" className="w-5 h-5"><path fill="#C71A36" d="M64 0L0 32v64l64 32 64-32V32z"/><path fill="#fff" d="M64 20l40 20v48L64 108 24 88V40z"/></svg>,
+  // Selenium WebDriver (DB: "Selenium WebDriver") - official Se logo
+  "selenium webdriver": <svg viewBox="0 0 128 128" className="w-5 h-5"><rect width="128" height="128" rx="12" fill="#43B02A"/><text x="64" y="82" textAnchor="middle" fontFamily="Arial,sans-serif" fontWeight="bold" fontSize="58" fill="#fff">Se</text></svg>,
+  "selenium": <svg viewBox="0 0 128 128" className="w-5 h-5"><rect width="128" height="128" rx="12" fill="#43B02A"/><text x="64" y="82" textAnchor="middle" fontFamily="Arial,sans-serif" fontWeight="bold" fontSize="58" fill="#fff">Se</text></svg>,
+  // Linux (DB: "Linux (Ubuntu/CentOS)") - Tux penguin from devicon CDN
+  // eslint-disable-next-line @next/next/no-img-element
+  "linux (ubuntu/centos)": <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg" alt="Linux" className="w-5 h-5" />,
+  // eslint-disable-next-line @next/next/no-img-element
+  "linux": <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg" alt="Linux" className="w-5 h-5" />,
+  // Azure DevOps
+  // eslint-disable-next-line @next/next/no-img-element
+  "azure devops": <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azuredevops/azuredevops-original.svg" alt="Azure DevOps" className="w-5 h-5" />,
+  // eslint-disable-next-line @next/next/no-img-element
+  "azuredevops": <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azuredevops/azuredevops-original.svg" alt="Azure DevOps" className="w-5 h-5" />,
+  // Bitbucket
+  // eslint-disable-next-line @next/next/no-img-element
+  "bitbucket": <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bitbucket/bitbucket-original.svg" alt="Bitbucket" className="w-5 h-5" />,
+  // Claude AI - Anthropic sparkle logo
+  "claude": <svg viewBox="0 0 64 64" className="w-5 h-5"><path d="M37.54 8.8L27.03 55.2h-7.59L29.95 8.8h7.59zm-9.04 23.2l16.38-23.2h8.58L34.15 36.93l-5.65-4.93zM33.3 35.47L44.14 55.2h-8.73l-7.75-14.6 5.64-5.13z" fill="#D4A27F"/></svg>,
+  // GitHub Copilot
+  "github copilot": <svg viewBox="0 0 128 128" className="w-5 h-5"><rect width="128" height="128" rx="28" fill="#000"/><path d="M64 30c-18.8 0-34 12.1-34 27v14c0 14.9 15.2 27 34 27s34-12.1 34-27V57c0-14.9-15.2-27-34-27zm-14 40a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm28 0a6 6 0 1 1 0-12 6 6 0 0 1 0 12z" fill="#fff"/></svg>,
+  "copilot": <svg viewBox="0 0 128 128" className="w-5 h-5"><rect width="128" height="128" rx="28" fill="#000"/><path d="M64 30c-18.8 0-34 12.1-34 27v14c0 14.9 15.2 27 34 27s34-12.1 34-27V57c0-14.9-15.2-27-34-27zm-14 40a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm28 0a6 6 0 1 1 0-12 6 6 0 0 1 0 12z" fill="#fff"/></svg>,
+  // Jenkins - official butler logo from devicon CDN
+  // eslint-disable-next-line @next/next/no-img-element
+  "jenkins": <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jenkins/jenkins-original.svg" alt="Jenkins" className="w-5 h-5" />,
+  // Maven / Gradle (DB: "Maven / Gradle", icon: "build")
+  "maven / gradle": <svg viewBox="0 0 128 128" className="w-5 h-5"><path fill="#E8E0C5" d="M64 4L4 34v60l60 30 60-30V34L64 4z"/><path fill="#BE2025" d="M64 4L4 34l60 30 60-30L64 4z"/><path fill="#794229" d="M64 64v60l60-30V34L64 64z"/><path fill="#96291B" d="M4 34v60l60 30V64L4 34z"/><text x="64" y="78" textAnchor="middle" fontFamily="Arial,sans-serif" fontWeight="bold" fontSize="26" fill="#fff">M</text></svg>,
+  "maven": <svg viewBox="0 0 128 128" className="w-5 h-5"><path fill="#E8E0C5" d="M64 4L4 34v60l60 30 60-30V34L64 4z"/><path fill="#BE2025" d="M64 4L4 34l60 30 60-30L64 4z"/><path fill="#794229" d="M64 64v60l60-30V34L64 64z"/><path fill="#96291B" d="M4 34v60l60 30V64L4 34z"/><text x="64" y="78" textAnchor="middle" fontFamily="Arial,sans-serif" fontWeight="bold" fontSize="26" fill="#fff">M</text></svg>,
+  "build": <svg viewBox="0 0 128 128" className="w-5 h-5"><path fill="#E8E0C5" d="M64 4L4 34v60l60 30 60-30V34L64 4z"/><path fill="#BE2025" d="M64 4L4 34l60 30 60-30L64 4z"/><path fill="#794229" d="M64 64v60l60-30V34L64 64z"/><path fill="#96291B" d="M4 34v60l60 30V64L4 34z"/><text x="64" y="78" textAnchor="middle" fontFamily="Arial,sans-serif" fontWeight="bold" fontSize="26" fill="#fff">M</text></svg>,
   "gradle": <svg viewBox="0 0 128 128" className="w-5 h-5"><path fill="#02303A" d="M64 4C30.9 4 4 30.9 4 64s26.9 60 60 60 60-26.9 60-60S97.1 4 64 4z"/><circle fill="#fff" cx="64" cy="64" r="20"/></svg>,
   // Networking
   "networking": <svg viewBox="0 0 128 128" className="w-5 h-5"><path fill="#607D8B" d="M64 8C33.1 8 8 33.1 8 64s25.1 56 56 56 56-25.1 56-56S94.9 8 64 8zm0 100c-24.3 0-44-19.7-44-44s19.7-44 44-44 44 19.7 44 44-19.7 44-44 44z"/><circle fill="#607D8B" cx="64" cy="40" r="8"/><circle fill="#607D8B" cx="40" cy="80" r="8"/><circle fill="#607D8B" cx="88" cy="80" r="8"/></svg>,
@@ -151,13 +168,14 @@ function getSkillLogo(skillName: string): React.ReactNode | null {
 }
 
 // Define category order - Backend first
-const categoryOrder = ["Backend", "Frontend", "Database", "Infrastructure", "Tools", "Other"];
+const categoryOrder = ["Backend", "Frontend", "Database", "Infrastructure", "Tools / VCS / AI", "Tools", "Other"];
 
 const categoryColors: Record<string, { bg: string; text: string; pill: string; iconBg: string }> = {
   Backend:        { bg: "bg-blue-500",    text: "text-blue-700 dark:text-blue-300",    pill: "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/30 border-blue-200 dark:border-blue-800/50", iconBg: "bg-blue-500/10 dark:bg-blue-400/10" },
   Frontend:       { bg: "bg-purple-500",  text: "text-purple-700 dark:text-purple-300", pill: "bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/30 border-purple-200 dark:border-purple-800/50", iconBg: "bg-purple-500/10 dark:bg-purple-400/10" },
   Database:       { bg: "bg-amber-500",   text: "text-amber-700 dark:text-amber-300",  pill: "bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950/50 dark:to-amber-900/30 border-amber-200 dark:border-amber-800/50", iconBg: "bg-amber-500/10 dark:bg-amber-400/10" },
   Infrastructure: { bg: "bg-emerald-500", text: "text-emerald-700 dark:text-emerald-300", pill: "bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/50 dark:to-emerald-900/30 border-emerald-200 dark:border-emerald-800/50", iconBg: "bg-emerald-500/10 dark:bg-emerald-400/10" },
+  "Tools / VCS / AI": { bg: "bg-rose-500", text: "text-rose-700 dark:text-rose-300", pill: "bg-gradient-to-br from-rose-50 to-rose-100 dark:from-rose-950/50 dark:to-rose-900/30 border-rose-200 dark:border-rose-800/50", iconBg: "bg-rose-500/10 dark:bg-rose-400/10" },
   Tools:          { bg: "bg-rose-500",    text: "text-rose-700 dark:text-rose-300",    pill: "bg-gradient-to-br from-rose-50 to-rose-100 dark:from-rose-950/50 dark:to-rose-900/30 border-rose-200 dark:border-rose-800/50", iconBg: "bg-rose-500/10 dark:bg-rose-400/10" },
 };
 

@@ -22,7 +22,7 @@ export function BlogSection({ posts }: BlogSectionProps) {
   const latestPosts = allPosts.slice(0, 3);
 
   return (
-    <section id="blog" className="bg-muted/30 py-20 sm:py-28">
+    <section id="blog" className="bg-muted/30 py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <motion.div

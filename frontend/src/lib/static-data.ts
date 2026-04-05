@@ -410,11 +410,11 @@ export const STATIC_CERTIFICATIONS: Certification[] = [
 export const STATIC_TESTIMONIALS: Testimonial[] = [
   {
     id: "1",
-    authorName: "Nguyen Thanh Tuan",
-    authorTitle: "Senior Engineer at FPT Software",
-    authorAvatar: "",
+    authorName: "FPT Software Da Nang",
+    authorTitle: "Business Unit R17",
+    authorAvatar: "/images/company/fpt.png",
     content:
-      "Trung is one of the most reliable engineers I've worked with. He takes ownership of problems end-to-end and consistently delivers clean, well-tested code. His deep understanding of Java and Spring Boot made him a core contributor to our team from day one.",
+      "Best performance employee of business unit R17 - FPT Software year 2022. Recognized for outstanding technical contributions and dedication to project delivery.",
     rating: 5,
     featured: true,
     sortOrder: 1,
@@ -423,11 +423,11 @@ export const STATIC_TESTIMONIALS: Testimonial[] = [
   },
   {
     id: "2",
-    authorName: "Le Thi Minh",
-    authorTitle: "Tech Lead at Hybrid Technologies",
-    authorAvatar: "",
+    authorName: "FPT Software Da Nang",
+    authorTitle: "Certification Achievement",
+    authorAvatar: "/images/company/fpt.png",
     content:
-      "Working with Trung on our SaaS product was a great experience. He quickly grasped complex business logic and translated it into pragmatic technical solutions. His work on the CI/CD pipeline saved our team hours of manual deployment time every week.",
+      "Top 2 Fsofter achieved the most international certificates at FPT Software Danang in 2022. Demonstrated exceptional commitment to continuous learning and professional development.",
     rating: 5,
     featured: true,
     sortOrder: 2,
@@ -436,13 +436,13 @@ export const STATIC_TESTIMONIALS: Testimonial[] = [
   },
   {
     id: "3",
-    authorName: "Pham Van Duc",
-    authorTitle: "Freelance Client – E-Commerce Project",
-    authorAvatar: "",
+    authorName: "Hybrid Technologies",
+    authorTitle: "Outstanding Project - NOVA E-learning",
+    authorAvatar: "/images/company/Hybrid.png",
     content:
-      "Trung built our online store from scratch and delivered everything on time and on budget. The site has been running without issues for over a year. He was professional, communicated clearly, and genuinely cared about our business goals.",
+      "Successfully delivered the NOVA E-learning platform for Nova Holdings (Japan) - a comprehensive English teaching application serving thousands of students. Led backend development using Java Spring Boot, implemented RESTful APIs, integrated payment systems, and ensured high availability.",
     rating: 5,
-    featured: false,
+    featured: true,
     sortOrder: 3,
     createdAt: "2023-01-01T00:00:00Z",
     updatedAt: "2023-01-01T00:00:00Z",

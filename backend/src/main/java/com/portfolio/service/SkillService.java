@@ -38,7 +38,6 @@ public class SkillService {
         Skill skill = Skill.builder()
                 .name(request.getName())
                 .category(category)
-                .proficiencyLevel(request.getProficiencyLevel())
                 .icon(request.getIcon())
                 .sortOrder(request.getSortOrder() != null ? request.getSortOrder() : 0)
                 .build();
@@ -51,7 +50,6 @@ public class SkillService {
                 .orElseThrow(() -> new ResourceNotFoundException("SkillCategory", "id", request.getCategoryId()));
         skill.setName(request.getName());
         skill.setCategory(category);
-        skill.setProficiencyLevel(request.getProficiencyLevel());
         skill.setIcon(request.getIcon());
         if (request.getSortOrder() != null) skill.setSortOrder(request.getSortOrder());
         return repository.save(skill);

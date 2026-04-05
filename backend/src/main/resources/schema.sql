@@ -60,12 +60,12 @@ CREATE TABLE IF NOT EXISTS skill_categories (
 
 -- Seed default categories (idempotent)
 INSERT INTO skill_categories (name, color, sort_order) VALUES
-    ('Backend',        'blue',    0),
-    ('Frontend',       'purple',  1),
-    ('Database',       'amber',   2),
-    ('Infrastructure', 'emerald', 3),
-    ('Tools',          'rose',    4),
-    ('Other',          'gray',    5)
+    ('Backend',           'blue',    0),
+    ('Frontend',          'purple',  1),
+    ('Database',          'amber',   2),
+    ('Infrastructure',    'emerald', 3),
+    ('Tools / VCS / AI',  'rose',    4),
+    ('Other',             'gray',    5)
 ON CONFLICT (name) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS skills (
@@ -78,22 +78,8 @@ CREATE TABLE IF NOT EXISTS skills (
     updated_at        TIMESTAMPTZ   NOT NULL DEFAULT NOW()
 );
 
--- Migrate any extra categories from existing skills rows (idempotent)
-INSERT INTO skill_categories (name, sort_order)
-SELECT DISTINCT category, 99 FROM skills WHERE category IS NOT NULL
-ON CONFLICT (name) DO NOTHING;
-
--- Add category_id FK column if not yet present
-ALTER TABLE skills ADD COLUMN IF NOT EXISTS category_id UUID REFERENCES skill_categories(id);
-
--- Back-fill category_id from legacy category string
-UPDATE skills s
-SET category_id = sc.id
-FROM skill_categories sc
-WHERE s.category = sc.name AND s.category_id IS NULL;
-
--- Drop legacy category column once back-filled
-ALTER TABLE skills DROP COLUMN IF EXISTS category;
+-- Legacy migration statements removed: skills table already uses category_id FK.
+-- The old 'category' text column no longer exists.
 
 CREATE TABLE IF NOT EXISTS projects (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -262,7 +248,6 @@ ALTER TABLE experiences ADD COLUMN IF NOT EXISTS technologies TEXT[] DEFAULT '{}
 -- INDEXES
 -- =====================================================
 
-CREATE INDEX IF NOT EXISTS idx_skills_category ON skills(category);
 CREATE INDEX IF NOT EXISTS idx_skills_category_id ON skills(category_id);
 CREATE INDEX IF NOT EXISTS idx_skill_categories_sort ON skill_categories(sort_order);
 CREATE INDEX IF NOT EXISTS idx_projects_featured ON projects(featured);

@@ -277,88 +277,6 @@ export function AboutSection({ profile }: AboutSectionProps) {
               {profile.bio}
             </p>
 
-            {/* Career Journey & International Clients — loaded from DB */}
-            {(profile.careerSummary || profile.internationalClients) && (
-              <div className="rounded-xl border border-slate-200 dark:border-slate-700/60 bg-slate-50 dark:bg-slate-800/40 p-4 space-y-4">
-                {profile.careerSummary && (
-                  <>
-                    <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                      <span className="inline-flex size-6 items-center justify-center rounded-md bg-gradient-to-br from-cyan-500 to-teal-500 text-white text-xs">🚀</span>
-                      Career Journey
-                    </h4>
-                    <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-                      {profile.careerSummary}
-                    </p>
-                  </>
-                )}
-                {profile.internationalClients && (() => {
-                  try {
-                    const clients: Array<{ name: string; country: string; flag: string; url?: string; company?: string; description?: string }> =
-                      typeof profile.internationalClients === "string"
-                        ? JSON.parse(profile.internationalClients)
-                        : profile.internationalClients;
-                    if (!Array.isArray(clients) || clients.length === 0) return null;
-                    return (
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-500 mb-2">
-                          International Clients
-                        </p>
-                        <div className="grid gap-2 sm:grid-cols-2">
-                          {clients.map((client) => {
-                            const inner = (
-                              <>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-base leading-none">{client.flag}</span>
-                                  <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
-                                    {client.name}
-                                    {client.url && <span className="ml-1 text-cyan-500">↗</span>}
-                                  </span>
-                                </div>
-                                {(client.company || client.description) && (
-                                  <div className="mt-1 ml-7 space-y-0.5">
-                                    {client.company && (
-                                      <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                                        via {client.company}
-                                      </p>
-                                    )}
-                                    {client.description && (
-                                      <p className="text-[11px] text-slate-400 dark:text-slate-500">
-                                        {client.description}
-                                      </p>
-                                    )}
-                                  </div>
-                                )}
-                              </>
-                            );
-                            return client.url ? (
-                              <a
-                                key={client.name}
-                                href={client.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block rounded-lg border border-slate-200 dark:border-slate-600/50 bg-white dark:bg-slate-700/40 px-3 py-2 transition-colors hover:border-cyan-400 dark:hover:border-cyan-500/50"
-                              >
-                                {inner}
-                              </a>
-                            ) : (
-                              <div
-                                key={client.name}
-                                className="rounded-lg border border-slate-200 dark:border-slate-600/50 bg-white dark:bg-slate-700/40 px-3 py-2"
-                              >
-                                {inner}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  } catch {
-                    return null;
-                  }
-                })()}
-              </div>
-            )}
-
             {profile.location && (
               <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-500">
                 <MapPin className="size-4 text-teal-500 dark:text-teal-400/60" />
@@ -390,6 +308,144 @@ export function AboutSection({ profile }: AboutSectionProps) {
             </div>
           </motion.div>
         </div>
+
+        {/* Career Journey & International Clients — full-width below avatar+bio grid */}
+        {(profile.careerSummary || profile.internationalClients) && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="relative z-10 mt-10 rounded-xl border border-slate-200 dark:border-slate-700/60 bg-slate-50 dark:bg-slate-800/40 p-5 sm:p-6"
+          >
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-8">
+              {profile.careerSummary && (
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2 mb-2">
+                    <span className="inline-flex size-5 items-center justify-center rounded-md bg-gradient-to-br from-cyan-500 to-teal-500 text-white text-[10px]">🚀</span>
+                    Career Journey
+                  </h4>
+                  <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                    {profile.careerSummary}
+                  </p>
+                </div>
+              )}
+              {profile.internationalClients && (() => {
+                try {
+                  const clients: Array<{ name: string; country: string; flag: string; url?: string; company?: string; description?: string }> =
+                    typeof profile.internationalClients === "string"
+                      ? JSON.parse(profile.internationalClients)
+                      : profile.internationalClients;
+                  if (!Array.isArray(clients) || clients.length === 0) return null;
+                  return (
+                    <div className="sm:w-auto sm:shrink-0">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-500 mb-2">
+                        International Clients
+                      </p>
+                      <div className="relative z-20 flex flex-wrap gap-2">
+                        {clients.map((client) =>
+                          client.url ? (
+                            <a
+                              key={client.name}
+                              href={client.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="relative z-30 inline-flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-slate-600/50 bg-white dark:bg-slate-700/40 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 no-underline transition-all duration-200 hover:border-cyan-400 hover:bg-cyan-50 hover:text-cyan-700 dark:hover:border-cyan-500/50 dark:hover:bg-cyan-950/30 dark:hover:text-cyan-300 hover:shadow-md cursor-pointer"
+                            >
+                              <span className="text-sm leading-none">{client.flag}</span>
+                              {client.name}
+                              <span className="text-cyan-500 text-[10px]">↗</span>
+                            </a>
+                          ) : (
+                            <span
+                              key={client.name}
+                              className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-slate-600/50 bg-white dark:bg-slate-700/40 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300"
+                            >
+                              <span className="text-sm leading-none">{client.flag}</span>
+                              {client.name}
+                            </span>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  );
+                } catch {
+                  return null;
+                }
+              })()}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Language Journey — full-width below Career Journey */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="relative z-10 mt-6 rounded-xl border border-slate-200 dark:border-slate-700/60 bg-slate-50 dark:bg-slate-800/40 p-5 sm:p-6"
+        >
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+            <div className="flex-1 min-w-0">
+              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2 mb-2">
+                <span className="inline-flex size-5 items-center justify-center rounded-md bg-gradient-to-br from-violet-500 to-purple-500 text-white text-[10px]">🌍</span>
+                Language Journey
+              </h4>
+              <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                As an extroverted person, I have always been passionate about connecting with people from different cultures. Through traveling, working internationally, and attending global events, I have met and made friends with people from <span className="font-semibold text-slate-700 dark:text-slate-300">over 50 countries</span> around the world. English has been my primary tool for global communication — from daily work with international clients to building friendships across continents. I also speak French at a conversational level, which I picked up through self-study and cultural exchange.
+              </p>
+              <a
+                href="/language"
+                className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition-colors"
+              >
+                View full language profile →
+              </a>
+            </div>
+            <div className="flex items-center gap-3 sm:shrink-0 sm:pt-1">
+              <div className="flex flex-col items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-600/50 bg-white dark:bg-slate-700/40 px-4 py-3">
+                <span className="text-2xl">🇬🇧</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">English</span>
+              </div>
+              <div className="flex flex-col items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-600/50 bg-white dark:bg-slate-700/40 px-4 py-3">
+                <span className="text-2xl">🇫🇷</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">French</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Piano Journey */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          className="relative z-10 mt-6 rounded-xl border border-slate-200 dark:border-slate-700/60 bg-slate-50 dark:bg-slate-800/40 p-5 sm:p-6"
+        >
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+            <div className="flex-1 min-w-0">
+              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2 mb-2">
+                <span className="inline-flex size-5 items-center justify-center rounded-md bg-gradient-to-br from-amber-500 to-orange-500 text-white text-[10px]">🎹</span>
+                Piano Journey
+              </h4>
+              <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                Beyond coding, music is my creative outlet. I have been teaching myself piano, exploring everything from classical pieces to modern compositions. Playing piano helps me stay focused, develop patience, and find balance between the analytical and creative sides of my mind — skills that translate directly into better problem-solving as an engineer.
+              </p>
+              <a
+                href="/piano"
+                className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
+              >
+                View piano journey →
+              </a>
+            </div>
+            <div className="flex items-center gap-3 sm:shrink-0 sm:pt-1">
+              <div className="flex flex-col items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-600/50 bg-white dark:bg-slate-700/40 px-5 py-3">
+                <span className="text-3xl">🎹</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Piano</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
