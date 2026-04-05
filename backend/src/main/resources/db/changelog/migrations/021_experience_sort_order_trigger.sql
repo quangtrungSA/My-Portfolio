@@ -17,12 +17,11 @@ BEGIN
     WHERE experiences.id = ranked.id;
     RETURN NULL;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
 
 --changeset portfolio:021-experience-sort-order-trigger runOnChange:true
 --comment: Trigger fires after insert/update of start_date to rerank all experiences
-DROP TRIGGER IF EXISTS trg_experience_sort_order ON experiences;
-CREATE TRIGGER trg_experience_sort_order
+CREATE OR REPLACE TRIGGER trg_experience_sort_order
     AFTER INSERT OR UPDATE OF start_date ON experiences
     FOR EACH STATEMENT EXECUTE FUNCTION fn_experience_sort_order();
 
