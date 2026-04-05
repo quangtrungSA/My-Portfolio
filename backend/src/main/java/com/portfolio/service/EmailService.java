@@ -1,5 +1,6 @@
 package com.portfolio.service;
 
+import com.portfolio.repository.ContactRepository;
 import com.portfolio.repository.ProfileRepository;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -11,9 +12,11 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +28,7 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
     private final ProfileRepository profileRepository;
+    private final ContactRepository contactRepository;
 
     @Value("${app.admin.email}")
     private String adminEmailFallback;
@@ -48,13 +52,21 @@ public class EmailService {
     // -------------------------------------------------------------------------
 
     /**
-     * Synchronous send — caller handles exception for result tracking (email_sent field).
-     * Throws RuntimeException on failure.
+     * Async fire-and-forget: sends HTML email in background thread.
+     * HTTP response is returned immediately — SMTP never blocks the request.
+     * Updates contact.email_sent = true on success.
      */
-    public void sendContactNotificationSync(String senderName, String senderEmail,
-                                            String subject, String message) {
-        String recipientEmail = resolveRecipientEmail();
+    @Async
+    public void sendContactNotificationAsync(UUID contactId,
+                                             String senderName, String senderEmail,
+                                             String subject, String message) {
+        // Skip if mail is not configured
+        if (fromEmail == null || fromEmail.isBlank()) {
+            logger.warn("MAIL_USERNAME not configured — email notification skipped for contact id={}", contactId);
+            return;
+        }
 
+        String recipientEmail = resolveRecipientEmail();
         try {
             MimeMessage mime = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mime, true, "UTF-8");
@@ -70,24 +82,16 @@ public class EmailService {
             helper.setText(buildHtml(senderName, senderEmail, subject, message), true);
 
             mailSender.send(mime);
-            logger.info("Contact notification sent → {} | from: {} <{}>",
-                    recipientEmail, senderName, senderEmail);
-        } catch (Exception e) {
-            logger.error("Failed to send contact notification to {}: {}", recipientEmail, e.getMessage());
-            throw new RuntimeException("Email send failed: " + e.getMessage(), e);
-        }
-    }
+            logger.info("Email sent → {} | from: {} <{}>", recipientEmail, senderName, senderEmail);
 
-    /**
-     * Fire-and-forget async send (no result tracking).
-     */
-    @Async
-    public void sendContactNotification(String senderName, String senderEmail,
-                                        String subject, String message) {
-        try {
-            sendContactNotificationSync(senderName, senderEmail, subject, message);
+            // Mark email_sent in DB
+            contactRepository.findById(contactId).ifPresent(c -> {
+                c.setEmailSent(true);
+                c.setEmailSentAt(Instant.now());
+                contactRepository.save(c);
+            });
         } catch (Exception e) {
-            logger.error("Async email notification failed: {}", e.getMessage());
+            logger.error("Failed to send contact email to {}: {}", recipientEmail, e.getMessage());
         }
     }
 
