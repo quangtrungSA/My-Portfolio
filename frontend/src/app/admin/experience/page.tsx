@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useForm, useFieldArray, Controller, Resolver } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Pencil, Trash2, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, ChevronDown, ChevronUp, Upload, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -401,16 +402,13 @@ export default function AdminExperiencePage() {
                     Comma-separated list of technologies used
                   </p>
                 </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="logoUrl">Logo URL</Label>
-                    <Input id="logoUrl" placeholder="https://..." {...register("logoUrl")} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="sortOrder">Sort Order</Label>
-                    <Input id="sortOrder" type="number" {...register("sortOrder")} />
-                  </div>
-                </div>
+                <Controller
+                  control={control}
+                  name="logoUrl"
+                  render={({ field }) => (
+                    <LogoDropzone value={field.value} onChange={field.onChange} />
+                  )}
+                />
               </div>
 
               <Separator />
@@ -578,6 +576,79 @@ export default function AdminExperiencePage() {
           )}
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LogoDropzone Component
+// ─────────────────────────────────────────────────────────────────────────────
+
+function LogoDropzone({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+  const [dragging, setDragging] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = (file: File) => {
+    if (!file.type.startsWith("image/")) return;
+    const reader = new FileReader();
+    reader.onload = (e) => onChange(e.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  };
+
+  return (
+    <div className="space-y-2">
+      <Label>Company Logo</Label>
+      <div
+        className={cn(
+          "relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 transition-colors cursor-pointer",
+          dragging
+            ? "border-primary bg-primary/5"
+            : "border-muted-foreground/30 hover:border-primary/50"
+        )}
+        onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={handleDrop}
+        onClick={() => inputRef.current?.click()}
+      >
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
+        />
+        {value ? (
+          <div className="flex items-center gap-3 w-full">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={value} alt="Logo preview" className="h-10 w-10 object-contain shrink-0" />
+            <span className="text-sm text-muted-foreground truncate flex-1">
+              {value.startsWith("data:") ? "Uploaded image" : value}
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="shrink-0"
+              onClick={(e) => { e.stopPropagation(); onChange(""); }}
+            >
+              <X className="size-4" />
+            </Button>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-1 py-2">
+            <Upload className="size-7 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">Kéo thả logo vào đây hoặc click để chọn file</p>
+            <p className="text-xs text-muted-foreground">PNG, JPG, SVG, ICO</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
