@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 
 import { toast } from "sonner";
+import type { Profile } from "@/types";
 
 function GithubIcon({ className }: { className?: string }) {
   return (
@@ -37,7 +38,6 @@ function LinkedinIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-
 // ---------------------------------------------------------------------------
 // Schema & constants
 // ---------------------------------------------------------------------------
@@ -58,49 +58,6 @@ const contactSchema = z.object({
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
-
-// ---------------------------------------------------------------------------
-// Contact info data
-// ---------------------------------------------------------------------------
-
-const CONTACT_INFO = [
-  {
-    icon: Mail,
-    label: "Email",
-    value: "trungly.dev@gmail.com",
-    href: "mailto:trungly.dev@gmail.com",
-    color: "text-blue-400",
-    bg: "bg-blue-500/10 border-blue-500/20",
-    hoverBg: "hover:bg-blue-500/20",
-  },
-  {
-    icon: MapPin,
-    label: "Location",
-    value: "Ho Chi Minh City, Vietnam",
-    href: null,
-    color: "text-emerald-400",
-    bg: "bg-emerald-500/10 border-emerald-500/20",
-    hoverBg: "hover:bg-emerald-500/20",
-  },
-  {
-    icon: GithubIcon,
-    label: "GitHub",
-    value: "github.com/quangtrungSA",
-    href: "https://github.com/quangtrungSA",
-    color: "text-white",
-    bg: "bg-white/5 border-white/10",
-    hoverBg: "hover:bg-white/10",
-  },
-  {
-    icon: LinkedinIcon,
-    label: "LinkedIn",
-    value: "linkedin.com/in/quangtrungsadev",
-    href: "https://www.linkedin.com/in/quangtrungsadev",
-    color: "text-[#0A66C2]",
-    bg: "bg-[#0A66C2]/10 border-[#0A66C2]/20",
-    hoverBg: "hover:bg-[#0A66C2]/20",
-  },
-];
 
 // ---------------------------------------------------------------------------
 // Quick-topic chips (let user pre-fill subject)
@@ -173,7 +130,50 @@ function inputClass(hasError: boolean, hasSuccess: boolean) {
 // Component
 // ---------------------------------------------------------------------------
 
-export function ContactSection() {
+interface ContactSectionProps {
+  profile: Profile;
+}
+
+export function ContactSection({ profile }: ContactSectionProps) {
+  const CONTACT_INFO = [
+    {
+      icon: Mail,
+      label: "Email",
+      value: profile.email || "trungly.dev@gmail.com",
+      href: `mailto:${profile.email || "trungly.dev@gmail.com"}`,
+      color: "text-blue-400",
+      bg: "bg-blue-500/10 border-blue-500/20",
+      hoverBg: "hover:bg-blue-500/20",
+    },
+    {
+      icon: MapPin,
+      label: "Location",
+      value: profile.location || "Ho Chi Minh City, Vietnam",
+      href: null,
+      color: "text-emerald-400",
+      bg: "bg-emerald-500/10 border-emerald-500/20",
+      hoverBg: "hover:bg-emerald-500/20",
+    },
+    {
+      icon: GithubIcon,
+      label: "GitHub",
+      value: "github.com/quangtrungSA",
+      href: "https://github.com/quangtrungSA",
+      color: "text-white",
+      bg: "bg-white/5 border-white/10",
+      hoverBg: "hover:bg-white/10",
+    },
+    {
+      icon: LinkedinIcon,
+      label: "LinkedIn",
+      value: "linkedin.com/in/quangtrungsadev",
+      href: "https://www.linkedin.com/in/quangtrungsadev",
+      color: "text-[#0A66C2]",
+      bg: "bg-[#0A66C2]/10 border-[#0A66C2]/20",
+      hoverBg: "hover:bg-[#0A66C2]/20",
+    },
+  ];
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 

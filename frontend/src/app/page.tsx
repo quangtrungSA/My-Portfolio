@@ -194,7 +194,7 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(59,130,246,0.15),transparent_60%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:2rem_2rem]" />
           <div className="dark relative">
-            <ContactSection />
+            <ContactSection profile={p} />
           </div>
         </section>
       </main>
