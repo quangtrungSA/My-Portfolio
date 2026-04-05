@@ -54,4 +54,10 @@ public class ProfileService {
         profile.setInternationalClients(request.getInternationalClients());
         return repository.save(profile);
     }
+
+    public Profile setAvailability(UUID id, Boolean available) {
+        Profile profile = getById(id);
+        profile.setAvailableForHire(available != null ? available : false);
+        return repository.save(profile);
+    }
 }

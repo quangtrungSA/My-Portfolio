@@ -8,7 +8,7 @@ SET end_date   = '2025-12-31',
 WHERE company ILIKE '%freelance%'
   AND (end_date IS NULL OR end_date > '2025-12-31');
 
---changeset portfolio:023-mgm-genesis-project runOnChange:false
+--changeset portfolio:023-mgm-genesis-project runOnChange:false splitStatements:false
 --comment: Insert mgm Technologies Partner - Genesis Project experience
 DO $$
 DECLARE
@@ -82,7 +82,7 @@ BEGIN
     );
 END $$;
 
---changeset portfolio:023-mgm-devops-project runOnChange:false
+--changeset portfolio:023-mgm-devops-project runOnChange:false splitStatements:false
 --comment: Insert mgm Technologies Partner - mgm VN DevOps Team experience
 DO $$
 DECLARE

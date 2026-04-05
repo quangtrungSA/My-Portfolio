@@ -1,61 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  validateCredentials,
-  signToken,
-  createTokenCookie,
-} from "@/lib/auth";
+
+const API_URL = process.env.API_URL || "http://localhost:8080";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { username, password } = body;
 
-    if (!username || !password) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Username and password are required",
-          data: null,
-        },
-        { status: 400 }
-      );
+    // Proxy login to Spring Boot backend
+    const backendRes = await fetch(`${API_URL}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    const data = await backendRes.json();
+
+    if (!backendRes.ok) {
+      return NextResponse.json(data, { status: backendRes.status });
     }
 
-    if (!validateCredentials(username, password)) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Invalid username or password",
-          data: null,
-        },
-        { status: 401 }
-      );
+    // Forward the Set-Cookie from backend (portfolio_token)
+    const response = NextResponse.json(data, { status: 200 });
+    const setCookie = backendRes.headers.get("set-cookie");
+    if (setCookie) {
+      response.headers.set("set-cookie", setCookie);
     }
 
-    const token = await signToken({ username, role: "ADMIN" });
-    const cookie = createTokenCookie(token);
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Login successful",
-        data: {
-          message: "Login successful",
-          username,
-          role: "ADMIN",
-        },
-      },
-      { status: 200, headers: { "Set-Cookie": cookie } }
-    );
+    return response;
   } catch {
     return NextResponse.json(
-      {
-        success: false,
-        message: "An error occurred during login",
-        data: null,
-      },
-      { status: 500 }
+      { success: false, message: "Backend unavailable", data: null },
+      { status: 502 }
     );
   }
 }
-

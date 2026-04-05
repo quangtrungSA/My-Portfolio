@@ -42,7 +42,63 @@ export function TestimonialsSection({
   if (testimonials.length === 0) return null;
 
   return (
-    <section id="testimonials" className="py-14 sm:py-20">
+    <section id="testimonials" className="relative py-14 sm:py-20 overflow-hidden">
+      {/* Aurora waves */}
+      <motion.div animate={{x:[0,70,0],y:[0,-25,0],scale:[1,1.35,1],opacity:[0.3,0.65,0.3]}} transition={{repeat:Infinity,duration:10,ease:"easeInOut"}}
+        className="pointer-events-none absolute -z-10 left-[-10%] top-[0%] h-96 w-[65%] rounded-full bg-gradient-to-r from-rose-500/12 to-purple-500/10 blur-[110px]" />
+      <motion.div animate={{x:[0,-55,0],y:[0,35,0],scale:[1,1.25,1],opacity:[0.3,0.65,0.3]}} transition={{repeat:Infinity,duration:13,ease:"easeInOut",delay:3}}
+        className="pointer-events-none absolute -z-10 right-[-10%] bottom-[0%] h-80 w-[55%] rounded-full bg-gradient-to-l from-pink-500/12 to-violet-500/10 blur-[100px]" />
+      <motion.div animate={{scale:[1,1.4,1],opacity:[0.2,0.5,0.2]}} transition={{repeat:Infinity,duration:9,ease:"easeInOut",delay:5}}
+        className="pointer-events-none absolute -z-10 left-[40%] top-[40%] h-56 w-56 rounded-full bg-rose-400/8 blur-[70px]" />
+      {/* Edge travellers */}
+      {[...Array(3)].map((_,i)=>(
+        <motion.div key={`te-${i}`} className="pointer-events-none absolute z-0 top-0 h-[2px] w-16 rounded-full bg-gradient-to-r from-transparent via-rose-400/50 to-transparent"
+          animate={{left:["-8%","108%"]}} transition={{repeat:Infinity,duration:6+i*1.5,delay:i*2,ease:"linear"}} />
+      ))}
+      {[...Array(2)].map((_,i)=>(
+        <motion.div key={`be-${i}`} className="pointer-events-none absolute z-0 bottom-0 h-[2px] w-20 rounded-full bg-gradient-to-r from-transparent via-pink-400/40 to-transparent"
+          animate={{left:["108%","-8%"]}} transition={{repeat:Infinity,duration:8+i*2,delay:i*3,ease:"linear"}} />
+      ))}
+      {[...Array(2)].map((_,i)=>(
+        <motion.div key={`le-${i}`} className="pointer-events-none absolute z-0 left-0 w-[2px] h-16 rounded-full bg-gradient-to-b from-transparent via-rose-400/40 to-transparent"
+          animate={{top:["-10%","110%"]}} transition={{repeat:Infinity,duration:7+i*1.5,delay:i*2,ease:"linear"}} />
+      ))}
+      {[...Array(2)].map((_,i)=>(
+        <motion.div key={`re-${i}`} className="pointer-events-none absolute z-0 right-0 w-[2px] h-16 rounded-full bg-gradient-to-b from-transparent via-violet-400/40 to-transparent"
+          animate={{top:["110%","-10%"]}} transition={{repeat:Infinity,duration:8+i*1.5,delay:i*2.5,ease:"linear"}} />
+      ))}
+      {/* Corner glows */}
+      <motion.div animate={{opacity:[0.3,0.7,0.3],scale:[1,1.2,1]}} transition={{repeat:Infinity,duration:4}}
+        className="pointer-events-none absolute -z-10 top-0 left-0 h-36 w-36 rounded-br-full bg-rose-500/8 blur-[40px]" />
+      <motion.div animate={{opacity:[0.3,0.7,0.3],scale:[1,1.2,1]}} transition={{repeat:Infinity,duration:5,delay:1.5}}
+        className="pointer-events-none absolute -z-10 top-0 right-0 h-36 w-36 rounded-bl-full bg-purple-500/8 blur-[40px]" />
+      <motion.div animate={{opacity:[0.3,0.7,0.3],scale:[1,1.2,1]}} transition={{repeat:Infinity,duration:4.5,delay:2.5}}
+        className="pointer-events-none absolute -z-10 bottom-0 left-0 h-36 w-36 rounded-tr-full bg-pink-500/8 blur-[40px]" />
+      <motion.div animate={{opacity:[0.3,0.7,0.3],scale:[1,1.2,1]}} transition={{repeat:Infinity,duration:6,delay:0.8}}
+        className="pointer-events-none absolute -z-10 bottom-0 right-0 h-36 w-36 rounded-tl-full bg-violet-500/8 blur-[40px]" />
+      {/* Floating quote marks */}
+      {[{l:"3%",t:"15%",s:24,dl:0},{l:"5%",t:"60%",s:18,dl:1.2},{l:"92%",t:"10%",s:20,dl:0.6},{l:"90%",t:"65%",s:22,dl:0.9},{l:"45%",t:"1%",s:18,dl:1.5},{l:"55%",t:"96%",s:20,dl:0.3}].map((q,i)=>(
+        <motion.div key={i} className="pointer-events-none absolute z-10 font-serif font-bold text-rose-400/20"
+          style={{left:q.l,top:q.t,fontSize:q.s}}
+          animate={{opacity:[0.05,0.3,0.05],y:[0,-8,0],scale:[0.9,1.1,0.9]}}
+          transition={{repeat:Infinity,duration:3+i*0.4,delay:q.dl,ease:"easeInOut"}}>
+          &ldquo;
+        </motion.div>
+      ))}
+      {/* Twinkling dots — rose theme */}
+      {[{l:"1%",t:"12%",s:6,d:1.8,dl:0},{l:"2%",t:"42%",s:7,d:2.0,dl:0.5},{l:"1%",t:"72%",s:5,d:1.6,dl:0.9},{l:"96%",t:"18%",s:7,d:1.9,dl:0.3},{l:"97%",t:"52%",s:5,d:2.1,dl:0.7},{l:"96%",t:"80%",s:6,d:1.7,dl:0.2},{l:"35%",t:"1%",s:5,d:2.2,dl:0.6},{l:"65%",t:"98%",s:6,d:1.8,dl:1.0}].map((s,i)=>(
+        <motion.div key={i} className="pointer-events-none absolute z-10 rounded-full bg-rose-300"
+          style={{left:s.l,top:s.t,width:s.s,height:s.s,boxShadow:`0 0 ${s.s*2}px ${s.s}px rgba(251,113,133,0.3)`}}
+          animate={{opacity:[0.2,0.7,0.2],scale:[0.8,1.2,0.8]}}
+          transition={{repeat:Infinity,duration:s.d,delay:s.dl,ease:"easeInOut"}} />
+      ))}
+      {[{l:"2%",t:"28%",dl:0.4},{l:"96%",t:"35%",dl:1.0},{l:"1%",t:"58%",dl:0.7},{l:"97%",t:"68%",dl:0.5}].map((c,i)=>(
+        <motion.div key={i} className="pointer-events-none absolute z-10" style={{left:c.l,top:c.t}}
+          animate={{opacity:[0,0.5,0],scale:[0.7,1.1,0.7]}}
+          transition={{repeat:Infinity,duration:2.4+i*0.3,delay:c.dl,ease:"easeInOut"}}>
+          <svg width="12" height="12" viewBox="0 0 12 12"><line x1="6" y1="0" x2="6" y2="12" stroke="rgba(251,113,133,0.7)" strokeWidth="1.5" strokeLinecap="round"/><line x1="0" y1="6" x2="12" y2="6" stroke="rgba(251,113,133,0.7)" strokeWidth="1.5" strokeLinecap="round"/></svg>
+        </motion.div>
+      ))}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <motion.div

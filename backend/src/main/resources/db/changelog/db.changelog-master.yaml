@@ -68,3 +68,18 @@ databaseChangeLog:
   - include:
       file: db/changelog/migrations/023_seed_mgm_experience.sql
       relativeToChangelogFile: false
+  - include:
+      file: db/changelog/migrations/024_fix_experience_sort_order_desc.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/migrations/025_update_mgm_logo_url.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/migrations/026_update_genesis_roles.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/migrations/027_update_genesis_roles_en.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/migrations/028_update_education_logos.sql
+      relativeToChangelogFile: false

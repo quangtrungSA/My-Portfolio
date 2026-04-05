@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
-import { createLogoutCookie } from "@/lib/auth";
 
 export async function POST() {
-  const cookie = createLogoutCookie();
-
-  return NextResponse.json(
-    {
-      success: true,
-      message: "Logged out successfully",
-      data: null,
-    },
-    { status: 200, headers: { "Set-Cookie": cookie } }
+  const response = NextResponse.json(
+    { success: true, message: "Logged out successfully", data: null },
+    { status: 200 }
   );
+  // Clear the portfolio_token cookie
+  response.cookies.set("portfolio_token", "", {
+    httpOnly: true,
+    expires: new Date(0),
+    path: "/",
+    sameSite: "lax",
+  });
+  return response;
 }
-

@@ -1,9 +1,79 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useMemo, useState, useRef, useCallback, useEffect } from "react";
+import { motion, AnimatePresence, useInView } from "motion/react";
 import { Code2 } from "lucide-react";
 import type { Skill } from "@/types";
+
+// ── Constellation canvas ───────────────────────────────────────────────────
+function ConstellationBg() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    let id: number;
+    const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
+    resize();
+    window.addEventListener("resize", resize);
+    const dots = Array.from({ length: 45 }, () => ({
+      x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
+      r: Math.random() * 1.2 + 0.4,
+    }));
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      dots.forEach((d) => {
+        d.x += d.vx; d.y += d.vy;
+        if (d.x < 0 || d.x > canvas.width) d.vx *= -1;
+        if (d.y < 0 || d.y > canvas.height) d.vy *= -1;
+      });
+      for (let i = 0; i < dots.length; i++)
+        for (let j = i + 1; j < dots.length; j++) {
+          const dx = dots[i].x - dots[j].x, dy = dots[i].y - dots[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath(); ctx.moveTo(dots[i].x, dots[i].y); ctx.lineTo(dots[j].x, dots[j].y);
+            ctx.strokeStyle = `rgba(99,102,241,${(1 - dist / 120) * 0.15})`; ctx.lineWidth = 0.7; ctx.stroke();
+          }
+        }
+      dots.forEach((d) => { ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2); ctx.fillStyle = "rgba(129,140,248,0.4)"; ctx.fill(); });
+      id = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => { cancelAnimationFrame(id); window.removeEventListener("resize", resize); };
+  }, []);
+  return <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 -z-10 h-full w-full opacity-50 dark:opacity-70" />;
+}
+
+// Animated stat counter
+function StatCounter({ value, label }: { value: number; label: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true });
+
+  const start = useCallback(() => {
+    const duration = 1500;
+    const startTime = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setCount(Math.round(eased * value));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [value]);
+
+  useMemo(() => { if (inView) start(); }, [inView, start]);
+
+  return (
+    <div ref={ref} className="text-center">
+      <div className="text-2xl font-bold text-slate-800 dark:text-white">{count}</div>
+      <div className="text-xs text-slate-500">{label}</div>
+    </div>
+  );
+}
 
 interface SkillsSectionProps {
   skills: Skill[];
@@ -183,20 +253,31 @@ const defaultColor = { bg: "bg-slate-500", text: "text-slate-700 dark:text-slate
 
 function SkillPill({ skill, index, color }: { skill: Skill; index: number; color: typeof defaultColor }) {
   const logo = getSkillLogo(skill.name);
+  // Wave pattern: pills in each row pop in with a wave delay
+  const col = index % 5;
+  const row = Math.floor(index / 5);
+  const waveDelay = col * 0.06 + row * 0.04;
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.03 }}
-      whileHover={{ scale: 1.05, y: -2 }}
-      className={`group inline-flex items-center gap-2 rounded-xl border px-3 py-2.5 shadow-sm hover:shadow-lg transition-all duration-200 cursor-default ${color.pill}`}
+      initial={{ opacity: 0, scale: 0.6, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20, delay: waveDelay }}
+      whileHover={{ scale: 1.08, y: -3, boxShadow: "0 8px 24px rgba(0,0,0,0.15)" }}
+      whileTap={{ scale: 0.96 }}
+      className={`group relative inline-flex items-center gap-2 rounded-xl border px-3 py-2.5 shadow-sm transition-all duration-200 cursor-default overflow-hidden ${color.pill}`}
     >
-      {/* Icon with colored background */}
-      <span className={`flex items-center justify-center w-7 h-7 rounded-lg ${color.iconBg} transition-transform group-hover:scale-110`}>
+      {/* Shine sweep on hover */}
+      <motion.span
+        className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent"
+        initial={false}
+        whileHover={{ translateX: "200%" }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
+      />
+      <span className={`relative flex items-center justify-center w-7 h-7 rounded-lg ${color.iconBg} transition-transform group-hover:scale-110`}>
         {logo || <Code2 className="w-4 h-4 text-slate-500 dark:text-slate-400" />}
       </span>
-      {/* Tech name */}
-      <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+      <span className="relative text-sm font-semibold text-slate-700 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
         {skill.name}
       </span>
     </motion.div>
@@ -227,65 +308,282 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
   const activeColor = categoryColors[activeCategory] || defaultColor;
 
   return (
-    <section id="skills" className="py-20 sm:py-28">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <section id="skills" className="relative py-20 sm:py-28 overflow-hidden">
+      {/* Hex grid — slowly drifting */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.04] dark:opacity-[0.07]"
+        style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='52' viewBox='0 0 60 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 26 L15 0 L45 0 L60 26 L45 52 L15 52Z' fill='none' stroke='%236366f1' stroke-width='1'/%3E%3C/svg%3E\")", backgroundSize: "60px 52px" }}
+        animate={{ backgroundPosition: ["0px 0px", "60px 52px"] }}
+        transition={{ repeat: Infinity, duration: 12, ease: "linear" }}
+      />
+
+      {/* Pulsing concentric rings from center */}
+      {[0, 1, 2, 3].map((i) => (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          key={i}
+          className="pointer-events-none absolute -z-10 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-indigo-400/10 dark:border-indigo-400/15"
+          initial={{ width: 80, height: 80, opacity: 0.6 }}
+          animate={{ width: 900, height: 900, opacity: 0 }}
+          transition={{ repeat: Infinity, duration: 6, delay: i * 1.5, ease: "easeOut" }}
+        />
+      ))}
+
+      {/* Constellation */}
+      <ConstellationBg />
+
+
+      {/* Edge travellers — top */}
+      {[...Array(3)].map((_, i) => (
+        <motion.div key={`te-${i}`}
+          className="pointer-events-none absolute z-0 top-0 h-[2px] w-20 rounded-full bg-gradient-to-r from-transparent via-indigo-400/50 to-transparent"
+          animate={{ left: ["-10%", "110%"] }}
+          transition={{ repeat: Infinity, duration: 6 + i * 1.5, delay: i * 2, ease: "linear" }}
+        />
+      ))}
+
+      {/* Edge travellers — bottom */}
+      {[...Array(2)].map((_, i) => (
+        <motion.div key={`be-${i}`}
+          className="pointer-events-none absolute z-0 bottom-0 h-[2px] w-24 rounded-full bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent"
+          animate={{ left: ["110%", "-10%"] }}
+          transition={{ repeat: Infinity, duration: 8 + i * 2, delay: i * 3, ease: "linear" }}
+        />
+      ))}
+
+      {/* Twinkling dots — 2 lề */}
+      {[
+        { left: "1%",  top: "10%", s: 7, d: 1.8, dl: 0   },
+        { left: "2%",  top: "35%", s: 5, d: 2.2, dl: 0.5 },
+        { left: "1%",  top: "62%", s: 8, d: 1.6, dl: 0.9 },
+        { left: "2%",  top: "85%", s: 5, d: 2.0, dl: 0.3 },
+        { left: "97%", top: "12%", s: 8, d: 1.9, dl: 0.4 },
+        { left: "96%", top: "40%", s: 5, d: 2.1, dl: 0.7 },
+        { left: "97%", top: "68%", s: 7, d: 1.7, dl: 0.2 },
+        { left: "96%", top: "88%", s: 5, d: 1.8, dl: 1.0 },
+        { left: "38%", top: "0.5%", s: 6, d: 2.0, dl: 0.6 },
+        { left: "62%", top: "98.5%", s: 6, d: 1.9, dl: 0.8 },
+      ].map((s, i) => (
+        <motion.div key={`tw-${i}`}
+          className="pointer-events-none absolute z-10 rounded-full bg-indigo-300"
+          style={{ left: s.left, top: s.top, width: s.s, height: s.s,
+            boxShadow: `0 0 ${s.s * 2}px ${s.s}px rgba(99,102,241,0.35)` }}
+          animate={{ opacity: [0.2, 0.75, 0.2], scale: [0.8, 1.2, 0.8] }}
+          transition={{ repeat: Infinity, duration: s.d, delay: s.dl, ease: "easeInOut" }}
+        />
+      ))}
+
+      {/* Cross sparkles */}
+      {[
+        { left: "2%",  top: "22%", dl: 0.3 },
+        { left: "96%", top: "28%", dl: 1.0 },
+        { left: "1%",  top: "55%", dl: 0.7 },
+        { left: "97%", top: "60%", dl: 0.5 },
+        { left: "28%", top: "1%",  dl: 1.2 },
+        { left: "72%", top: "98%", dl: 0.8 },
+      ].map((c, i) => (
+        <motion.div key={`cr-${i}`} className="pointer-events-none absolute z-10"
+          style={{ left: c.left, top: c.top }}
+          animate={{ opacity: [0, 0.55, 0], scale: [0.7, 1.1, 0.7] }}
+          transition={{ repeat: Infinity, duration: 2.4 + i * 0.3, delay: c.dl, ease: "easeInOut" }}
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12">
+            <line x1="6" y1="0" x2="6" y2="12" stroke="rgba(129,140,248,0.7)" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="0" y1="6" x2="12" y2="6" stroke="rgba(129,140,248,0.7)" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+        </motion.div>
+      ))}
+
+      {/* Animated orbs */}
+      <motion.div
+        animate={{ x: [0, 50, 0], y: [0, -30, 0], scale: [1, 1.2, 1] }}
+        transition={{ repeat: Infinity, duration: 14, ease: "easeInOut" }}
+        className="pointer-events-none absolute -z-10 left-[-5%] top-[10%] h-72 w-72 rounded-full bg-indigo-500/10 blur-[100px]"
+      />
+      <motion.div
+        animate={{ x: [0, -40, 0], y: [0, 40, 0], scale: [1, 1.15, 1] }}
+        transition={{ repeat: Infinity, duration: 18, ease: "easeInOut", delay: 2 }}
+        className="pointer-events-none absolute -z-10 right-[-5%] bottom-[10%] h-80 w-80 rounded-full bg-cyan-500/10 blur-[110px]"
+      />
+      <motion.div
+        animate={{ x: [0, 30, 0], y: [0, -20, 0], scale: [1, 1.1, 1] }}
+        transition={{ repeat: Infinity, duration: 22, ease: "easeInOut", delay: 4 }}
+        className="pointer-events-none absolute -z-10 left-[40%] bottom-[5%] h-60 w-60 rounded-full bg-violet-500/8 blur-[90px]"
+      />
+
+      {/* Floating dots rising up */}
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="pointer-events-none absolute -z-10 rounded-full bg-indigo-400/20 dark:bg-indigo-400/30"
+          style={{
+            width: 4 + (i % 3) * 3,
+            height: 4 + (i % 3) * 3,
+            left: `${10 + i * 11}%`,
+            bottom: "-10px",
+          }}
+          animate={{ y: [0, -(300 + i * 40)], opacity: [0, 0.6, 0] }}
+          transition={{
+            repeat: Infinity,
+            duration: 8 + i * 1.2,
+            delay: i * 1.4,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+
+      {/* Subtle radial glow */}
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_50%_at_50%_50%,rgba(99,102,241,0.06),transparent)]" />
+
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        {/* Heading */}
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
           className="mb-12 text-center"
         >
-          <motion.div className="mb-4 flex justify-center" initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.1 }}>
+          <motion.div
+            className="mb-4 flex justify-center"
+            initial={{ opacity: 0, scale: 0.75 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", stiffness: 200, damping: 18, delay: 0.1 }}
+          >
             <div className="flex items-center gap-2 rounded-full border border-blue-400/30 dark:border-blue-500/20 bg-blue-100/50 dark:bg-blue-500/5 px-4 py-1.5">
-              <Code2 className="size-4 text-blue-600 dark:text-blue-400/70" />
+              <motion.span
+                animate={{ rotate: [0, 15, -10, 0] }}
+                transition={{ repeat: Infinity, duration: 4, delay: 2 }}
+              >
+                <Code2 className="size-4 text-blue-600 dark:text-blue-400/70" />
+              </motion.span>
               <span className="text-xs font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400/70">Tech Stack</span>
             </div>
           </motion.div>
+
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-            <span className="bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-600 dark:from-blue-300 dark:via-cyan-400 dark:to-blue-300 bg-clip-text text-transparent">Skills</span>{" "}
-            <span className="text-slate-700 dark:text-slate-200">& Technologies</span>
+            {/* "Skills" — letter by letter drop-in */}
+            <span className="inline-flex bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600 dark:from-blue-300 dark:via-cyan-400 dark:to-indigo-300 bg-clip-text text-transparent"
+              style={{ backgroundSize: "200%" }}>
+              {"Skills".split("").map((char, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 0, y: -30, rotateX: -90 }}
+                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ type: "spring", stiffness: 260, damping: 18, delay: 0.1 + i * 0.07 }}
+                  style={{ display: "inline-block" }}
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </span>
+            {" "}
+            {/* "& Technologies" — slide in from right, word by word */}
+            {"& Technologies".split(" ").map((word, wi) => (
+              <motion.span
+                key={wi}
+                initial={{ opacity: 0, x: 40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ type: "spring", stiffness: 180, damping: 20, delay: 0.55 + wi * 0.15 }}
+                className="inline-block text-slate-700 dark:text-slate-200 mr-2 last:mr-0"
+              >
+                {word}
+              </motion.span>
+            ))}
           </h2>
-          <motion.div initial={{ width: 0 }} whileInView={{ width: 90 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.3 }} className="mx-auto mt-4 h-0.5 rounded-full bg-gradient-to-r from-blue-500/60 via-cyan-500/40 to-blue-500/60" />
-          <motion.p className="mx-auto mt-4 max-w-2xl text-sm text-slate-600 dark:text-slate-400" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.4 }}>
+
+          <motion.div
+            initial={{ width: 0 }}
+            whileInView={{ width: 90 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="mx-auto mt-4 h-0.5 rounded-full bg-gradient-to-r from-blue-500/60 via-cyan-500/40 to-blue-500/60"
+          />
+          <motion.p
+            className="mx-auto mt-4 max-w-2xl text-sm text-slate-600 dark:text-slate-400"
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
             Technologies and tools I use to bring ideas to life
           </motion.p>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-8 flex flex-wrap justify-center gap-2">
-          {categories.map(([category, catSkills]) => {
+        {/* Category tabs with glow ring */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="mb-8 flex flex-wrap justify-center gap-2"
+        >
+          {categories.map(([category, catSkills], i) => {
             const color = categoryColors[category] || defaultColor;
             const isActive = activeCategory === category;
             return (
-              <button
+              <motion.button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${isActive ? `${color.bg} text-white shadow-md` : "border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`relative rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 overflow-hidden ${isActive ? `${color.bg} text-white shadow-lg` : "border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"}`}
               >
-                {category} ({catSkills.length})
-              </button>
+                {isActive && (
+                  <motion.span
+                    layoutId="activeTab"
+                    className="absolute inset-0 rounded-full ring-2 ring-white/30"
+                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                  />
+                )}
+                {/* Shine on active */}
+                {isActive && (
+                  <motion.span
+                    className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                    animate={{ translateX: ["−100%", "200%"] }}
+                    transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut", repeatDelay: 1 }}
+                  />
+                )}
+                <span className="relative">
+                  {category} <span className="opacity-70">({catSkills.length})</span>
+                </span>
+              </motion.button>
             );
           })}
         </motion.div>
 
+        {/* Skill pills — blur+scale on category switch */}
         <AnimatePresence mode="wait">
-          <motion.div key={activeCategory} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-wrap justify-center gap-3">
+          <motion.div
+            key={activeCategory}
+            initial={{ opacity: 0, scale: 0.95, filter: "blur(8px)" }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, scale: 0.95, filter: "blur(8px)" }}
+            transition={{ duration: 0.25 }}
+            className="flex flex-wrap justify-center gap-3"
+          >
             {activeSkills.map((skill, index) => (
               <SkillPill key={skill.id} skill={skill} index={index} color={activeColor} />
             ))}
           </motion.div>
         </AnimatePresence>
 
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="mt-12 flex justify-center gap-8">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-slate-800 dark:text-white">{skills.length}</div>
-            <div className="text-xs text-slate-500">Technologies</div>
-          </div>
+        {/* Animated stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mt-12 flex justify-center gap-8"
+        >
+          <StatCounter value={skills.length} label="Technologies" />
           <div className="h-10 w-px bg-slate-200 dark:bg-slate-700" />
-          <div className="text-center">
-            <div className="text-2xl font-bold text-slate-800 dark:text-white">{categories.length}</div>
-            <div className="text-xs text-slate-500">Categories</div>
-          </div>
+          <StatCounter value={categories.length} label="Categories" />
         </motion.div>
       </div>
     </section>

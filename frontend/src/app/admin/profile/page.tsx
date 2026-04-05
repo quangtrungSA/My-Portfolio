@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useForm, Resolver } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Save, Loader2, Plus, Trash2 } from "lucide-react";
+import { Save, Loader2, Plus, Trash2, Briefcase, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,7 +20,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import type { Profile } from "@/types";
-import { fetchProfile, updateProfile } from "@/lib/api";
+import { fetchProfile, updateProfile, setProfileAvailability } from "@/lib/api";
 
 const profileSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -53,6 +53,7 @@ export default function AdminProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [togglingAvail, setTogglingAvail] = useState(false);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
 
   const {
@@ -120,6 +121,20 @@ export default function AdminProfilePage() {
     );
   };
 
+  const handleToggleAvailability = async () => {
+    if (!profile) return;
+    setTogglingAvail(true);
+    try {
+      const res = await setProfileAvailability(profile.id, !profile.availableForHire);
+      setProfile(res.data);
+      toast.success(res.data.availableForHire ? "Status set to Available for hire" : "Status set to Unavailable");
+    } catch {
+      toast.error("Failed to update availability");
+    } finally {
+      setTogglingAvail(false);
+    }
+  };
+
   const onSubmit = async (data: ProfileFormData) => {
     if (!profile) return;
     setSaving(true);
@@ -148,7 +163,7 @@ export default function AdminProfilePage() {
     });
 
     try {
-      await updateProfile({
+      await updateProfile(profile.id, {
         ...data,
         githubUrl: socialData.githubUrl,
         linkedinUrl: socialData.linkedinUrl,
@@ -354,6 +369,67 @@ export default function AdminProfilePage() {
                 </Button>
               </div>
             ))}
+          </CardContent>
+        </Card>
+
+        {/* Availability toggle */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Availability Status</CardTitle>
+            <CardDescription>
+              Controls the availability badge shown on the homepage hero section
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between rounded-xl border p-4">
+              <div className="flex items-center gap-3">
+                {profile.availableForHire ? (
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/15">
+                    <Briefcase className="size-5 text-emerald-500" />
+                  </div>
+                ) : (
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-500/15">
+                    <XCircle className="size-5 text-slate-400" />
+                  </div>
+                )}
+                <div>
+                  <p className="font-medium">
+                    {profile.availableForHire ? (
+                      <span className="text-emerald-600 dark:text-emerald-400">Available for hire</span>
+                    ) : (
+                      <span className="text-slate-500">Unavailable</span>
+                    )}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {profile.availableForHire
+                      ? "Green badge shown on homepage"
+                      : "Grey badge shown on homepage"}
+                  </p>
+                </div>
+              </div>
+              <Button
+                type="button"
+                variant={profile.availableForHire ? "destructive" : "default"}
+                size="sm"
+                onClick={handleToggleAvailability}
+                disabled={togglingAvail}
+                className={!profile.availableForHire ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}
+              >
+                {togglingAvail ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : profile.availableForHire ? (
+                  <>
+                    <XCircle className="size-4 mr-1" />
+                    Set Unavailable
+                  </>
+                ) : (
+                  <>
+                    <Briefcase className="size-4 mr-1" />
+                    Set Available
+                  </>
+                )}
+              </Button>
+            </div>
           </CardContent>
         </Card>
 

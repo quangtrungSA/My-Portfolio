@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset portfolio:021-experience-sort-order-fn runOnChange:true
+--changeset portfolio:021-experience-sort-order-fn runOnChange:true splitStatements:false
 --comment: Function to auto-assign sort_order based on start_date ASC (earliest project first)
 CREATE OR REPLACE FUNCTION fn_experience_sort_order()
 RETURNS TRIGGER AS $$

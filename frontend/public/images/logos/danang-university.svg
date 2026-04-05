@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
+  <rect width="80" height="80" rx="12" fill="#006633"/>
+  <text x="40" y="34" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="white">ĐẠI HỌC</text>
+  <text x="40" y="52" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" fill="#FFD700">ĐÀ NẴNG</text>
+  <line x1="16" y1="58" x2="64" y2="58" stroke="#FFD700" stroke-width="1.5"/>
+  <text x="40" y="70" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="white" letter-spacing="1">UDN</text>
+</svg>

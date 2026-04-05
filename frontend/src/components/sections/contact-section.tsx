@@ -241,7 +241,67 @@ export function ContactSection({ profile }: ContactSectionProps) {
         : "text-slate-600";
 
   return (
-    <section className="py-20 sm:py-28">
+    <section className="relative py-20 sm:py-28 overflow-hidden">
+      {/* Radar pulse rings from center */}
+      {[0,1,2,3].map(i=>(
+        <motion.div key={i} className="pointer-events-none absolute -z-10 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-400/12"
+          initial={{width:60,height:60,opacity:0.5}}
+          animate={{width:1000,height:1000,opacity:0}}
+          transition={{repeat:Infinity,duration:8,delay:i*2,ease:"easeOut"}} />
+      ))}
+      {/* Orbs */}
+      <motion.div animate={{x:[0,50,0],y:[0,-35,0],scale:[1,1.25,1]}} transition={{repeat:Infinity,duration:18,ease:"easeInOut"}}
+        className="pointer-events-none absolute -z-10 left-[-6%] top-[5%] h-96 w-96 rounded-full bg-emerald-500/10 blur-[120px]" />
+      <motion.div animate={{x:[0,-40,0],y:[0,40,0],scale:[1,1.2,1]}} transition={{repeat:Infinity,duration:22,ease:"easeInOut",delay:5}}
+        className="pointer-events-none absolute -z-10 right-[-6%] bottom-[5%] h-80 w-80 rounded-full bg-cyan-500/10 blur-[110px]" />
+      <motion.div animate={{scale:[1,1.35,1],opacity:[0.3,0.6,0.3],x:[0,20,0]}} transition={{repeat:Infinity,duration:12,ease:"easeInOut",delay:7}}
+        className="pointer-events-none absolute -z-10 left-[42%] top-[35%] h-56 w-56 rounded-full bg-teal-500/7 blur-[80px]" />
+      {/* Edge travellers */}
+      {[...Array(3)].map((_,i)=>(
+        <motion.div key={`te-${i}`} className="pointer-events-none absolute z-0 top-0 h-[2px] w-16 rounded-full bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent"
+          animate={{left:["-8%","108%"]}} transition={{repeat:Infinity,duration:6+i*1.5,delay:i*2,ease:"linear"}} />
+      ))}
+      {[...Array(2)].map((_,i)=>(
+        <motion.div key={`be-${i}`} className="pointer-events-none absolute z-0 bottom-0 h-[2px] w-20 rounded-full bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent"
+          animate={{left:["108%","-8%"]}} transition={{repeat:Infinity,duration:8+i*2,delay:i*3,ease:"linear"}} />
+      ))}
+      {[...Array(2)].map((_,i)=>(
+        <motion.div key={`le-${i}`} className="pointer-events-none absolute z-0 left-0 w-[2px] h-16 rounded-full bg-gradient-to-b from-transparent via-emerald-400/40 to-transparent"
+          animate={{top:["-10%","110%"]}} transition={{repeat:Infinity,duration:7+i*1.5,delay:i*2,ease:"linear"}} />
+      ))}
+      {[...Array(2)].map((_,i)=>(
+        <motion.div key={`re-${i}`} className="pointer-events-none absolute z-0 right-0 w-[2px] h-16 rounded-full bg-gradient-to-b from-transparent via-cyan-400/40 to-transparent"
+          animate={{top:["110%","-10%"]}} transition={{repeat:Infinity,duration:8+i*1.5,delay:i*2.5,ease:"linear"}} />
+      ))}
+      {/* Corner glows */}
+      <motion.div animate={{opacity:[0.3,0.7,0.3],scale:[1,1.2,1]}} transition={{repeat:Infinity,duration:4}}
+        className="pointer-events-none absolute -z-10 top-0 left-0 h-36 w-36 rounded-br-full bg-emerald-500/8 blur-[40px]" />
+      <motion.div animate={{opacity:[0.3,0.7,0.3],scale:[1,1.2,1]}} transition={{repeat:Infinity,duration:5,delay:1.5}}
+        className="pointer-events-none absolute -z-10 top-0 right-0 h-36 w-36 rounded-bl-full bg-cyan-500/8 blur-[40px]" />
+      <motion.div animate={{opacity:[0.3,0.7,0.3],scale:[1,1.2,1]}} transition={{repeat:Infinity,duration:4.5,delay:2.5}}
+        className="pointer-events-none absolute -z-10 bottom-0 left-0 h-36 w-36 rounded-tr-full bg-teal-500/8 blur-[40px]" />
+      <motion.div animate={{opacity:[0.3,0.7,0.3],scale:[1,1.2,1]}} transition={{repeat:Infinity,duration:6,delay:0.8}}
+        className="pointer-events-none absolute -z-10 bottom-0 right-0 h-36 w-36 rounded-tl-full bg-emerald-400/8 blur-[40px]" />
+      {/* Data stream — vertical lines */}
+      {[...Array(3)].map((_,i)=>(
+        <motion.div key={i} className="pointer-events-none absolute -z-10 w-px bg-gradient-to-b from-transparent via-emerald-400/25 to-transparent"
+          style={{left:`${15+i*35}%`,height:"30%"}}
+          animate={{top:["-30%","130%"]}} transition={{repeat:Infinity,duration:5+i*1.5,delay:i*1.2,ease:"linear"}} />
+      ))}
+      {/* Twinkling — emerald theme */}
+      {[{l:"1%",t:"12%",s:7,d:1.8,dl:0},{l:"2%",t:"45%",s:5,d:2.0,dl:0.5},{l:"1%",t:"75%",s:7,d:1.6,dl:0.9},{l:"96%",t:"18%",s:8,d:1.9,dl:0.3},{l:"97%",t:"52%",s:5,d:2.1,dl:0.7},{l:"96%",t:"82%",s:6,d:1.7,dl:0.2},{l:"38%",t:"1%",s:6,d:2.2,dl:0.6},{l:"62%",t:"98%",s:5,d:1.9,dl:0.8}].map((s,i)=>(
+        <motion.div key={i} className="pointer-events-none absolute z-10 rounded-full bg-emerald-300"
+          style={{left:s.l,top:s.t,width:s.s,height:s.s,boxShadow:`0 0 ${s.s*2}px ${s.s}px rgba(52,211,153,0.3)`}}
+          animate={{opacity:[0.2,0.7,0.2],scale:[0.8,1.2,0.8]}}
+          transition={{repeat:Infinity,duration:s.d,delay:s.dl,ease:"easeInOut"}} />
+      ))}
+      {[{l:"2%",t:"28%",dl:0.3},{l:"96%",t:"35%",dl:1.0},{l:"1%",t:"60%",dl:0.7},{l:"97%",t:"68%",dl:0.5},{l:"42%",t:"1%",dl:1.2},{l:"58%",t:"98%",dl:0.8}].map((c,i)=>(
+        <motion.div key={i} className="pointer-events-none absolute z-10" style={{left:c.l,top:c.t}}
+          animate={{opacity:[0,0.5,0],scale:[0.7,1.1,0.7]}}
+          transition={{repeat:Infinity,duration:2.4+i*0.3,delay:c.dl,ease:"easeInOut"}}>
+          <svg width="12" height="12" viewBox="0 0 12 12"><line x1="6" y1="0" x2="6" y2="12" stroke="rgba(52,211,153,0.7)" strokeWidth="1.5" strokeLinecap="round"/><line x1="0" y1="6" x2="12" y2="6" stroke="rgba(52,211,153,0.7)" strokeWidth="1.5" strokeLinecap="round"/></svg>
+        </motion.div>
+      ))}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ─── Heading ─── */}
         <motion.div

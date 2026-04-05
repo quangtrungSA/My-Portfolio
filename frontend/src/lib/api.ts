@@ -47,7 +47,8 @@ async function fetchApi<T>(
 // ---------------------------------------------------------------------------
 
 export async function fetchProfile(): Promise<ApiResponse<Profile>> {
-  return fetchApi<Profile>("/api/profile");
+  const res = await fetchApi<Profile[]>("/api/profiles");
+  return { ...res, data: res.data[0] };
 }
 
 // ---------------------------------------------------------------------------
@@ -101,13 +102,13 @@ export async function fetchEducation(): Promise<ApiResponse<Education[]>> {
 export async function fetchPublishedBlogPosts(): Promise<
   ApiResponse<BlogPost[]>
 > {
-  return fetchApi<BlogPost[]>("/api/blog?published=true");
+  return fetchApi<BlogPost[]>("/api/blog-posts?published=true");
 }
 
 export async function fetchBlogPostBySlug(
   slug: string
 ): Promise<ApiResponse<BlogPost>> {
-  return fetchApi<BlogPost>(`/api/blog/slug/${slug}`);
+  return fetchApi<BlogPost>(`/api/blog-posts/slug/${slug}`);
 }
 
 // ---------------------------------------------------------------------------
@@ -137,11 +138,22 @@ export async function getCurrentUser(): Promise<ApiResponse<AuthResponse>> {
 // ---------------------------------------------------------------------------
 
 export async function updateProfile(
+  id: string,
   data: Partial<Profile>
 ): Promise<ApiResponse<Profile>> {
-  return fetchApi<Profile>("/api/admin/profile", {
+  return fetchApi<Profile>(`/api/admin/profiles/${id}`, {
     method: "PUT",
     body: JSON.stringify(data),
+  });
+}
+
+export async function setProfileAvailability(
+  id: string,
+  availableForHire: boolean
+): Promise<ApiResponse<Profile>> {
+  return fetchApi<Profile>(`/api/admin/profiles/${id}/availability`, {
+    method: "PATCH",
+    body: JSON.stringify({ availableForHire }),
   });
 }
 
@@ -308,13 +320,13 @@ export async function deleteEducation(
 // ---------------------------------------------------------------------------
 
 export async function fetchAllBlogPosts(): Promise<ApiResponse<BlogPost[]>> {
-  return fetchApi<BlogPost[]>("/api/admin/blog");
+  return fetchApi<BlogPost[]>("/api/admin/blog-posts");
 }
 
 export async function createBlogPost(
   data: Omit<BlogPost, "id" | "createdAt" | "updatedAt">
 ): Promise<ApiResponse<BlogPost>> {
-  return fetchApi<BlogPost>("/api/admin/blog", {
+  return fetchApi<BlogPost>("/api/admin/blog-posts", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -324,14 +336,14 @@ export async function updateBlogPost(
   id: string,
   data: Partial<BlogPost>
 ): Promise<ApiResponse<BlogPost>> {
-  return fetchApi<BlogPost>(`/api/admin/blog/${id}`, {
+  return fetchApi<BlogPost>(`/api/admin/blog-posts/${id}`, {
     method: "PUT",
     body: JSON.stringify(data),
   });
 }
 
 export async function deleteBlogPost(id: string): Promise<ApiResponse<void>> {
-  return fetchApi<void>(`/api/admin/blog/${id}`, { method: "DELETE" });
+  return fetchApi<void>(`/api/admin/blog-posts/${id}`, { method: "DELETE" });
 }
 
 // ---------------------------------------------------------------------------
@@ -361,7 +373,7 @@ export async function deleteContact(id: string): Promise<ApiResponse<void>> {
 export async function submitContact(
   data: Pick<Contact, "name" | "email" | "subject" | "message">
 ): Promise<ApiResponse<Contact>> {
-  return fetchApi<Contact>("/api/contact", {
+  return fetchApi<Contact>("/api/contacts", {
     method: "POST",
     body: JSON.stringify(data),
   });

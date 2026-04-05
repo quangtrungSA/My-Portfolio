@@ -48,3 +48,4 @@ frontend/README.md
 seed-data.sh
 *.log
 node_modules/
+.claude/worktrees/

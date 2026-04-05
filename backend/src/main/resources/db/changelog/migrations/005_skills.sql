@@ -13,16 +13,22 @@ CREATE TABLE IF NOT EXISTS skills (
 );
 
 --changeset portfolio:005-skills-migrate-categories runOnChange:false
+--preconditions onFail:MARK_RAN
+--precondition-sql-check expectedResult:1 SELECT COUNT(*) FROM information_schema.columns WHERE table_name='skills' AND column_name='category'
 --comment: Migrate extra categories from existing skills.category string (idempotent)
 INSERT INTO skill_categories (name, sort_order)
 SELECT DISTINCT category, 99 FROM skills WHERE category IS NOT NULL
 ON CONFLICT (name) DO NOTHING;
 
 --changeset portfolio:005-skills-add-category-id runOnChange:false
+--preconditions onFail:MARK_RAN
+--precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM information_schema.columns WHERE table_name='skills' AND column_name='category_id'
 --comment: Add category_id FK column if not yet present
 ALTER TABLE skills ADD COLUMN IF NOT EXISTS category_id UUID REFERENCES skill_categories(id);
 
 --changeset portfolio:005-skills-backfill-category-id runOnChange:false
+--preconditions onFail:MARK_RAN
+--precondition-sql-check expectedResult:1 SELECT COUNT(*) FROM information_schema.columns WHERE table_name='skills' AND column_name='category'
 --comment: Back-fill category_id from legacy category string column
 UPDATE skills s
 SET category_id = sc.id

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -27,5 +28,13 @@ public class ProfileController {
     public ResponseEntity<ApiResponse<Profile>> update(@PathVariable UUID id,
                                                         @Valid @RequestBody ProfileRequest request) {
         return ResponseEntity.ok(ApiResponse.success(profileService.update(id, request)));
+    }
+
+    @PatchMapping("/api/admin/profiles/{id}/availability")
+    public ResponseEntity<ApiResponse<Profile>> toggleAvailability(
+            @PathVariable UUID id,
+            @RequestBody Map<String, Boolean> body) {
+        Boolean available = body.get("availableForHire");
+        return ResponseEntity.ok(ApiResponse.success(profileService.setAvailability(id, available)));
     }
 }

@@ -1,11 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" fill="none">
-  <!-- mgm icon: square with top-right corner cut, inner square bottom-left -->
-  <g transform="translate(8, 10)">
-    <!-- Outer square with top-right corner cut -->
-    <path d="M0,0 H44 L56,12 V56 H0 Z" fill="#1a6faf"/>
-    <!-- Inner white square (bottom-left area) -->
-    <rect x="8" y="28" width="24" height="24" fill="white"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 50" fill="none">
+  <!-- Large hollow square (outline only) - upper right -->
+  <rect x="10" y="5" width="26" height="26" stroke="#1d1d1b" stroke-width="2.8" fill="none"/>
+  <!-- Small solid square - lower left, overlapping lower-left of large square -->
+  <rect x="4" y="19" width="16" height="16" fill="#1d1d1b"/>
   <!-- mgm text -->
-  <text x="76" y="52" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#1a6faf" letter-spacing="-0.5">mgm</text>
+  <text x="46" y="31" font-family="'Helvetica Neue', Arial, sans-serif" font-size="23" font-weight="400" fill="#1d1d1b" letter-spacing="0.4">mgm</text>
 </svg>
