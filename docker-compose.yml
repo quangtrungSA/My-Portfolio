@@ -1,25 +1,53 @@
+# docker-compose.yml — LOCAL full-stack (PostgreSQL + Backend + Frontend)
+# Usage: docker compose up --build
+# Requires: no .env needed (all defaults configured below)
+
 services:
+  db:
+    image: postgres:17-alpine
+    container_name: portfolio-db
+    environment:
+      POSTGRES_DB: portfolio
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d portfolio"]
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 5
+    networks:
+      - portfolio-net
+
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    container_name: portfolio-backend
     ports:
       - "8080:8080"
     environment:
-      - NEON_JDBC_URL=${NEON_JDBC_URL}
-      - NEON_USERNAME=${NEON_USERNAME}
-      - NEON_PASSWORD=${NEON_PASSWORD}
-      - JWT_SECRET=${JWT_SECRET:-myDefaultSuperSecretKeyThatIsAtLeast256BitsLongForHS512Algorithm123456}
-      - MAIL_HOST=${MAIL_HOST:-smtp.gmail.com}
-      - MAIL_PORT=${MAIL_PORT:-587}
-      - MAIL_USERNAME=${MAIL_USERNAME:-}
-      - MAIL_PASSWORD=${MAIL_PASSWORD:-}
+      - NEON_JDBC_URL=jdbc:postgresql://db:5432/portfolio
+      - NEON_USERNAME=postgres
+      - NEON_PASSWORD=postgres
+      - JWT_SECRET=localDevSecretKeyThatIsAtLeast256BitsLongForHS512Algorithm123456789
+      - MAIL_HOST=smtp.gmail.com
+      - MAIL_PORT=587
+      - MAIL_USERNAME=
+      - MAIL_PASSWORD=
+    depends_on:
+      db:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/api/profiles"]
       interval: 30s
       timeout: 5s
-      start_period: 60s
-      retries: 3
+      start_period: 90s
+      retries: 5
     networks:
       - portfolio-net
 
@@ -29,15 +57,20 @@ services:
       dockerfile: Dockerfile
       args:
         - API_URL=http://backend:8080
+    container_name: portfolio-frontend
     ports:
       - "3000:3000"
     environment:
       - API_URL=http://backend:8080
+      - DOCKER=true
     depends_on:
       backend:
         condition: service_healthy
     networks:
       - portfolio-net
+
+volumes:
+  postgres_data:
 
 networks:
   portfolio-net:

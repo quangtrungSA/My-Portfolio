@@ -19,10 +19,9 @@ spring:
       hibernate:
         format_sql: true
 
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:schema.sql
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
 
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
