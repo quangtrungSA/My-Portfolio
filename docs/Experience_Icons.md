@@ -4,7 +4,9 @@
 
 | # | Company | Period | Project | Icon | Logo File |
 |:-:|---------|--------|---------|------|-----------|
-| 1 | Freelance Developer | Apr 2025 - Present | Coffee Shop Management App | ![Freelance](/images/logos/freelance.svg) | `freelance.svg` |
+| 1 | mgm Technology Partners | Apr 2026 - Present | mgm VN DevOps Team | ![mgm](/images/logos/mgm.svg) | `mgm.svg` |
+| 2 | mgm Technology Partners | Jan 2026 - Apr 2026 | Genesis Project | ![mgm](/images/logos/mgm.svg) | `mgm.svg` |
+| 3 | Freelance Developer | Apr 2025 - Dec 2025 | Coffee Shop Management App | ![Freelance](/images/logos/freelance.svg) | `freelance.svg` |
 | 2 | Hybrid Technologies | Jun 2023 - Apr 2025 | NOVA (E-learning) | ![Hybrid](/images/logos/hybrid-technologies.svg) | `hybrid-technologies.svg` |
 | 3 | FPT Software Da Nang | Sep 2022 - May 2023 | AIRCASH (Finance) | ![FPT](/images/logos/fpt-software.svg) | `fpt-software.svg` |
 | 4 | FPT Software Da Nang | Jun 2022 - Aug 2022 | R17 Working Tool (Internal) | ![FPT](/images/logos/fpt-software.svg) | `fpt-software.svg` |
@@ -23,6 +25,7 @@
 
 ```
 frontend/public/images/logos/
+├── mgm.svg                   # mgm Technology Partners logo (blue)
 ├── fpt-software.svg          # FPT Software logo (orange/green)
 ├── hybrid-technologies.svg   # Hybrid Technologies logo (blue)
 ├── freelance.svg             # Freelance/independent developer icon (purple)
