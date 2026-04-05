@@ -68,10 +68,10 @@ const CARD_PALETTE = [
 
 // Explicit local logos — keys match exact issuingOrg from DB
 const LOCAL_LOGOS: Record<string, string> = {
-  "Oracle":                       "/images/corporation/oracle.png",
-  "Oracle Corporation":           "/images/corporation/oracle.png",
-  "Linux Professional Institute": "/images/corporation/linux.png",
-  "LPI":                          "/images/corporation/linux.png",
+  "Oracle":                       "/images/logos/oracle.svg",
+  "Oracle Corporation":           "/images/logos/oracle.svg",
+  "Linux Professional Institute": "/images/logos/lpi.svg",
+  "LPI":                          "/images/logos/lpi.svg",
 };
 
 // Stagger container variant
@@ -207,7 +207,7 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
         >
           {certifications.map((cert, index) => {
             const pal = CARD_PALETTE[index % CARD_PALETTE.length];
-            const logoSrc = LOCAL_LOGOS[cert.issuingOrg] ?? null;
+            const logoSrc = LOCAL_LOGOS[cert.issuingOrg] ?? cert.badgeUrl ?? null;
 
             return (
               <motion.div
@@ -235,7 +235,7 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
                     {/* Logo — float animation on hover */}
                     <div className="relative z-10">
                       <motion.div
-                        className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl bg-white/95 p-2 shadow-md ring-1 ring-white/10"
+                        className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl shadow-lg"
                         whileHover={{
                           y: -3,
                           scale: 1.05,
@@ -246,9 +246,9 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
                           <Image
                             src={logoSrc}
                             alt={cert.issuingOrg}
-                            width={48}
-                            height={48}
-                            className="h-full w-full object-contain"
+                            width={64}
+                            height={64}
+                            className="h-full w-full object-cover"
                           />
                         ) : (
                           <Award className="size-8 text-slate-400" />
