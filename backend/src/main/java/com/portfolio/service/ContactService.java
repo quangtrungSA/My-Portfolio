@@ -5,14 +5,19 @@ import com.portfolio.entity.Contact;
 import com.portfolio.exception.ResourceNotFoundException;
 import com.portfolio.repository.ContactRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ContactService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ContactService.class);
 
     private final ContactRepository repository;
     private final EmailService emailService;
@@ -34,10 +39,20 @@ public class ContactService {
                 .build();
         Contact saved = repository.save(contact);
 
-        // Send notification email
-        emailService.sendContactNotification(
-                request.getName(), request.getEmail(), request.getSubject(), request.getMessage()
-        );
+        // Send notification email async, then mark email_sent on success
+        try {
+            emailService.sendContactNotificationSync(
+                    request.getName(), request.getEmail(),
+                    request.getSubject(), request.getMessage()
+            );
+            saved.setEmailSent(true);
+            saved.setEmailSentAt(Instant.now());
+            repository.save(saved);
+        } catch (Exception e) {
+            // Email failure is non-critical — contact is already saved
+            logger.warn("Email notification could not be sent for contact id={}: {}",
+                    saved.getId(), e.getMessage());
+        }
 
         return saved;
     }

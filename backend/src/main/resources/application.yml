@@ -44,7 +44,7 @@ app:
     expiration-ms: 86400000
     cookie-name: portfolio_token
   admin:
-    email: ${ADMIN_EMAIL:admin@portfolio.com}
+    email: ${ADMIN_EMAIL:trungly.dev@gmail.com}
 
 logging:
   level:
