@@ -108,7 +108,7 @@ export async function fetchPublishedBlogPosts(): Promise<
 export async function fetchBlogPostBySlug(
   slug: string
 ): Promise<ApiResponse<BlogPost>> {
-  return fetchApi<BlogPost>(`/api/blog-posts/slug/${slug}`);
+  return fetchApi<BlogPost>(`/api/blog-posts/${slug}`);
 }
 
 // ---------------------------------------------------------------------------

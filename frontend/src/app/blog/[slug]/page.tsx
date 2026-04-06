@@ -5,12 +5,38 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getPostBySlug, getRelatedPosts, STATIC_BLOG_POSTS } from "@/lib/blog-data";
+import type { BlogPost } from "@/types";
 import { format } from "date-fns";
 import { Calendar, Clock, ArrowLeft, ArrowRight, BookOpen, Share2 } from "lucide-react";
 
-export async function generateStaticParams() {
-  return STATIC_BLOG_POSTS.map((p) => ({ slug: p.slug }));
+async function fetchPostBySlug(slug: string): Promise<BlogPost | null> {
+  try {
+    const apiUrl = process.env.API_URL || "http://localhost:8080";
+    const res = await fetch(`${apiUrl}/api/blog-posts/${slug}`, { cache: "no-store" });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.data ?? json ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchAllPosts(): Promise<BlogPost[]> {
+  try {
+    const apiUrl = process.env.API_URL || "http://localhost:8080";
+    const res = await fetch(`${apiUrl}/api/blog-posts`, { cache: "no-store" });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.data ?? json ?? [];
+  } catch {
+    return [];
+  }
+}
+
+function getRelatedPosts(post: BlogPost, allPosts: BlogPost[], limit = 3): BlogPost[] {
+  return allPosts
+    .filter((p) => p.id !== post.id && p.tags.some((tag) => post.tags.includes(tag)))
+    .slice(0, limit);
 }
 
 export async function generateMetadata({
@@ -18,7 +44,7 @@ export async function generateMetadata({
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
-  const post = getPostBySlug(params.slug);
+  const post = await fetchPostBySlug(params.slug);
   if (!post) return { title: "Post Not Found" };
   return {
     title: `${post.title} | Blog`,
@@ -35,11 +61,14 @@ function estimateReadTime(content: string) {
   return Math.max(1, Math.ceil(content.split(/\s+/).length / 200));
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = getPostBySlug(params.slug);
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const [post, allPosts] = await Promise.all([
+    fetchPostBySlug(params.slug),
+    fetchAllPosts(),
+  ]);
   if (!post) notFound();
 
-  const related = getRelatedPosts(post, 3);
+  const related = getRelatedPosts(post, allPosts, 3);
   const readTime = estimateReadTime(post.content);
 
   return (

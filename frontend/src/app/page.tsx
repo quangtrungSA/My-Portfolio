@@ -31,7 +31,7 @@ import {
   STATIC_CERTIFICATIONS,
   STATIC_TESTIMONIALS,
 } from "@/lib/static-data";
-import { STATIC_BLOG_POSTS } from "@/lib/blog-data";
+
 
 const API_BASE = process.env.API_URL || "http://localhost:8080";
 
@@ -90,7 +90,7 @@ export default async function HomePage() {
   const eduData        = education.length      > 0 ? education      : STATIC_EDUCATION;
   const certsData      = certifications.length > 0 ? certifications : STATIC_CERTIFICATIONS;
   const testimonialsData = testimonials.length > 0 ? testimonials   : STATIC_TESTIMONIALS;
-  const blogData       = blogPosts.length      > 0 ? blogPosts      : STATIC_BLOG_POSTS;
+  const blogData       = blogPosts.length      > 0 ? blogPosts      : [];
 
   return (
     <div className="min-h-screen">

@@ -4,9 +4,9 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { STATIC_BLOG_POSTS, ALL_TAGS } from "@/lib/blog-data";
 import { format } from "date-fns";
 import { Calendar, Clock, ArrowLeft, ArrowRight, BookOpen, Rss } from "lucide-react";
+import type { BlogPost } from "@/types";
 
 export const metadata: Metadata = {
   title: "Blog | Ly Van Quang Trung",
@@ -18,8 +18,21 @@ function estimateReadTime(content: string) {
   return Math.max(1, Math.ceil(content.split(/\s+/).length / 200));
 }
 
-export default function BlogPage() {
-  const posts = STATIC_BLOG_POSTS;
+async function fetchPosts(): Promise<BlogPost[]> {
+  try {
+    const apiUrl = process.env.API_URL || "http://localhost:8080";
+    const res = await fetch(`${apiUrl}/api/blog-posts`, { cache: "no-store" });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.data ?? json ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export default async function BlogPage() {
+  const posts = await fetchPosts();
+  const allTags = Array.from(new Set(posts.flatMap((p) => p.tags))).sort();
   const featured = posts[0];
   const rest = posts.slice(1);
   const totalReadTime = posts.reduce((a, p) => a + estimateReadTime(p.content), 0);
@@ -66,7 +79,7 @@ export default function BlogPage() {
 
           {/* Tag cloud */}
           <div className="mt-8 flex flex-wrap gap-2">
-            {ALL_TAGS.map((tag) => (
+            {allTags.map((tag) => (
               <Badge
                 key={tag}
                 variant="outline"
@@ -86,12 +99,13 @@ export default function BlogPage() {
             {posts.length} Articles
           </span>
           <span className="hidden sm:inline">·</span>
-          <span>{ALL_TAGS.length} Topics</span>
+          <span>{allTags.length} Topics</span>
           <span className="hidden sm:inline">·</span>
           <span>~{totalReadTime} min total reading time</span>
         </div>
 
         {/* ── Featured Post ── */}
+        {featured && (
         <section className="mb-16">
           <div className="mb-6 flex items-center gap-4">
             <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
@@ -150,6 +164,7 @@ export default function BlogPage() {
             </div>
           </Link>
         </section>
+        )}
 
         {/* ── All Articles ── */}
         <section>
