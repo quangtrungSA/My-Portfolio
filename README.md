@@ -2,7 +2,7 @@
 
 A modern, full-stack personal portfolio web application with an admin CMS dashboard for **Ly Van Quang Trung** — Software Engineer.
 
-**Live:** [frontend-two-tan-77.vercel.app](https://frontend-two-tan-77.vercel.app)
+**Live:** [quangtrung.store](https://quangtrung.store)
 
 ---
 
@@ -13,7 +13,7 @@ A modern, full-stack personal portfolio web application with an admin CMS dashbo
 | **Frontend** | Next.js 14, shadcn/ui, Tailwind CSS, Framer Motion, TypeScript |
 | **Backend** | Java 21, Spring Boot 3.4, Spring Security, JWT |
 | **Database** | PostgreSQL 17 (Neon cloud, Singapore) |
-| **Deployment** | Vercel (frontend) + Oracle Cloud Always Free VM (backend) |
+| **Deployment** | Google Cloud Run (frontend) + Oracle Cloud Always Free VM (backend) |
 | **CI/CD** | GitHub Actions |
 
 ## Features
@@ -63,7 +63,7 @@ docker compose up --build
 ## Architecture
 
 ```
-Browser → Vercel (Next.js) ──middleware proxy──▶ Oracle Cloud VM (Spring Boot) ──JDBC──▶ Neon (PostgreSQL)
+Browser → Google Cloud Run (Next.js) ──middleware proxy──▶ Oracle Cloud VM (Spring Boot) ──JDBC──▶ Neon (PostgreSQL)
               :3000                                        :8080                        Singapore
 ```
 
@@ -75,11 +75,11 @@ Browser → Vercel (Next.js) ──middleware proxy──▶ Oracle Cloud VM (Sp
 
 | Service | Platform | Region |
 |---------|----------|--------|
-| Frontend | Vercel | Edge (global) |
+| Frontend | Vercel | asia-southeast1 |
 | Backend | Oracle Cloud Always Free VM (ARM) | ap-singapore-1 |
 | Database | Neon | Singapore |
 
-Auto-deploy: push to `main` → GitHub Actions CI → Vercel auto-deploys frontend + SSH deploy to Oracle Cloud VM.
+Auto-deploy: push to `main` → GitHub Actions CI → GitHub Actions deploys to Cloud Run + SSH deploy to Oracle Cloud VM.
 
 See [docs/Deployment_Guide.md](docs/Deployment_Guide.md) for full setup instructions.
 
@@ -114,7 +114,7 @@ Schema managed by `backend/src/main/resources/schema.sql` — all `IF NOT EXISTS
 |----------|-------------|
 | [CLAUDE.md](CLAUDE.md) | Full project reference (architecture, env vars, structure) |
 | [docs/API_Endpoints.md](docs/API_Endpoints.md) | Complete REST API reference |
-| [docs/Deployment_Guide.md](docs/Deployment_Guide.md) | Step-by-step deploy guide (Vercel + Oracle Cloud) |
+| [docs/Deployment_Guide.md](docs/Deployment_Guide.md) | Step-by-step deploy guide (Google Cloud Run) |
 | [docs/Portfolio_DB_Requirements.md](docs/Portfolio_DB_Requirements.md) | Database schema & requirements |
 | [docs/License_Audit.md](docs/License_Audit.md) | Dependency license audit (all open-source) |
 | [docs/Security_Push_Checklist.md](docs/Security_Push_Checklist.md) | **MUST READ** before pushing code |

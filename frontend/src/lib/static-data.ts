@@ -96,11 +96,11 @@ export const STATIC_PROJECTS: Project[] = [
     id: "1",
     title: "My Portfolio & CMS",
     description:
-      "Full-stack personal portfolio with an admin CMS dashboard. Next.js 14 App Router + Spring Boot 3 backend, PostgreSQL on Neon, JWT auth (httpOnly cookie), Framer Motion animations, dark/light mode, and a full CI/CD pipeline via GitHub Actions → Vercel + Render.",
+      "Full-stack personal portfolio with an admin CMS dashboard. Next.js 14 App Router + Spring Boot 3 backend, PostgreSQL on Neon, JWT auth (httpOnly cookie), Framer Motion animations, dark/light mode, and a full CI/CD pipeline via GitHub Actions → Google Cloud Run.",
     imageUrl: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&q=80",
     techStack: ["Next.js 14", "Spring Boot 3", "PostgreSQL", "Tailwind CSS", "Docker", "GitHub Actions"],
     githubUrl: "https://github.com/quangtrungSA/My-Portfolio",
-    liveUrl: "https://frontend-two-tan-77.vercel.app",
+    liveUrl: "https://quangtrung.store",
     featured: true,
     sortOrder: 1,
     category: "Full-Stack",

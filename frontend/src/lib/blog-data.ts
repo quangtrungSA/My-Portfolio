@@ -17,7 +17,7 @@ export const STATIC_BLOG_POSTS: BlogPost[] = [
   <li><strong>Frontend:</strong> Next.js 14 (App Router) + Tailwind CSS + shadcn/ui + Framer Motion</li>
   <li><strong>Backend:</strong> Java Spring Boot 3.4.5 + Spring Security + JWT</li>
   <li><strong>Database:</strong> PostgreSQL on Neon (serverless)</li>
-  <li><strong>Deployment:</strong> Vercel (frontend) + Fly.io (backend)</li>
+  <li><strong>Deployment:</strong> Google Cloud Run (frontend + backend)</li>
 </ul>
 
 <h2>Why Next.js App Router?</h2>
@@ -48,7 +48,7 @@ public ResponseEntity&lt;AuthResponse&gt; login(@RequestBody LoginRequest reques
 }</code></pre>
 
 <h2>Eliminating CORS with API Proxy</h2>
-<p>By configuring Next.js rewrites, all <code>/api/*</code> requests are proxied to the backend. This means the browser only ever talks to Vercel — no CORS configuration needed!</p>
+<p>By configuring Next.js rewrites, all <code>/api/*</code> requests are proxied to the backend. This means the browser only ever talks to the frontend server — no CORS configuration needed!</p>
 
 <h2>Conclusion</h2>
 <p>The result is a fast, secure, and maintainable portfolio with a fully functional admin CMS. The separation of concerns between frontend and backend makes it easy to iterate on each independently.</p>

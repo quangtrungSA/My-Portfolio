@@ -169,7 +169,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               className="gap-2"
               render={
                 <a
-                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`https://frontend-two-tan-77.vercel.app/blog/${post.slug}`)}`}
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`https://quangtrung.store/blog/${post.slug}`)}`}
                   target="_blank"
                   rel="noreferrer"
                 />

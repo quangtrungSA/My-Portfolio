@@ -54,5 +54,5 @@ After deploy, verify the backend is running:
 ```bash
 curl https://<ORACLE_VM_IP>/api/profiles
 # or via frontend proxy:
-curl https://frontend-two-tan-77.vercel.app/api/profiles
+curl https://quangtrung.store/api/profiles
 ```

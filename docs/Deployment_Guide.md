@@ -4,7 +4,7 @@
 
 | Service | Platform | Region | Always On? |
 |---------|----------|--------|------------|
-| Frontend | **Vercel** | Edge (global) | Yes |
+| Frontend | **Google Cloud Run** | asia-southeast1 | Yes |
 | Backend | **Oracle Cloud** Always Free VM | Choose closest | Yes (never shuts down) |
 | Database | **Neon** | Singapore | Yes |
 
@@ -163,6 +163,6 @@ Add at: GitHub repo - Settings - Secrets and variables - Actions.
 git push origin main
     |
     +--> GitHub Actions CI (test + build)
-    +--> Vercel auto-deploys frontend (~1 min)
+    +--> GitHub Actions deploys to Cloud Run (~1 min)
     +--> GitHub Actions SSH - Oracle VM - docker compose up (~2 min)
 ```
