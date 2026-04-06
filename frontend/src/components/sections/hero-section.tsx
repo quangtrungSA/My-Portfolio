@@ -131,7 +131,7 @@ export function HeroSection({ profile }: HeroSectionProps) {
   const typedRole = useTypewriter(ROLES);
 
   // Stats counters
-  const years   = useCounter(4);
+  const years   = useCounter(5);
   const certs   = useCounter(8);
   const projects = useCounter(10);
 

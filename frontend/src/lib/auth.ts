@@ -3,7 +3,7 @@ import { SignJWT, jwtVerify } from "jose";
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "admin";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "changeme";
 const JWT_SECRET =
-  process.env.JWT_SECRET || "portfolio-jwt-secret-key-change-in-production-2024";
+  process.env.JWT_SECRET || "myDefaultSuperSecretKeyThatIsAtLeast256BitsLongForHS512Algorithm123456";
 const COOKIE_NAME = "portfolio_token";
 const TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7 days
 
@@ -13,7 +13,7 @@ function getSecretKey() {
 
 export async function signToken(payload: { username: string; role: string }) {
   return new SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
+    .setProtectedHeader({ alg: "HS512" })
     .setIssuedAt()
     .setExpirationTime(`${TOKEN_MAX_AGE}s`)
     .sign(getSecretKey());
