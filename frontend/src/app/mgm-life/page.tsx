@@ -35,6 +35,7 @@ const STATIC_ITEMS: MgmLifeItem[] = [
   { id: "s5", title: "Onboarding Gift — Welcome to mgm!", description: "A warm welcome card from Ms. Ngo Loan — Deputy General Director.", mediaType: "IMAGE", mediaUrl: GD("1wigY74letDLUD-uUSeBtmMxY4Lgq_AnN"), thumbnailUrl: "", category: "COMPANY_OVERVIEW", sortOrder: 1, published: true, createdAt: "", updatedAt: "" },
   { id: "s6", title: "Software Quality — ISO/IEC 25010", description: "International speaker session on software quality characteristics.", mediaType: "IMAGE", mediaUrl: GD("110ZpnhR08VEg0yGXEpK3TFLkU0DJcWd9"), thumbnailUrl: "", category: "COMPANY_OVERVIEW", sortOrder: 2, published: true, createdAt: "", updatedAt: "" },
   { id: "s7", title: "Tech Talk at mgm", description: "Engineers sharing knowledge and technical insights.", mediaType: "IMAGE", mediaUrl: GD("1d61zh7zySVYgT3IVv2feCuzX38dkMOVN"), thumbnailUrl: "", category: "COMPANY_OVERVIEW", sortOrder: 3, published: true, createdAt: "", updatedAt: "" },
+  { id: "s8", title: "mgm Office — Da Nang", description: "Our workspace in the heart of Da Nang — open, modern, and welcoming.", mediaType: "IMAGE", mediaUrl: GD("1xE8O5NKYhkUWVVdLy58JcoJy4I8q9MYU"), thumbnailUrl: "", category: "COMPANY_OVERVIEW", sortOrder: 4, published: true, createdAt: "", updatedAt: "" },
   { id: "s3", title: "Instant Noodles at the Office", description: "Late afternoons cooking instant noodles together.", mediaType: "IMAGE", mediaUrl: GD("13HcKoP-xkU6zLAkVG93vzUCtdg-WT9Xk"), thumbnailUrl: "", category: "GENERAL", sortOrder: 1, published: true, createdAt: "", updatedAt: "" },
   { id: "s4", title: "Piano at the Office", description: "The office piano — a place to unwind and share a passion for music.", mediaType: "IMAGE", mediaUrl: GD("1ZEsaj7zr0UHGTyOHBv9vKMfSWXIWJ0mi"), thumbnailUrl: "", category: "GENERAL", sortOrder: 2, published: true, createdAt: "", updatedAt: "" },
 ];
@@ -50,17 +51,6 @@ async function fetchItems(): Promise<MgmLifeItem[]> {
   }
 }
 
-function DriveImage({ id, alt, className }: { id: string; alt: string; className?: string }) {
-  return (
-    <Image
-      src={GD(id)}
-      alt={alt}
-      fill
-      className={className ?? "object-cover"}
-      unoptimized
-    />
-  );
-}
 
 function DriveMedia({ item, className }: { item: MgmLifeItem; className?: string }) {
   if (item.mediaType === "VIDEO" && item.mediaUrl) {
@@ -436,6 +426,16 @@ export default async function MgmLifePage() {
               </p>
             </div>
 
+            {/* Office photo */}
+            {(() => {
+              const officePhoto = items.find((i) => i.mediaUrl?.includes("1xE8O5NKYhkUWVVdLy58JcoJy4I8q9MYU"));
+              return officePhoto ? (
+                <div className="mb-6 relative aspect-video overflow-hidden rounded-3xl border border-white/10">
+                  <DriveMedia item={officePhoto} className="object-cover" />
+                </div>
+              ) : null;
+            })()}
+
             {/* Video placeholder or actual video */}
             <div className="mb-6 overflow-hidden rounded-3xl border border-white/10 bg-slate-800">
               {officeVideo ? (
@@ -528,9 +528,6 @@ export default async function MgmLifePage() {
                   <div className="mt-1 text-xs text-slate-400">{label}</div>
                 </div>
               ))}
-            </div>
-
-            <div
             </div>
 
             {/* Happy Friday items if any */}
