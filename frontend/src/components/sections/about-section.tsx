@@ -362,14 +362,6 @@ export function AboutSection({ profile }: AboutSectionProps) {
                   </a>
                 );
               })}
-              <Link
-                href="/mgm-life"
-                style={{ zIndex: 50 }}
-                className="inline-flex items-center gap-1.5 h-11 rounded-xl border border-violet-400/30 bg-violet-500/10 px-4 text-sm font-medium text-violet-600 dark:text-violet-300 shadow-sm transition-colors hover:bg-violet-500/20 hover:border-violet-400/50"
-              >
-                <Sparkles className="size-4" />
-                mgm life
-              </Link>
             </div>
           </motion.div>
         </div>
@@ -389,17 +381,17 @@ export function AboutSection({ profile }: AboutSectionProps) {
                   <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2 mb-2">
                     <span className="inline-flex size-5 items-center justify-center rounded-md bg-gradient-to-br from-cyan-500 to-teal-500 text-white text-[10px]">🚀</span>
                     Career Journey
-                    <Link
-                      href="/mgm-life"
-                      className="inline-flex items-center gap-1 rounded-full bg-violet-500/10 px-2 py-0.5 text-[11px] font-medium text-violet-600 dark:text-violet-400 ring-1 ring-violet-500/20 transition-colors hover:bg-violet-500/20"
-                    >
-                      <Sparkles className="size-3" />
-                      mgm life →
-                    </Link>
                   </h4>
                   <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
                     {profile.careerSummary}
                   </p>
+                  <Link
+                    href="/mgm-life"
+                    className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-violet-600 dark:text-violet-400 hover:text-violet-500 dark:hover:text-violet-300 transition-colors"
+                  >
+                    <Sparkles className="size-3" />
+                    Life at mgm →
+                  </Link>
                 </div>
               )}
               {profile.internationalClients && (() => {
