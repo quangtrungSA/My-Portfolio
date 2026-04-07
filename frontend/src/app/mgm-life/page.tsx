@@ -15,6 +15,9 @@ import {
   Award,
   Languages,
   Play,
+  Laptop,
+  Mouse,
+  Keyboard,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -352,6 +355,13 @@ export default async function MgmLifePage() {
                   desc: "Tech talk nội bộ, session chia sẻ kỹ thuật, cơ hội học hỏi từ senior engineer người Đức và châu Âu.",
                   tag: "Continuous learning",
                 },
+                {
+                  icon: Laptop,
+                  color: "sky",
+                  title: "MacBook hoặc ThinkPad — bạn chọn",
+                  desc: "Nhân viên được tự chọn thiết bị theo nhu cầu cá nhân: MacBook Pro/Air hoặc ThinkPad mới nhất, kèm bàn phím và chuột flagship.",
+                  tag: "Latest hardware",
+                },
               ].map(({ icon: Icon, color, title, desc, tag }) => (
                 <div
                   key={title}
@@ -595,7 +605,46 @@ export default async function MgmLifePage() {
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2">
-              {/* Noodles */}
+              {/* Device setup highlight */}
+            <div className="mb-6 overflow-hidden rounded-2xl border border-sky-500/20 bg-gradient-to-r from-sky-950/30 to-slate-900 p-6">
+              <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+                <div className="shrink-0">
+                  <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-sky-500/10">
+                    <Laptop className="size-7 text-sky-400" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="mb-1 text-lg font-bold text-white">
+                    Thiết bị theo nhu cầu — MacBook hoặc ThinkPad
+                  </h3>
+                  <p className="text-sm text-slate-400">
+                    mgm trang bị cho nhân viên{" "}
+                    <span className="font-semibold text-sky-300">MacBook Pro / Air hoặc Lenovo ThinkPad</span>{" "}
+                    đời mới nhất tuỳ theo sở thích và công việc. Kèm theo là phụ kiện
+                    flagship — bàn phím cơ / Apple Magic Keyboard và chuột cao cấp mới nhất.
+                    Không cần lo về công cụ, chỉ cần tập trung làm việc tốt.
+                  </p>
+                </div>
+                <div className="flex shrink-0 flex-col gap-2 sm:items-end">
+                  <div className="flex items-center gap-4">
+                    {[
+                      { icon: Laptop,   label: "MacBook / ThinkPad" },
+                      { icon: Keyboard, label: "Latest keyboard" },
+                      { icon: Mouse,    label: "Premium mouse" },
+                    ].map(({ icon: Icon, label }) => (
+                      <div key={label} className="flex flex-col items-center gap-1">
+                        <div className="rounded-xl border border-sky-500/20 bg-sky-500/10 p-2.5">
+                          <Icon className="size-4 text-sky-400" />
+                        </div>
+                        <span className="text-center text-[10px] text-slate-500">{label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Noodles */}
               {noodles && (
                 <div className="group overflow-hidden rounded-2xl border border-white/10 bg-slate-800/60">
                   <div className="relative aspect-video overflow-hidden">
