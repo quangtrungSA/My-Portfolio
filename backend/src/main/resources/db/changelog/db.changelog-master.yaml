@@ -98,3 +98,6 @@ databaseChangeLog:
   - include:
       file: db/changelog/migrations/033_fix_mgm_life_titles_en.sql
       relativeToChangelogFile: false
+  - include:
+      file: db/changelog/migrations/034_seed_mgm_office_photos.sql
+      relativeToChangelogFile: false

@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, AnimatePresence, useInView } from "motion/react";
 import {
   Calendar,
@@ -766,6 +767,15 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                       <FolderGit2 className="size-3 text-cyan-400/60" />
                       {group.experiences.length} project{group.experiences.length > 1 ? "s" : ""}
                     </span>
+                    {group.company.toLowerCase().includes("mgm") && (
+                      <Link
+                        href="/mgm-life"
+                        className="flex items-center gap-1 rounded-full bg-violet-500/10 px-2 py-0.5 text-[11px] font-medium text-violet-400 ring-1 ring-violet-500/20 transition-colors hover:bg-violet-500/20"
+                      >
+                        <Sparkles className="size-3" />
+                        mgm life →
+                      </Link>
+                    )}
                   </motion.div>
                 </div>
               </div>

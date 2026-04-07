@@ -36,6 +36,8 @@ const STATIC_ITEMS: MgmLifeItem[] = [
   { id: "s6", title: "Software Quality — ISO/IEC 25010", description: "International speaker session on software quality characteristics.", mediaType: "IMAGE", mediaUrl: GD("110ZpnhR08VEg0yGXEpK3TFLkU0DJcWd9"), thumbnailUrl: "", category: "COMPANY_OVERVIEW", sortOrder: 2, published: true, createdAt: "", updatedAt: "" },
   { id: "s7", title: "Tech Talk at mgm", description: "Engineers sharing knowledge and technical insights.", mediaType: "IMAGE", mediaUrl: GD("1d61zh7zySVYgT3IVv2feCuzX38dkMOVN"), thumbnailUrl: "", category: "COMPANY_OVERVIEW", sortOrder: 3, published: true, createdAt: "", updatedAt: "" },
   { id: "s8", title: "mgm Office — Da Nang", description: "Our workspace in the heart of Da Nang — open, modern, and welcoming.", mediaType: "IMAGE", mediaUrl: GD("1xE8O5NKYhkUWVVdLy58JcoJy4I8q9MYU"), thumbnailUrl: "", category: "COMPANY_OVERVIEW", sortOrder: 4, published: true, createdAt: "", updatedAt: "" },
+  { id: "s9",  title: "mgm Office Da Nang — Workspace",  description: "A modern, collaborative workspace where the team builds enterprise software for global clients.", mediaType: "IMAGE", mediaUrl: GD("1dKCMJjTeqgcVdIjsmRv6hGBMJ9dpj68Q"), thumbnailUrl: "", category: "COMPANY_OVERVIEW", sortOrder: 5, published: true, createdAt: "", updatedAt: "" },
+  { id: "s10", title: "mgm Office Da Nang — Team Area",   description: "Open team area designed for collaboration — where Vietnamese and international engineers work side by side.", mediaType: "IMAGE", mediaUrl: GD("14vhCNIqbuOTZl-ljJuIoypIDf_1mjhpa"), thumbnailUrl: "", category: "COMPANY_OVERVIEW", sortOrder: 6, published: true, createdAt: "", updatedAt: "" },
   { id: "s3", title: "Instant Noodles at the Office", description: "Late afternoons cooking instant noodles together.", mediaType: "IMAGE", mediaUrl: GD("13HcKoP-xkU6zLAkVG93vzUCtdg-WT9Xk"), thumbnailUrl: "", category: "GENERAL", sortOrder: 1, published: true, createdAt: "", updatedAt: "" },
   { id: "s4", title: "Piano at the Office", description: "The office piano — a place to unwind and share a passion for music.", mediaType: "IMAGE", mediaUrl: GD("1ZEsaj7zr0UHGTyOHBv9vKMfSWXIWJ0mi"), thumbnailUrl: "", category: "GENERAL", sortOrder: 2, published: true, createdAt: "", updatedAt: "" },
 ];
@@ -96,6 +98,8 @@ export default async function MgmLifePage() {
   const welcomeGift  = getItem("1wigY74letDLUD-uUSeBtmMxY4Lgq_AnN");
   const speaker1     = getItem("1d61zh7zySVYgT3IVv2feCuzX38dkMOVN");
   const speaker2     = getItem("110ZpnhR08VEg0yGXEpK3TFLkU0DJcWd9");
+  const office1      = getItem("1dKCMJjTeqgcVdIjsmRv6hGBMJ9dpj68Q");
+  const office2      = getItem("14vhCNIqbuOTZl-ljJuIoypIDf_1mjhpa");
   const noodles      = getItem("13HcKoP-xkU6zLAkVG93vzUCtdg-WT9Xk");
   const piano        = getItem("1ZEsaj7zr0UHGTyOHBv9vKMfSWXIWJ0mi");
 
@@ -207,7 +211,7 @@ export default async function MgmLifePage() {
 
               {/* Office collage */}
               <div className="grid grid-cols-2 gap-3">
-                {[speaker1, speaker2].filter(Boolean).map((item, i) => (
+                {[office1, office2].filter(Boolean).map((item, i) => (
                   <div
                     key={item!.id}
                     className={`relative overflow-hidden rounded-2xl bg-slate-800 ${
@@ -220,7 +224,7 @@ export default async function MgmLifePage() {
                     </div>
                   </div>
                 ))}
-                {(!speaker1 || !speaker2) && (
+                {(!office1 || !office2) && (
                   <div className="col-span-2 flex aspect-video items-center justify-center rounded-2xl border border-dashed border-white/10 text-slate-600">
                     Office photos coming soon
                   </div>
@@ -304,7 +308,7 @@ export default async function MgmLifePage() {
                   icon: Languages,
                   color: "blue",
                   title: "English Class · 2h/day",
-                  desc: "English lessons during working hours, counted as paid time. A benefit you won't find at most companies.",
+                  desc: "New employees get 2 hours of English class daily for their first 3 months — during working hours, counted as paid time.",
                   tag: "Paid time",
                 },
                 {
@@ -474,8 +478,8 @@ export default async function MgmLifePage() {
                 English Class — A Rare Benefit
               </h2>
               <p className="mt-3 text-slate-400">
-                2 hours of English every day, during working hours, counted as paid time.
-                Very few companies do this.
+                New employees receive 2 hours of English class every day during their first 3 months —
+                counted as fully paid working hours. A head start that very few companies offer.
               </p>
             </div>
 
@@ -518,8 +522,8 @@ export default async function MgmLifePage() {
             <div className="mt-8 grid grid-cols-3 gap-4">
               {[
                 { value: "2h", label: "Every day" },
+                { value: "3mo", label: "For new employees" },
                 { value: "100%", label: "Paid time" },
-                { value: "🎉", label: "Happy Friday outdoor" },
               ].map(({ value, label }) => (
                 <div key={label} className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-5 text-center">
                   <div className="text-2xl font-bold text-blue-300">{value}</div>
