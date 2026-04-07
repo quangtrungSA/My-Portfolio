@@ -145,13 +145,12 @@ export default async function MgmLifePage() {
 
             {/* Tagline */}
             <p className="mx-auto mb-4 max-w-3xl text-center text-xl text-slate-300 sm:text-2xl">
-              <span className="font-bold text-white">mgm technology partners</span> — nơi công nghệ
-              Đức gặp gỡ tài năng Việt Nam tại Đà Nẵng.
+              <span className="font-bold text-white">mgm technology partners</span> — where German engineering meets Vietnamese talent in Da Nang.
             </p>
             <p className="mx-auto mb-14 max-w-2xl text-center text-base text-slate-400">
-              Thành lập năm 1994 tại Munich, Đức. Văn phòng Việt Nam đặt tại trung tâm Đà Nẵng —
-              nơi team đa quốc tịch (Đức, Việt Nam, Pháp, Áo…) cùng nhau xây dựng phần mềm
-              doanh nghiệp cho khách hàng toàn cầu.
+              Founded in 1994 in Munich, Germany. Our Vietnam office is located in the heart of Da Nang —
+              where a multinational team (Germany, Vietnam, France, Austria…) builds enterprise software
+              for global clients.
             </p>
 
             {/* Stats */}
@@ -183,32 +182,32 @@ export default async function MgmLifePage() {
             <div className="grid items-center gap-12 lg:grid-cols-2">
               <div>
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-violet-500/10 px-3 py-1 text-sm text-violet-400">
-                  <MapPin className="size-3.5" /> Đà Nẵng, Việt Nam
+                  <MapPin className="size-3.5" /> Da Nang, Vietnam
                 </div>
                 <h2 className="mb-6 text-3xl font-bold text-white sm:text-4xl">
-                  Một công ty quốc tế,<br />
-                  <span className="text-violet-400">ngay giữa lòng Đà Nẵng</span>
+                  A global company,<br />
+                  <span className="text-violet-400">right in the heart of Da Nang</span>
                 </h2>
                 <div className="space-y-4 text-slate-400">
                   <p>
-                    mgm technology partners là công ty phần mềm Đức hàng đầu, chuyên xây dựng
-                    giải pháp doanh nghiệp quy mô lớn — từ banking, insurance đến e-commerce.
-                    Văn phòng Đà Nẵng là cầu nối giữa engineering talent Việt Nam và
-                    ecosystem công nghệ châu Âu.
+                    mgm technology partners is a leading German software company specialising in
+                    large-scale enterprise solutions — from banking and insurance to e-commerce.
+                    The Da Nang office bridges Vietnamese engineering talent with Europe's
+                    technology ecosystem.
                   </p>
                   <p>
-                    Team tại Đà Nẵng làm việc trực tiếp với đồng nghiệp người Đức, tham gia
-                    các dự án cross-border thực sự — không phải outsourcing, mà là
-                    <span className="font-semibold text-slate-200"> một phần của mgm toàn cầu</span>.
+                    The Da Nang team works directly with colleagues in Germany on real cross-border
+                    projects — not outsourcing, but{" "}
+                    <span className="font-semibold text-slate-200">a genuine part of mgm worldwide</span>.
                   </p>
                 </div>
 
                 <div className="mt-8 grid grid-cols-2 gap-3">
                   {[
-                    { icon: Globe,     text: "Trụ sở Munich, Đức" },
-                    { icon: Users,     text: "Team đa quốc tịch" },
-                    { icon: Zap,       text: "Dự án enterprise thực" },
-                    { icon: Languages, text: "Môi trường tiếng Anh" },
+                    { icon: Globe,     text: "HQ in Munich, Germany" },
+                    { icon: Users,     text: "Multinational team" },
+                    { icon: Zap,       text: "Real enterprise projects" },
+                    { icon: Languages, text: "English-first environment" },
                   ].map(({ icon: Icon, text }) => (
                     <div key={text} className="flex items-center gap-2 text-sm text-slate-300">
                       <Icon className="size-4 shrink-0 text-violet-400" />
@@ -267,27 +266,27 @@ export default async function MgmLifePage() {
                   <Heart className="size-3.5" /> Welcome Gift
                 </div>
                 <h2 className="mb-6 text-3xl font-bold text-white sm:text-4xl">
-                  Chào mừng thành viên mới —
-                  <span className="text-amber-400"> như một gia đình</span>
+                  Welcome to the team —
+                  <span className="text-amber-400"> like family from day one</span>
                 </h2>
                 <p className="mb-4 text-slate-400">
-                  Ngay từ ngày đầu tiên, mgm gửi đến nhân viên mới một thiệp chào mừng
-                  thân thiết. Thiệp ký tên từ{" "}
+                  From the very first day, mgm sends every new employee a personalised welcome card —
+                  signed by{" "}
                   <span className="font-semibold text-slate-200">
-                    bà Ngô Loan — Phó Tổng Giám đốc
-                  </span>{" "}
-                  — một cử chỉ nhỏ nhưng nói lên nhiều điều về văn hóa trọng người tại đây.
+                    Ms. Ngo Loan, Deputy General Director
+                  </span>
+                  . A small gesture that says a great deal about how people are valued here.
                 </p>
                 <p className="text-slate-400">
-                  Onboarding tại mgm không phải một quy trình — đó là trải nghiệm được thiết
-                  kế để bạn cảm thấy được chào đón thực sự, từ ban lãnh đạo đến đồng nghiệp.
+                  Onboarding at mgm is not a checklist — it is an experience designed to make you
+                  feel genuinely welcomed, from leadership all the way to your teammates.
                 </p>
                 <div className="mt-8 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
                   <p className="text-sm italic text-slate-300">
-                    "Chào mừng Trung đến với mgm family. Chúc bạn có những ngày làm việc
-                    vui vẻ, hiệu quả và nhiều kỷ niệm đẹp."
+                    "Welcome to the mgm family, Trung. Wishing you wonderful, productive days
+                    and many great memories ahead."
                   </p>
-                  <p className="mt-3 text-xs text-amber-400">— Ngô Loan, Deputy General Director</p>
+                  <p className="mt-3 text-xs text-amber-400">— Ngo Loan, Deputy General Director</p>
                 </div>
               </div>
             </div>
@@ -304,10 +303,10 @@ export default async function MgmLifePage() {
                 <Zap className="size-3.5" /> Employee Benefits
               </div>
               <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                Phúc lợi vượt trội
+                Outstanding Benefits
               </h2>
               <p className="mt-3 text-slate-400">
-                mgm đầu tư vào con người — không chỉ bằng lương, mà bằng trải nghiệm sống.
+                mgm invests in people — not just with salary, but with real life experiences.
               </p>
             </div>
 
@@ -316,50 +315,50 @@ export default async function MgmLifePage() {
                 {
                   icon: Languages,
                   color: "blue",
-                  title: "English Class · 2h/ngày",
-                  desc: "Học tiếng Anh trong giờ làm việc, được tính như giờ lương. Đây là phúc lợi hiếm có ở bất kỳ công ty nào.",
+                  title: "English Class · 2h/day",
+                  desc: "English lessons during working hours, counted as paid time. A benefit you won't find at most companies.",
                   tag: "Paid time",
                 },
                 {
                   icon: PartyPopper,
                   color: "amber",
                   title: "Happy Friday",
-                  desc: "Mỗi thứ Sáu, giáo viên và học viên cùng ra ngoài cả buổi sáng — ăn sáng, khám phá thành phố, hoàn toàn tự do.",
+                  desc: "Every Friday, teachers and students head out together for the entire morning — breakfast, city walks, or whatever brings joy. No assignments. No deadlines.",
                   tag: "Every Friday",
                 },
                 {
                   icon: Mic2,
                   color: "purple",
                   title: "International Speakers",
-                  desc: "Diễn giả quốc tế từ Đức và khắp châu Âu thường xuyên chia sẻ kiến thức kỹ thuật và kinh nghiệm thực tiễn.",
+                  desc: "International experts from Germany and across Europe regularly share technical knowledge and real-world engineering experience.",
                   tag: "Knowledge sharing",
                 },
                 {
                   icon: Globe,
                   color: "violet",
                   title: "Global Projects",
-                  desc: "Làm việc trực tiếp với team Đức trên các dự án enterprise thực sự cho khách hàng châu Âu.",
+                  desc: "Work directly with the German team on real enterprise projects for European clients — not outsourcing, but true collaboration.",
                   tag: "Cross-border",
                 },
                 {
                   icon: Coffee,
                   color: "emerald",
                   title: "Relaxed Office Culture",
-                  desc: "Không dress code cứng nhắc. Có piano, có bếp, có đồng nghiệp vui tính. Văn phòng là nơi bạn muốn đến mỗi sáng.",
+                  desc: "No rigid dress code. Piano in the office, a kitchen, and colleagues who actually enjoy being there. A place you look forward to each morning.",
                   tag: "Work-life balance",
                 },
                 {
                   icon: BookOpen,
                   color: "rose",
                   title: "Learning Culture",
-                  desc: "Tech talk nội bộ, session chia sẻ kỹ thuật, cơ hội học hỏi từ senior engineer người Đức và châu Âu.",
+                  desc: "Internal tech talks, knowledge-sharing sessions, and direct exposure to senior engineers from Germany and across Europe.",
                   tag: "Continuous learning",
                 },
                 {
                   icon: Laptop,
                   color: "sky",
-                  title: "MacBook hoặc ThinkPad — bạn chọn",
-                  desc: "Nhân viên được tự chọn thiết bị theo nhu cầu cá nhân: MacBook Pro/Air hoặc ThinkPad mới nhất, kèm bàn phím và chuột flagship.",
+                  title: "MacBook or ThinkPad — your choice",
+                  desc: "Employees choose their own device: latest MacBook Pro/Air or Lenovo ThinkPad, paired with flagship keyboard and premium mouse.",
                   tag: "Latest hardware",
                 },
               ].map(({ icon: Icon, color, title, desc, tag }) => (
@@ -392,11 +391,11 @@ export default async function MgmLifePage() {
                   <Mic2 className="size-3.5" /> International Speakers
                 </div>
                 <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                  Diễn giả quốc tế tại mgm
+                  International Speakers at mgm
                 </h2>
                 <p className="mt-3 max-w-xl text-slate-400">
-                  Các chuyên gia từ Đức và châu Âu thường xuyên đến Đà Nẵng để chia sẻ
-                  kiến thức — từ software architecture đến ISO quality standards.
+                  Experts from Germany and across Europe regularly visit Da Nang to share
+                  knowledge — from software architecture to ISO quality standards.
                 </p>
               </div>
 
@@ -430,10 +429,10 @@ export default async function MgmLifePage() {
                 <MapPin className="size-3.5" /> Our Office
               </div>
               <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                Văn phòng mgm Đà Nẵng
+                mgm Da Nang Office
               </h2>
               <p className="mt-3 text-slate-400">
-                Không gian làm việc mở, hiện đại — nơi code gặp gỡ cà phê và âm nhạc.
+                An open, modern workspace — where code meets coffee and music.
               </p>
             </div>
 
@@ -453,9 +452,9 @@ export default async function MgmLifePage() {
                   <div className="flex h-16 w-16 items-center justify-center rounded-full border border-white/20 bg-white/10">
                     <Play className="size-7 text-white" />
                   </div>
-                  <p className="text-sm text-slate-400">Video văn phòng — sắp ra mắt</p>
+                  <p className="text-sm text-slate-400">Office video — coming soon</p>
                   <p className="text-xs text-slate-600">
-                    Admin có thể thêm video tại /admin/mgm-life
+                    Admin can add a video at /admin/mgm-life
                   </p>
                 </div>
               )}
@@ -474,11 +473,11 @@ export default async function MgmLifePage() {
                 <Languages className="size-3.5" /> Language Benefit
               </div>
               <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                English Class — Phúc lợi độc đáo
+                English Class — A Rare Benefit
               </h2>
               <p className="mt-3 text-slate-400">
-                2 tiếng tiếng Anh mỗi ngày, trong giờ làm việc, được tính như lương.
-                Không nơi nào khác làm điều này.
+                2 hours of English every day, during working hours, counted as paid time.
+                Very few companies do this.
               </p>
             </div>
 
@@ -500,7 +499,7 @@ export default async function MgmLifePage() {
                     <div className="flex h-14 w-14 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10">
                       <Play className="size-6 text-blue-400" />
                     </div>
-                    <p className="text-sm text-slate-400">Video English Class — sắp ra mắt</p>
+                    <p className="text-sm text-slate-400">English Class video — coming soon</p>
                   </div>
                 )}
               </div>
@@ -562,10 +561,10 @@ export default async function MgmLifePage() {
                 <Coffee className="size-3.5" /> Employee Lifestyle
               </div>
               <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                Cuộc sống nhân viên tại mgm
+                Employee Lifestyle at mgm
               </h2>
               <p className="mt-3 text-slate-400">
-                Không chỉ làm việc — đây là nơi mọi người cùng học, cùng vui, cùng lớn.
+                Not just work — a place where people learn, have fun, and grow together.
               </p>
             </div>
 
@@ -574,25 +573,25 @@ export default async function MgmLifePage() {
               <div className="grid gap-8 sm:grid-cols-2">
                 <div>
                   <h3 className="mb-3 text-xl font-bold text-white">
-                    Ai cũng giỏi tiếng Anh — và luôn hỗ trợ nhau
+                    Everyone speaks English — and everyone supports each other
                   </h3>
                   <p className="mb-3 text-sm text-slate-400">
-                    Nhờ học tiếng Anh mỗi ngày, nhân viên mgm giao tiếp tự nhiên trong mọi
-                    tình huống — từ meeting với khách hàng Đức đến email quốc tế thường ngày.
+                    Thanks to daily English practice, mgm employees communicate naturally in
+                    every situation — from meetings with German clients to everyday international emails.
                   </p>
                   <p className="text-sm text-slate-400">
-                    Văn hóa tại đây là{" "}
-                    <span className="font-semibold text-teal-300">không ai bị bỏ lại</span>
-                    : đồng nghiệp, giáo viên và ban quản lý đều chủ động hỗ trợ nhau —
-                    vì khi cả team mạnh, mọi người đều được lợi.
+                    The culture here is{" "}
+                    <span className="font-semibold text-teal-300">no one gets left behind</span>
+                    : colleagues, teachers, and management actively support one another —
+                    because when the whole team is strong, everyone wins.
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { icon: Languages, title: "Daily English",  desc: "Tiếng Anh là ngôn ngữ tự nhiên, không áp lực" },
-                    { icon: Heart,     title: "Peer Support",   desc: "Đồng nghiệp luôn sẵn sàng giúp nhau" },
-                    { icon: Globe,     title: "Global Mindset", desc: "Tư duy đa văn hóa từ môi trường Đức–Việt" },
-                    { icon: Zap,       title: "Grow Together",  desc: "Team mạnh khi từng người cùng lớn" },
+                    { icon: Languages, title: "Daily English",  desc: "English flows naturally — no pressure, no fear" },
+                    { icon: Heart,     title: "Peer Support",   desc: "Colleagues always ready to help each other out" },
+                    { icon: Globe,     title: "Global Mindset", desc: "Cross-cultural thinking from a German-Vietnamese environment" },
+                    { icon: Zap,       title: "Grow Together",  desc: "A strong team starts with every individual growing" },
                   ].map(({ icon: Icon, title, desc }) => (
                     <div key={title} className="rounded-xl border border-teal-500/15 bg-teal-500/5 p-3">
                       <Icon className="mb-1.5 size-4 text-teal-400" />
@@ -615,14 +614,14 @@ export default async function MgmLifePage() {
                 </div>
                 <div className="flex-1">
                   <h3 className="mb-1 text-lg font-bold text-white">
-                    Thiết bị theo nhu cầu — MacBook hoặc ThinkPad
+                    Device of your choice — MacBook or ThinkPad
                   </h3>
                   <p className="text-sm text-slate-400">
-                    mgm trang bị cho nhân viên{" "}
-                    <span className="font-semibold text-sky-300">MacBook Pro / Air hoặc Lenovo ThinkPad</span>{" "}
-                    đời mới nhất tuỳ theo sở thích và công việc. Kèm theo là phụ kiện
-                    flagship — bàn phím cơ / Apple Magic Keyboard và chuột cao cấp mới nhất.
-                    Không cần lo về công cụ, chỉ cần tập trung làm việc tốt.
+                    mgm equips every employee with the{" "}
+                    <span className="font-semibold text-sky-300">latest MacBook Pro / Air or Lenovo ThinkPad</span>{" "}
+                    based on personal preference and role. Paired with premium accessories —
+                    mechanical keyboard or Apple Magic Keyboard, and the latest high-end mouse.
+                    No worrying about tools. Just focus on doing great work.
                   </p>
                 </div>
                 <div className="flex shrink-0 flex-col gap-2 sm:items-end">
@@ -706,11 +705,12 @@ export default async function MgmLifePage() {
               <Heart className="size-3.5" /> Join mgm
             </div>
             <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
-              Trở thành một phần của mgm family
+              Become part of the mgm family
             </h2>
             <p className="mb-8 text-slate-400">
-              Nếu bạn muốn làm việc trong môi trường quốc tế, học tiếng Anh mỗi ngày trong
-              giờ làm, và được đồng hành bởi những người tử tế — mgm Đà Nẵng là nơi dành cho bạn.
+              If you want to work in a truly international environment, improve your English
+              every single day on the clock, and be surrounded by genuinely kind people —
+              mgm Da Nang is the place for you.
             </p>
             <a
               href="https://mgm-tp.com/career"
@@ -718,7 +718,7 @@ export default async function MgmLifePage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-violet-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-violet-500"
             >
-              Xem cơ hội tại mgm
+              Explore careers at mgm
             </a>
           </div>
         </section>
