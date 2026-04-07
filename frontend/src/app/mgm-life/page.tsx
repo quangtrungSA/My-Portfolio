@@ -372,53 +372,7 @@ export default async function MgmLifePage() {
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
-            5. TEAM CULTURE — Support each other, strong English
-        ══════════════════════════════════════════════════════════════ */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-teal-950/30 via-slate-900 to-slate-950 py-20">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(20,184,166,0.08),transparent_60%)]" />
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <div className="grid items-center gap-10 lg:grid-cols-2">
-              <div>
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-teal-500/10 px-3 py-1 text-sm text-teal-400">
-                  <Users className="size-3.5" /> Team Culture
-                </div>
-                <h2 className="mb-5 text-3xl font-bold text-white sm:text-4xl">
-                  Ai cũng giỏi tiếng Anh —<br />
-                  <span className="text-teal-400">và luôn hỗ trợ nhau</span>
-                </h2>
-                <p className="mb-4 text-slate-400">
-                  Nhờ học tiếng Anh mỗi ngày trong nhiều năm, hầu hết nhân viên mgm đều
-                  giao tiếp tự nhiên — từ cuộc họp với khách hàng Đức đến email quốc tế hàng ngày.
-                </p>
-                <p className="text-slate-400">
-                  Văn hóa tại đây là{" "}
-                  <span className="font-semibold text-teal-300">
-                    không ai bị bỏ lại phía sau
-                  </span>
-                  . Dù bạn mới vào hay đã có kinh nghiệm, giáo viên, đồng nghiệp và cả
-                  ban quản lý đều chủ động hỗ trợ — vì khi cả team mạnh, mọi người đều được lợi.
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { icon: Languages, title: "Daily English",    desc: "Giao tiếp tiếng Anh là chuyện bình thường, không áp lực" },
-                  { icon: Heart,     title: "Peer Support",     desc: "Đồng nghiệp luôn sẵn sàng giải thích và hỗ trợ nhau" },
-                  { icon: Globe,     title: "Global Mindset",   desc: "Tư duy quốc tế từ môi trường làm việc đa văn hóa" },
-                  { icon: Zap,       title: "Grow Together",    desc: "Team mạnh khi từng cá nhân cùng phát triển" },
-                ].map(({ icon: Icon, title, desc }) => (
-                  <div key={title} className="rounded-2xl border border-teal-500/15 bg-teal-500/5 p-4">
-                    <Icon className="mb-2 size-5 text-teal-400" />
-                    <p className="mb-1 text-sm font-semibold text-white">{title}</p>
-                    <p className="text-xs text-slate-400">{desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ══════════════════════════════════════════════════════════════
-            6. INTERNATIONAL SPEAKERS
+            5. INTERNATIONAL SPEAKERS
         ══════════════════════════════════════════════════════════════ */}
         {(speaker1 || speaker2) && (
           <section className="bg-gradient-to-b from-slate-900 to-slate-950 py-24">
@@ -589,20 +543,55 @@ export default async function MgmLifePage() {
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
-            8. DAILY LIFE — Noodles, Piano & more
+            8. DAILY LIFE — Lifestyle, support, noodles, piano & more
         ══════════════════════════════════════════════════════════════ */}
         <section className="bg-gradient-to-b from-slate-950 to-slate-900 py-24">
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
             <div className="mb-12">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-sm text-emerald-400">
-                <Coffee className="size-3.5" /> Daily Life
+                <Coffee className="size-3.5" /> Employee Lifestyle
               </div>
               <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                Cuộc sống thường ngày tại mgm
+                Cuộc sống nhân viên tại mgm
               </h2>
               <p className="mt-3 text-slate-400">
-                Những khoảnh khắc bình dị làm nên văn hóa — từ bếp ăn đến cây đàn piano.
+                Không chỉ làm việc — đây là nơi mọi người cùng học, cùng vui, cùng lớn.
               </p>
+            </div>
+
+            {/* Lifestyle highlight: peer support + English */}
+            <div className="mb-10 overflow-hidden rounded-2xl border border-teal-500/20 bg-gradient-to-br from-teal-950/30 to-slate-900 p-6 sm:p-8">
+              <div className="grid gap-8 sm:grid-cols-2">
+                <div>
+                  <h3 className="mb-3 text-xl font-bold text-white">
+                    Ai cũng giỏi tiếng Anh — và luôn hỗ trợ nhau
+                  </h3>
+                  <p className="mb-3 text-sm text-slate-400">
+                    Nhờ học tiếng Anh mỗi ngày, nhân viên mgm giao tiếp tự nhiên trong mọi
+                    tình huống — từ meeting với khách hàng Đức đến email quốc tế thường ngày.
+                  </p>
+                  <p className="text-sm text-slate-400">
+                    Văn hóa tại đây là{" "}
+                    <span className="font-semibold text-teal-300">không ai bị bỏ lại</span>
+                    : đồng nghiệp, giáo viên và ban quản lý đều chủ động hỗ trợ nhau —
+                    vì khi cả team mạnh, mọi người đều được lợi.
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { icon: Languages, title: "Daily English",  desc: "Tiếng Anh là ngôn ngữ tự nhiên, không áp lực" },
+                    { icon: Heart,     title: "Peer Support",   desc: "Đồng nghiệp luôn sẵn sàng giúp nhau" },
+                    { icon: Globe,     title: "Global Mindset", desc: "Tư duy đa văn hóa từ môi trường Đức–Việt" },
+                    { icon: Zap,       title: "Grow Together",  desc: "Team mạnh khi từng người cùng lớn" },
+                  ].map(({ icon: Icon, title, desc }) => (
+                    <div key={title} className="rounded-xl border border-teal-500/15 bg-teal-500/5 p-3">
+                      <Icon className="mb-1.5 size-4 text-teal-400" />
+                      <p className="text-xs font-semibold text-white">{title}</p>
+                      <p className="mt-0.5 text-xs text-slate-500">{desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2">
