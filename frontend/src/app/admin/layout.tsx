@@ -23,6 +23,7 @@ import {
   Shield,
   ExternalLink,
   ChevronRight,
+  Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -40,6 +41,7 @@ const navItems = [
   { label: "Education", href: "/admin/education", icon: GraduationCap, group: "content" },
   { label: "Certifications", href: "/admin/certifications", icon: Award, group: "content" },
   { label: "Testimonials", href: "/admin/testimonials", icon: MessageSquareQuote, group: "content" },
+  { label: "MGM Life", href: "/admin/mgm-life", icon: Building2, group: "content" },
   { label: "Blog", href: "/admin/blog", icon: FileText, group: "publish" },
   { label: "Contacts", href: "/admin/contacts", icon: Mail, group: "publish" },
 ];

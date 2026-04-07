@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 const mainNav = [
   { label: "Home", href: "/" },
   { label: "Blog", href: "/blog" },
+  { label: "mgm life", href: "/mgm-life" },
   { label: "LeetCode", href: "https://leetcode.com/quangtrungleetcode/", external: true },
   { label: "Piano Journey", href: "/piano" },
   { label: "Language", href: "/language" },

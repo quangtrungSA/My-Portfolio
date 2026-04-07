@@ -6,6 +6,7 @@ import type {
   Contact,
   Education,
   Experience,
+  MgmLifeItem,
   Profile,
   Project,
   SiteSetting,
@@ -488,6 +489,58 @@ export async function createTag(data: Omit<Tag, "id" | "createdAt">): Promise<Ap
 
 export async function deleteTag(id: string): Promise<ApiResponse<void>> {
   return fetchApi<void>(`/api/admin/tags/${id}`, { method: "DELETE" });
+}
+
+// ---------------------------------------------------------------------------
+// Public – MGM Life
+// ---------------------------------------------------------------------------
+
+export async function fetchMgmLifeItems(): Promise<ApiResponse<MgmLifeItem[]>> {
+  return fetchApi<MgmLifeItem[]>("/api/mgm-life");
+}
+
+// ---------------------------------------------------------------------------
+// Admin – MGM Life
+// ---------------------------------------------------------------------------
+
+export async function fetchAllMgmLifeItems(): Promise<ApiResponse<MgmLifeItem[]>> {
+  return fetchApi<MgmLifeItem[]>("/api/admin/mgm-life");
+}
+
+export type MgmLifeItemInput = {
+  title: string;
+  description?: string;
+  mediaType: "IMAGE" | "VIDEO";
+  mediaUrl?: string;
+  thumbnailUrl?: string;
+  category: "ENGLISH_CLASS" | "HAPPY_FRIDAY" | "COMPANY_OVERVIEW" | "GENERAL";
+  sortOrder?: number;
+  published?: boolean;
+};
+
+export async function createMgmLifeItem(
+  data: MgmLifeItemInput
+): Promise<ApiResponse<MgmLifeItem>> {
+  return fetchApi<MgmLifeItem>("/api/admin/mgm-life", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateMgmLifeItem(
+  id: string,
+  data: MgmLifeItemInput
+): Promise<ApiResponse<MgmLifeItem>> {
+  return fetchApi<MgmLifeItem>(`/api/admin/mgm-life/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteMgmLifeItem(
+  id: string
+): Promise<ApiResponse<void>> {
+  return fetchApi<void>(`/api/admin/mgm-life/${id}`, { method: "DELETE" });
 }
 
 // ---------------------------------------------------------------------------

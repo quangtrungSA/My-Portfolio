@@ -187,6 +187,20 @@ export interface Tag {
   createdAt: string;
 }
 
+export interface MgmLifeItem {
+  id: string;
+  title: string;
+  description: string;
+  mediaType: "IMAGE" | "VIDEO";
+  mediaUrl: string;
+  thumbnailUrl: string;
+  category: "ENGLISH_CLASS" | "HAPPY_FRIDAY" | "COMPANY_OVERVIEW" | "GENERAL";
+  sortOrder: number;
+  published: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface SiteSetting {
   id: string;
   key: string;
