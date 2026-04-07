@@ -51,7 +51,6 @@ async function fetchItems(): Promise<MgmLifeItem[]> {
   }
 }
 
-
 function DriveMedia({ item, className }: { item: MgmLifeItem; className?: string }) {
   if (item.mediaType === "VIDEO" && item.mediaUrl) {
     return (
@@ -60,7 +59,7 @@ function DriveMedia({ item, className }: { item: MgmLifeItem; className?: string
         className={className ?? "h-full w-full"}
         allow="autoplay"
         allowFullScreen
-      />
+      ></iframe>
     );
   }
   if (item.mediaUrl) {
@@ -89,7 +88,6 @@ export default async function MgmLifePage() {
   const items = await fetchItems();
 
   const englishItems = items.filter((i) => i.category === "ENGLISH_CLASS");
-  const companyItems = items.filter((i) => i.category === "COMPANY_OVERVIEW");
   const generalItems = items.filter((i) => i.category === "GENERAL");
   const happyFridayItems = items.filter((i) => i.category === "HAPPY_FRIDAY");
 
@@ -182,7 +180,7 @@ export default async function MgmLifePage() {
                   <p>
                     mgm technology partners is a leading German software company specialising in
                     large-scale enterprise solutions — from banking and insurance to e-commerce.
-                    The Da Nang office bridges Vietnamese engineering talent with Europe's
+                    The Da Nang office bridges Vietnamese engineering talent with Europe&apos;s
                     technology ecosystem.
                   </p>
                   <p>
@@ -273,8 +271,8 @@ export default async function MgmLifePage() {
                 </p>
                 <div className="mt-8 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
                   <p className="text-sm italic text-slate-300">
-                    "Welcome to the mgm family, Trung. Wishing you wonderful, productive days
-                    and many great memories ahead."
+                    &ldquo;Welcome to the mgm family, Trung. Wishing you wonderful, productive days
+                    and many great memories ahead.&rdquo;
                   </p>
                   <p className="mt-3 text-xs text-amber-400">— Ngo Loan, Deputy General Director</p>
                 </div>
@@ -427,14 +425,14 @@ export default async function MgmLifePage() {
             </div>
 
             {/* Office photo */}
-            {(() => {
-              const officePhoto = items.find((i) => i.mediaUrl?.includes("1xE8O5NKYhkUWVVdLy58JcoJy4I8q9MYU"));
-              return officePhoto ? (
-                <div className="mb-6 relative aspect-video overflow-hidden rounded-3xl border border-white/10">
-                  <DriveMedia item={officePhoto} className="object-cover" />
-                </div>
-              ) : null;
-            })()}
+            {companyItems.find((i) => i.mediaUrl?.includes("1xE8O5NKYhkUWVVdLy58JcoJy4I8q9MYU")) && (
+              <div className="relative mb-6 aspect-video overflow-hidden rounded-3xl border border-white/10">
+                <DriveMedia
+                  item={companyItems.find((i) => i.mediaUrl?.includes("1xE8O5NKYhkUWVVdLy58JcoJy4I8q9MYU"))!}
+                  className="object-cover"
+                />
+              </div>
+            )}
 
             {/* Video placeholder or actual video */}
             <div className="mb-6 overflow-hidden rounded-3xl border border-white/10 bg-slate-800">
@@ -528,6 +526,9 @@ export default async function MgmLifePage() {
                   <div className="mt-1 text-xs text-slate-400">{label}</div>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-6">
             </div>
 
             {/* Happy Friday items if any */}
