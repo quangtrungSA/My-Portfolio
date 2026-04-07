@@ -133,6 +133,7 @@ export default function AdminContactsPage() {
                   <TableHead>Email</TableHead>
                   <TableHead>Subject</TableHead>
                   <TableHead>Date</TableHead>
+                  <TableHead>Time</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="w-[100px]">Actions</TableHead>
                 </TableRow>
@@ -167,7 +168,16 @@ export default function AdminContactsPage() {
                       <TableCell>{contact.subject}</TableCell>
                       <TableCell>
                         <span className="text-sm text-muted-foreground">
-                          {new Date(contact.createdAt).toLocaleDateString()}
+                          {new Date(contact.createdAt).toLocaleDateString("vi-VN")}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-muted-foreground">
+                          {new Date(contact.createdAt).toLocaleTimeString("vi-VN", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            timeZone: "Asia/Ho_Chi_Minh",
+                          })}
                         </span>
                       </TableCell>
                       <TableCell>
@@ -185,7 +195,10 @@ export default function AdminContactsPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => handleToggleRead(contact)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleRead(contact);
+                            }}
                             title={
                               contact.read ? "Mark as unread" : "Mark as read"
                             }
@@ -198,10 +211,12 @@ export default function AdminContactsPage() {
                           </Button>
                           <AlertDialog>
                             <AlertDialogTrigger
-                              render={<Button variant="ghost" size="icon" />}
-                            >
-                              <Trash2 className="size-4 text-destructive" />
-                            </AlertDialogTrigger>
+                              render={
+                                <Button variant="ghost" size="icon">
+                                  <Trash2 className="size-4 text-destructive" />
+                                </Button>
+                              }
+                            />
                             <AlertDialogContent>
                               <AlertDialogHeader>
                                 <AlertDialogTitle>
@@ -229,7 +244,7 @@ export default function AdminContactsPage() {
                     </TableRow>
                     {expandedId === contact.id && (
                       <TableRow key={`${contact.id}-expanded`}>
-                        <TableCell colSpan={7}>
+                        <TableCell colSpan={8}>
                           <div className="rounded-lg bg-muted/50 p-4">
                             <p className="mb-1 text-xs font-medium uppercase text-muted-foreground">
                               Message
