@@ -11,7 +11,7 @@ const mainNav = [
   { label: "Home", href: "/" },
   { label: "Blog", href: "/blog" },
   { label: "LeetCode", href: "https://leetcode.com/quangtrungleetcode/", external: true },
-  { label: "Piano", href: "/piano" },
+  { label: "Piano Journey", href: "/piano" },
   { label: "Language", href: "/language" },
 ];
 
