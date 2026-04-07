@@ -50,18 +50,6 @@ async function fetchItems(): Promise<MgmLifeItem[]> {
   }
 }
 
-function DriveImage({ id, alt, className }: { id: string; alt: string; className?: string }) {
-  return (
-    <Image
-      src={GD(id)}
-      alt={alt}
-      fill
-      className={className ?? "object-cover"}
-      unoptimized
-    />
-  );
-}
-
 function DriveMedia({ item, className }: { item: MgmLifeItem; className?: string }) {
   if (item.mediaType === "VIDEO" && item.mediaUrl) {
     return (
@@ -70,7 +58,7 @@ function DriveMedia({ item, className }: { item: MgmLifeItem; className?: string
         className={className ?? "h-full w-full"}
         allow="autoplay"
         allowFullScreen
-      />
+      ></iframe>
     );
   }
   if (item.mediaUrl) {
@@ -99,7 +87,6 @@ export default async function MgmLifePage() {
   const items = await fetchItems();
 
   const englishItems = items.filter((i) => i.category === "ENGLISH_CLASS");
-  const companyItems = items.filter((i) => i.category === "COMPANY_OVERVIEW");
   const generalItems = items.filter((i) => i.category === "GENERAL");
   const happyFridayItems = items.filter((i) => i.category === "HAPPY_FRIDAY");
 
@@ -192,7 +179,7 @@ export default async function MgmLifePage() {
                   <p>
                     mgm technology partners is a leading German software company specialising in
                     large-scale enterprise solutions — from banking and insurance to e-commerce.
-                    The Da Nang office bridges Vietnamese engineering talent with Europe's
+                    The Da Nang office bridges Vietnamese engineering talent with Europe&apos;s
                     technology ecosystem.
                   </p>
                   <p>
@@ -283,8 +270,8 @@ export default async function MgmLifePage() {
                 </p>
                 <div className="mt-8 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
                   <p className="text-sm italic text-slate-300">
-                    "Welcome to the mgm family, Trung. Wishing you wonderful, productive days
-                    and many great memories ahead."
+                    &ldquo;Welcome to the mgm family, Trung. Wishing you wonderful, productive days
+                    and many great memories ahead.&rdquo;
                   </p>
                   <p className="mt-3 text-xs text-amber-400">— Ngo Loan, Deputy General Director</p>
                 </div>
@@ -530,7 +517,7 @@ export default async function MgmLifePage() {
               ))}
             </div>
 
-            <div
+            <div className="mt-6">
             </div>
 
             {/* Happy Friday items if any */}
