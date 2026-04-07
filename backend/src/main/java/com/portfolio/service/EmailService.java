@@ -3,9 +3,9 @@ package com.portfolio.service;
 import com.portfolio.repository.ContactRepository;
 import com.portfolio.repository.ProfileRepository;
 import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -19,16 +19,23 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
     private static final DateTimeFormatter FORMATTER =
             DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm z");
 
-    private final JavaMailSender mailSender;
+    @Autowired(required = false)
+    private JavaMailSender mailSender;
+
     private final ProfileRepository profileRepository;
     private final ContactRepository contactRepository;
+
+    @Autowired
+    public EmailService(ProfileRepository profileRepository, ContactRepository contactRepository) {
+        this.profileRepository = profileRepository;
+        this.contactRepository = contactRepository;
+    }
 
     @Value("${app.admin.email}")
     private String adminEmailFallback;
@@ -60,9 +67,9 @@ public class EmailService {
     public void sendContactNotificationAsync(UUID contactId,
                                              String senderName, String senderEmail,
                                              String subject, String message) {
-        // Skip if mail is not configured
-        if (fromEmail == null || fromEmail.isBlank()) {
-            logger.warn("MAIL_USERNAME not configured — email notification skipped for contact id={}", contactId);
+        // Skip if mail sender not available or not configured
+        if (mailSender == null || fromEmail == null || fromEmail.isBlank()) {
+            logger.warn("Mail not configured — email notification skipped for contact id={}", contactId);
             return;
         }
 
