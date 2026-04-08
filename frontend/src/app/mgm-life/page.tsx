@@ -274,8 +274,8 @@ export default async function MgmLifePage() {
               {/* Card image */}
               <div className="order-2 lg:order-1">
                 {welcomeGift ? (
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-amber-500/20 shadow-2xl shadow-amber-900/20">
-                    <DriveMedia item={welcomeGift} className="object-cover" />
+                  <div className="relative aspect-[3/4] overflow-hidden rounded-3xl border border-amber-500/20 bg-slate-800/50 shadow-2xl shadow-amber-900/20">
+                    <DriveMedia item={welcomeGift} className="object-contain" />
                   </div>
                 ) : (
                   <div className="aspect-[4/3] rounded-3xl border border-dashed border-white/10 bg-slate-800" />
