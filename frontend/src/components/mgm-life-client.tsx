@@ -61,6 +61,14 @@ export function driveVideoEmbedUrl(url: string): string {
   return url;
 }
 
+/** Auto-detect VIDEO from URL pattern — overrides DB mediaType if URL is clearly a video */
+function resolveMediaType(item: MgmLifeItem): "IMAGE" | "VIDEO" {
+  if (item.mediaType === "VIDEO") return "VIDEO";
+  const url = item.mediaUrl ?? "";
+  if (url.includes("/file/d/") && (url.includes("/view") || url.includes("/preview"))) return "VIDEO";
+  return "IMAGE";
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Lightbox
 // ─────────────────────────────────────────────────────────────────────────────
@@ -244,7 +252,7 @@ export function ClickableImage({
   className?: string;
   onOpen: (src: string, alt: string) => void;
 }) {
-  if (item.mediaType === "VIDEO") {
+  if (resolveMediaType(item) === "VIDEO") {
     return (
       <iframe
         src={driveVideoEmbedUrl(item.mediaUrl)}
@@ -301,8 +309,8 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
   const noodles      = getItem("13HcKoP-xkU6zLAkVG93vzUCtdg-WT9Xk");
   const piano        = getItem("1ZEsaj7zr0UHGTyOHBv9vKMfSWXIWJ0mi");
 
-  const officeVideo  = items.find((i) => i.mediaType === "VIDEO" && i.category === "COMPANY_OVERVIEW");
-  const englishVideo = items.find((i) => i.mediaType === "VIDEO" && i.category === "ENGLISH_CLASS");
+  const officeVideo  = items.find((i) => resolveMediaType(i) === "VIDEO" && i.category === "COMPANY_OVERVIEW");
+  const englishVideo = items.find((i) => resolveMediaType(i) === "VIDEO" && i.category === "ENGLISH_CLASS");
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">

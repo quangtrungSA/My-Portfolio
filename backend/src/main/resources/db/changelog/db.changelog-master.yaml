@@ -107,3 +107,6 @@ databaseChangeLog:
   - include:
       file: db/changelog/migrations/036_fix_mgm_life_media_types.sql
       relativeToChangelogFile: false
+  - include:
+      file: db/changelog/migrations/037_auto_set_video_media_type.sql
+      relativeToChangelogFile: false
