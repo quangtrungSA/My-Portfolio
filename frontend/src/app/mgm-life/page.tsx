@@ -53,33 +53,42 @@ async function fetchItems(): Promise<MgmLifeItem[]> {
   }
 }
 
+// Extract Google Drive file ID from any URL format
+function extractDriveId(url: string): string | null {
+  if (!url) return null;
+  // thumbnail?id=XXX or uc?export=view&id=XXX
+  const idParam = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (idParam) return idParam[1];
+  // /file/d/XXX/ or /d/XXX/
+  const filePath = url.match(/\/(?:file\/)?d\/([a-zA-Z0-9_-]+)/);
+  if (filePath) return filePath[1];
+  return null;
+}
+
 // Normalize any Google Drive URL to the reliable thumbnail format
 function normalizeDriveUrl(url: string): string {
   if (!url) return url;
-  // Already thumbnail format
-  if (url.includes("drive.google.com/thumbnail")) return url;
-  // Extract file ID from uc?export=view&id=XXX
-  const ucMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-  if (ucMatch) return `https://drive.google.com/thumbnail?id=${ucMatch[1]}&sz=w1280`;
-  // Extract file ID from /file/d/XXX/
-  const fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if (fileMatch) return `https://drive.google.com/thumbnail?id=${fileMatch[1]}&sz=w1280`;
+  const id = extractDriveId(url);
+  if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w1280`;
+  return url;
+}
+
+// Convert any Google Drive URL to embeddable video preview URL
+function driveVideoEmbedUrl(url: string): string {
+  if (!url) return url;
+  if (url.includes("/preview")) return url;
+  const id = extractDriveId(url);
+  if (id) return `https://drive.google.com/file/d/${id}/preview`;
   return url;
 }
 
 function DriveMedia({ item, className }: { item: MgmLifeItem; className?: string }) {
   if (item.mediaType === "VIDEO" && item.mediaUrl) {
-    // Convert drive file URL to embed/preview URL for video
-    const videoUrl = item.mediaUrl.includes("/preview")
-      ? item.mediaUrl
-      : item.mediaUrl.replace(/\/view(\?.*)?$/, "/preview")
-          .replace(/[?&]export=view/, "")
-          || item.mediaUrl;
     return (
       <iframe
-        src={videoUrl}
+        src={driveVideoEmbedUrl(item.mediaUrl)}
         className={className ?? "h-full w-full"}
-        allow="autoplay"
+        allow="autoplay; encrypted-media"
         allowFullScreen
       ></iframe>
     );
@@ -464,11 +473,11 @@ export default async function MgmLifePage() {
               {officeVideo ? (
                 <div className="relative aspect-video">
                   <iframe
-                    src={officeVideo.mediaUrl}
+                    src={driveVideoEmbedUrl(officeVideo.mediaUrl)}
                     className="h-full w-full"
-                    allow="autoplay"
+                    allow="autoplay; encrypted-media"
                     allowFullScreen
-                  />
+                  ></iframe>
                 </div>
               ) : (
                 <div className="relative flex aspect-video flex-col items-center justify-center gap-3 bg-gradient-to-br from-slate-800 to-slate-900 text-center">
@@ -511,11 +520,11 @@ export default async function MgmLifePage() {
                 {englishVideo ? (
                   <div className="relative aspect-video">
                     <iframe
-                      src={englishVideo.mediaUrl}
+                      src={driveVideoEmbedUrl(englishVideo.mediaUrl)}
                       className="h-full w-full"
-                      allow="autoplay"
+                      allow="autoplay; encrypted-media"
                       allowFullScreen
-                    />
+                    ></iframe>
                   </div>
                 ) : (
                   <div className="relative flex aspect-video flex-col items-center justify-center gap-3 bg-gradient-to-br from-blue-950/50 to-slate-900 text-center">
