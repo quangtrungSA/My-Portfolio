@@ -101,3 +101,9 @@ databaseChangeLog:
   - include:
       file: db/changelog/migrations/034_seed_mgm_office_photos.sql
       relativeToChangelogFile: false
+  - include:
+      file: db/changelog/migrations/035_fix_mgm_life_drive_urls.sql
+      relativeToChangelogFile: false
+  - include:
+      file: db/changelog/migrations/036_fix_mgm_life_media_types.sql
+      relativeToChangelogFile: false
