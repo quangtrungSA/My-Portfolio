@@ -27,7 +27,7 @@ import Image from "next/image";
 
 const API_BASE = process.env.API_URL || "http://localhost:8080";
 
-const GD = (id: string) => `https://drive.google.com/uc?export=view&id=${id}`;
+const GD = (id: string) => `https://drive.google.com/thumbnail?id=${id}&sz=w1280`;
 
 const STATIC_ITEMS: MgmLifeItem[] = [
   { id: "s1", title: "English Class — Outdoor Session", description: "Teachers and students explore Da Nang together during class hours.", mediaType: "IMAGE", mediaUrl: GD("1EvGNzQ5tmhG6sf0-WCY6aI3VH7ElYJih"), thumbnailUrl: "", category: "ENGLISH_CLASS", sortOrder: 1, published: true, createdAt: "", updatedAt: "" },
@@ -53,11 +53,31 @@ async function fetchItems(): Promise<MgmLifeItem[]> {
   }
 }
 
+// Normalize any Google Drive URL to the reliable thumbnail format
+function normalizeDriveUrl(url: string): string {
+  if (!url) return url;
+  // Already thumbnail format
+  if (url.includes("drive.google.com/thumbnail")) return url;
+  // Extract file ID from uc?export=view&id=XXX
+  const ucMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (ucMatch) return `https://drive.google.com/thumbnail?id=${ucMatch[1]}&sz=w1280`;
+  // Extract file ID from /file/d/XXX/
+  const fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (fileMatch) return `https://drive.google.com/thumbnail?id=${fileMatch[1]}&sz=w1280`;
+  return url;
+}
+
 function DriveMedia({ item, className }: { item: MgmLifeItem; className?: string }) {
   if (item.mediaType === "VIDEO" && item.mediaUrl) {
+    // Convert drive file URL to embed/preview URL for video
+    const videoUrl = item.mediaUrl.includes("/preview")
+      ? item.mediaUrl
+      : item.mediaUrl.replace(/\/view(\?.*)?$/, "/preview")
+          .replace(/[?&]export=view/, "")
+          || item.mediaUrl;
     return (
       <iframe
-        src={item.mediaUrl}
+        src={videoUrl}
         className={className ?? "h-full w-full"}
         allow="autoplay"
         allowFullScreen
@@ -67,7 +87,7 @@ function DriveMedia({ item, className }: { item: MgmLifeItem; className?: string
   if (item.mediaUrl) {
     return (
       <Image
-        src={item.mediaUrl}
+        src={normalizeDriveUrl(item.mediaUrl)}
         alt={item.title}
         fill
         className={className ?? "object-cover"}
