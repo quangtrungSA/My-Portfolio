@@ -81,7 +81,7 @@ databaseChangeLog:
       file: db/changelog/migrations/027_update_genesis_roles_en.sql
       relativeToChangelogFile: false
   - include:
-      file: db/changelog/migrations/035_fix_mgm_life_drive_urls.sql
+      file: db/changelog/migrations/028_update_education_logos.sql
       relativeToChangelogFile: false
   - include:
       file: db/changelog/migrations/029_mgm_life_items.sql
