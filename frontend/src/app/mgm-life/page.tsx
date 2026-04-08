@@ -90,6 +90,7 @@ export default async function MgmLifePage() {
   const items = await fetchItems();
 
   const englishItems = items.filter((i) => i.category === "ENGLISH_CLASS");
+  const companyItems = items.filter((i) => i.category === "COMPANY_OVERVIEW");
   const generalItems = items.filter((i) => i.category === "GENERAL");
   const happyFridayItems = items.filter((i) => i.category === "HAPPY_FRIDAY");
 
