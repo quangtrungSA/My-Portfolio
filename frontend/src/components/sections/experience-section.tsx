@@ -17,8 +17,6 @@ import {
   Briefcase,
   ChevronsUpDown,
   Sparkles,
-  Building2,
-  Globe,
 } from "lucide-react";
 import { format } from "date-fns";
 import type { Experience } from "@/types";
@@ -791,60 +789,6 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                   transition={{ delay: gi * 0.12 + 0.3 }}
                   className="mb-5 ml-6 sm:ml-8"
                 >
-                  {/* Company description */}
-                  <div className="mb-4 rounded-xl border border-slate-700/40 bg-slate-800/40 p-4 backdrop-blur-sm">
-                    <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-white/90">
-                      <Building2 className="size-4 text-blue-400" />
-                      About the Company
-                    </div>
-                    <p className="text-sm leading-relaxed text-slate-400">
-                      <span className="text-blue-400 font-medium">mgm technology partners</span> is a leading{" "}
-                      <span className="text-violet-400">German software company</span> specialising in large-scale
-                      enterprise solutions — from{" "}
-                      <span className="text-cyan-400">insurance</span> to{" "}
-                      <span className="text-amber-400">e-commerce</span>.
-                      The Da Nang office bridges{" "}
-                      <span className="text-emerald-400">Vietnamese engineering talent</span> with{" "}
-                      Europe&apos;s technology ecosystem.
-                    </p>
-                  </div>
-
-                  {/* Office photos */}
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      {
-                        src: "https://lh3.googleusercontent.com/d/1xE8O5NKYhkUWVVdLy58JcoJy4I8q9MYU=w800",
-                        alt: "mgm Office — Da Nang",
-                        label: "mgm Office — Da Nang",
-                      },
-                      {
-                        src: "https://lh3.googleusercontent.com/d/14vhCNIqbuOTZl-ljJuIoypIDf_1mjhpa=w800",
-                        alt: "mgm Office Da Nang — Team Area",
-                        label: "Team Area",
-                      },
-                    ].map((photo, pi) => (
-                      <motion.div
-                        key={pi}
-                        whileHover={{ scale: 1.03 }}
-                        className="group relative overflow-hidden rounded-lg border border-slate-700/40"
-                      >
-                        <div className="relative aspect-video">
-                          <Image
-                            src={photo.src}
-                            alt={photo.alt}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-110"
-                            unoptimized
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                          <span className="absolute bottom-2 left-2 flex items-center gap-1 text-[11px] font-medium text-white/90">
-                            <Globe className="size-3 text-blue-400" />
-                            {photo.label}
-                          </span>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
                 </motion.div>
               )}
 

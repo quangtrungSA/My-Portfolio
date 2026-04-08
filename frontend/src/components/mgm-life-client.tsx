@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
-import { X, ZoomIn } from "lucide-react";
+import { X } from "lucide-react";
 import {
   Globe,
   BookOpen,
@@ -12,18 +12,15 @@ import {
   MapPin,
   Mic2,
   Coffee,
-  Music,
   Heart,
   Zap,
   Award,
   Languages,
   Play,
   Laptop,
-  Mouse,
-  Keyboard,
+  Trophy,
 } from "lucide-react";
 import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
 import type { MgmLifeItem } from "@/types";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -42,14 +39,14 @@ function extractDriveId(url: string): string | null {
 export function normalizeDriveUrl(url: string): string {
   if (!url) return url;
   const id = extractDriveId(url);
-  if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w1280`;
+  if (id) return `https://lh3.googleusercontent.com/d/${id}=w1600`;
   return url;
 }
 
 function driveFullUrl(url: string): string {
   if (!url) return url;
   const id = extractDriveId(url);
-  if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w2000`;
+  if (id) return `https://lh3.googleusercontent.com/d/${id}=w4000`;
   return url;
 }
 
@@ -228,19 +225,61 @@ export function ScaleOnHover({
   children: React.ReactNode;
   className?: string;
 }) {
+  return <div className={className}>{children}</div>;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Lazy video — shows thumbnail until user clicks play
+// ─────────────────────────────────────────────────────────────────────────────
+
+function LazyVideo({ item }: { item: MgmLifeItem }) {
+  const [open, setOpen] = useState(false);
+  const id = extractDriveId(item.mediaUrl);
+  const thumbSrc = id ? `https://lh3.googleusercontent.com/d/${id}=w1280` : item.mediaUrl;
+  const embedSrc = id ? `https://drive.google.com/file/d/${id}/preview` : item.mediaUrl;
+
   return (
-    <motion.div
-      whileHover={{ scale: 1.03, y: -4 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className={className}
-    >
-      {children}
-    </motion.div>
+    <>
+      {/* Thumbnail */}
+      <div className="group absolute inset-0 cursor-pointer overflow-hidden" onClick={() => setOpen(true)}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={thumbSrc} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/15 backdrop-blur-md ring-2 ring-white/30 transition-all duration-300 group-hover:scale-110 group-hover:bg-white/25 group-hover:ring-white/60">
+            <Play className="size-7 translate-x-0.5 text-white drop-shadow-lg" />
+          </div>
+        </div>
+        <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-0.5 text-xs text-white/70 backdrop-blur-sm">
+          <Play className="size-3" /> Video
+        </div>
+      </div>
+
+      {/* Popup */}
+      {open && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm" onClick={() => setOpen(false)}>
+          <div className="relative w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
+            <button className="absolute -right-3 -top-3 z-10 rounded-full bg-white/10 p-2 text-white backdrop-blur-sm hover:bg-white/20" onClick={() => setOpen(false)}>
+              <X className="size-5" />
+            </button>
+            <div className="relative aspect-video overflow-hidden rounded-2xl bg-black">
+              <iframe
+                src={embedSrc}
+                className="h-full w-full"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+              />
+              <div className="pointer-events-none absolute right-0 top-0 h-12 w-16 bg-black" />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Clickable image with zoom icon + lightbox
+// Clickable image — click to open lightbox (no zoom overlay)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function ClickableImage({
@@ -272,18 +311,9 @@ export function ClickableImage({
         src={normalizeDriveUrl(item.mediaUrl)}
         alt={item.title}
         fill
-        className={`${className ?? "object-cover"} transition-transform duration-500 group-hover/img:scale-105`}
+        className={`${className ?? "object-cover"}`}
         unoptimized
       />
-      <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all duration-300 group-hover/img:bg-black/30">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.5 }}
-          whileHover={{ scale: 1 }}
-          className="rounded-full bg-white/20 p-3 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover/img:opacity-100"
-        >
-          <ZoomIn className="size-6 text-white" />
-        </motion.div>
-      </div>
     </div>
   );
 }
@@ -296,21 +326,22 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
   const { openLightbox, LightboxOverlay } = useLightbox();
 
   const englishItems = items.filter((i) => i.category === "ENGLISH_CLASS");
-  const companyItems = items.filter((i) => i.category === "COMPANY_OVERVIEW");
   const generalItems = items.filter((i) => i.category === "GENERAL");
   const happyFridayItems = items.filter((i) => i.category === "HAPPY_FRIDAY");
 
   const getItem = (id: string) => items.find((i) => i.id === id || i.mediaUrl?.includes(id));
-  const welcomeGift  = getItem("1wigY74letDLUD-uUSeBtmMxY4Lgq_AnN");
+  const getByTitle = (keyword: string) => items.find((i) => i.title?.includes(keyword));
+  const welcomeGift  = getByTitle("Onboarding Gift") ?? getByTitle("Welcome to mgm") ?? getItem("1wigY74letDLUD-uUSeBtmMxY4Lgq_AnN");
   const speaker1     = getItem("1d61zh7zySVYgT3IVv2feCuzX38dkMOVN");
   const speaker2     = getItem("110ZpnhR08VEg0yGXEpK3TFLkU0DJcWd9");
-  const office1      = getItem("1dKCMJjTeqgcVdIjsmRv6hGBMJ9dpj68Q");
-  const office2      = getItem("14vhCNIqbuOTZl-ljJuIoypIDf_1mjhpa");
-  const noodles      = getItem("13HcKoP-xkU6zLAkVG93vzUCtdg-WT9Xk");
-  const piano        = getItem("1ZEsaj7zr0UHGTyOHBv9vKMfSWXIWJ0mi");
+  const office1      = getByTitle("mgm Office Da Nang") ?? getByTitle("mgm Office ") ?? getItem("1xE8O5NKYhkUWVVdLy58JcoJy4I8q9MYU");
+  const office2      = getByTitle("mgm Office Rooftop") ?? getItem("1PzieFriIyLxMr8Q3lxmnoOlW7hy02C80");
+  const noodles      = getByTitle("Instant Noodles") ?? getByTitle("Noodles") ?? getItem("13HcKoP-xkU6zLAkVG93vzUCtdg-WT9Xk");
+  const piano        = getByTitle("Piano") ?? getItem("1ZEsaj7zr0UHGTyOHBv9vKMfSWXIWJ0mi");
 
-  const officeVideo  = items.find((i) => resolveMediaType(i) === "VIDEO" && i.category === "COMPANY_OVERVIEW");
-  const englishVideo = items.find((i) => resolveMediaType(i) === "VIDEO" && i.category === "ENGLISH_CLASS");
+  const officeVideo        = getItem("84d5a768-b2c5-4876-97a2-edd4e8411263");
+  const happyFridayVideo1  = getItem("00e77590-dfd8-4cb0-b90f-83a4caebfbcb");
+  const happyFridayVideo2  = getItem("2c025fe8-db38-40b4-9d25-c4c377bbd8d4");
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -396,7 +427,8 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
                   <div className="space-y-4 text-slate-400">
                     <p>
                       mgm technology partners is a leading German software company specialising in
-                      large-scale enterprise solutions — from banking and insurance to e-commerce.
+                      large-scale enterprise solutions — from retail and insurance to e-commerce,
+                      including tax systems for the German government.
                       The Da Nang office bridges Vietnamese engineering talent with Europe&apos;s
                       technology ecosystem.
                     </p>
@@ -425,23 +457,47 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
 
               {/* Office collage */}
               <FadeIn direction="left">
-                <StaggerContainer className="grid grid-cols-2 gap-3">
-                  {[office1, office2].filter(Boolean).map((item, i) => (
-                    <StaggerItem key={item!.id}>
+                <StaggerContainer className="grid grid-cols-1 gap-4">
+                  {office1 && (
+                    <StaggerItem key={office1.id}>
                       <div
-                        className={`relative overflow-hidden rounded-2xl bg-slate-800 ${
-                          i === 0 ? "aspect-[3/4]" : "aspect-square self-end"
-                        }`}
+                        className="relative overflow-hidden rounded-2xl bg-slate-800 aspect-[8/4.2] cursor-pointer"
+                        onClick={() => openLightbox(office1.mediaUrl, office1.title)}
                       >
-                        <ClickableImage item={item!} className="object-cover" onOpen={openLightbox} />
+                        <Image
+                          src={normalizeDriveUrl(office1.mediaUrl)}
+                          alt={office1.title}
+                          fill
+                          className="object-cover object-top"
+                          unoptimized
+                        />
                         <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3">
-                          <p className="text-xs font-medium text-white">{item!.title}</p>
+                          <p className="text-xs font-medium text-white">{office1.title}</p>
                         </div>
                       </div>
                     </StaggerItem>
-                  ))}
-                  {(!office1 || !office2) && (
-                    <div className="col-span-2 flex aspect-video items-center justify-center rounded-2xl border border-dashed border-white/10 text-slate-600">
+                  )}
+                  {office2 && (
+                    <StaggerItem key={office2.id}>
+                      <div
+                        className="relative overflow-hidden rounded-2xl bg-slate-900 aspect-[16/9] cursor-pointer"
+                        onClick={() => openLightbox(office2.mediaUrl, office2.title)}
+                      >
+                        <Image
+                          src={normalizeDriveUrl(office2.mediaUrl)}
+                          alt={office2.title}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                        <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3">
+                          <p className="text-xs font-medium text-white">{office2.title}</p>
+                        </div>
+                      </div>
+                    </StaggerItem>
+                  )}
+                  {!office1 && !office2 && (
+                    <div className="flex aspect-video items-center justify-center rounded-2xl border border-dashed border-white/10 text-slate-600">
                       Office photos coming soon
                     </div>
                   )}
@@ -462,7 +518,13 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
               <FadeIn direction="left" className="order-2 lg:order-1">
                 {welcomeGift ? (
                   <div className="relative aspect-[3/4] overflow-hidden rounded-3xl border border-amber-500/20 bg-slate-800/50 shadow-2xl shadow-amber-900/20">
-                    <ClickableImage item={welcomeGift} className="object-contain" onOpen={openLightbox} />
+                    <Image
+                      src={normalizeDriveUrl(welcomeGift.mediaUrl)}
+                      alt={welcomeGift.title}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
                   </div>
                 ) : (
                   <div className="aspect-[4/3] rounded-3xl border border-dashed border-white/10 bg-slate-800" />
@@ -512,8 +574,8 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-sm text-emerald-400">
                   <Zap className="size-3.5" /> Employee Benefits
                 </div>
-                <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                  Outstanding Benefits
+                <h2 className="text-3xl font-bold sm:text-4xl">
+                  <span className="bg-gradient-to-r from-yellow-400 to-emerald-400 bg-clip-text text-transparent">Outstanding Benefits</span>
                 </h2>
                 <p className="mt-3 text-slate-400">
                   mgm invests in people — not just with salary, but with real life experiences.
@@ -521,7 +583,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
               </div>
             </FadeIn>
 
-            <StaggerContainer className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <StaggerContainer className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 items-start">
               {[
                 {
                   icon: Languages,
@@ -567,10 +629,17 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
                 },
                 {
                   icon: Laptop,
-                  color: "sky",
+                  color: "blue",
                   title: "MacBook or ThinkPad — your choice",
                   desc: "Employees choose their own device: latest MacBook Pro/Air or Lenovo ThinkPad, paired with flagship keyboard and premium mouse.",
                   tag: "Latest hardware",
+                },
+                {
+                  icon: Trophy,
+                  color: "emerald",
+                  title: "Sports Clubs",
+                  desc: "Join the badminton, swimming, marathon running, or football club. mgm supports an active lifestyle — teammates who play together, stay together.",
+                  tag: "Active lifestyle",
                 },
               ].map(({ icon: Icon, color, title, desc, tag }) => (
                 <StaggerItem key={title}>
@@ -605,8 +674,8 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
                   <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-purple-500/10 px-3 py-1 text-sm text-purple-400">
                     <Mic2 className="size-3.5" /> International Speakers
                   </div>
-                  <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                    International Speakers at mgm
+                  <h2 className="text-3xl font-bold sm:text-4xl">
+                    <span className="bg-gradient-to-r from-purple-400 to-fuchsia-400 bg-clip-text text-transparent">International Speakers at mgm</span>
                   </h2>
                   <p className="mt-3 max-w-xl text-slate-400">
                     Experts from Germany and across Europe regularly visit Da Nang to share
@@ -621,7 +690,13 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
                     <ScaleOnHover>
                       <div className="overflow-hidden rounded-2xl border border-purple-500/20 bg-slate-800/50">
                         <div className="relative aspect-video overflow-hidden">
-                          <ClickableImage item={item!} className="object-cover" onOpen={openLightbox} />
+                          <Image
+                            src={driveFullUrl(item!.mediaUrl)}
+                            alt={item!.title}
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
                         </div>
                         <div className="p-5">
                           <p className="font-semibold text-white">{item!.title}</p>
@@ -646,8 +721,8 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-sky-500/10 px-3 py-1 text-sm text-sky-400">
                   <MapPin className="size-3.5" /> Our Office
                 </div>
-                <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                  mgm Da Nang Office
+                <h2 className="text-3xl font-bold sm:text-4xl">
+                  <span className="bg-gradient-to-r from-sky-400 to-cyan-400 bg-clip-text text-transparent">mgm Da Nang Office</span>
                 </h2>
                 <p className="mt-3 text-slate-400">
                   An open, modern workspace — where code meets coffee and music.
@@ -655,30 +730,12 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
               </div>
             </FadeIn>
 
-            {/* Office photo */}
-            {companyItems.find((i) => i.mediaUrl?.includes("1xE8O5NKYhkUWVVdLy58JcoJy4I8q9MYU")) && (
-              <FadeIn>
-                <div className="relative mb-6 aspect-video overflow-hidden rounded-3xl border border-white/10">
-                  <ClickableImage
-                    item={companyItems.find((i) => i.mediaUrl?.includes("1xE8O5NKYhkUWVVdLy58JcoJy4I8q9MYU"))!}
-                    className="object-cover"
-                    onOpen={openLightbox}
-                  />
-                </div>
-              </FadeIn>
-            )}
-
             {/* Video placeholder or actual video */}
             <FadeIn delay={0.1}>
-              <div className="mb-6 overflow-hidden rounded-3xl border border-white/10 bg-slate-800">
+              <div className="mb-6 overflow-hidden rounded-3xl border border-sky-500/30 bg-slate-900 shadow-2xl shadow-sky-900/20 ring-1 ring-sky-500/10">
                 {officeVideo ? (
-                  <div className="relative aspect-video">
-                    <iframe
-                      src={driveVideoEmbedUrl(officeVideo.mediaUrl)}
-                      className="h-full w-full"
-                      allow="autoplay; encrypted-media"
-                      allowFullScreen
-                    ></iframe>
+                  <div className="relative aspect-video overflow-hidden">
+                    <LazyVideo item={officeVideo} />
                   </div>
                 ) : (
                   <div className="relative flex aspect-video flex-col items-center justify-center gap-3 bg-gradient-to-br from-slate-800 to-slate-900 text-center">
@@ -707,8 +764,8 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-blue-500/10 px-3 py-1 text-sm text-blue-400">
                   <Languages className="size-3.5" /> Language Benefit
                 </div>
-                <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                  English Class — A Rare Benefit
+                <h2 className="text-3xl font-bold sm:text-4xl">
+                  <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">English Class — A Rare Benefit</span>
                 </h2>
                 <p className="mt-3 text-slate-400">
                   New employees receive 2 hours of English class every day during their first 3 months —
@@ -717,47 +774,19 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
               </div>
             </FadeIn>
 
-            {/* Video + 2 photos layout */}
-            <div className="grid gap-5 lg:grid-cols-2">
-              {/* Video side */}
-              <FadeIn direction="right">
-                <div className="overflow-hidden rounded-2xl border border-blue-500/20 bg-slate-800">
-                  {englishVideo ? (
-                    <div className="relative aspect-video">
-                      <iframe
-                        src={driveVideoEmbedUrl(englishVideo.mediaUrl)}
-                        className="h-full w-full"
-                        allow="autoplay; encrypted-media"
-                        allowFullScreen
-                      ></iframe>
-                    </div>
-                  ) : (
-                    <div className="relative flex aspect-video flex-col items-center justify-center gap-3 bg-gradient-to-br from-blue-950/50 to-slate-900 text-center">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10">
-                        <Play className="size-6 text-blue-400" />
-                      </div>
-                      <p className="text-sm text-slate-400">English Class video — coming soon</p>
-                    </div>
-                  )}
-                </div>
-              </FadeIn>
-
-              {/* Photos side */}
-              <StaggerContainer className="grid grid-rows-2 gap-4">
-                {englishItems.slice(0, 2).map((item) => (
-                  <StaggerItem key={item.id}>
-                    <div className="relative overflow-hidden rounded-2xl bg-slate-800">
-                      <div className="relative aspect-video">
-                        <ClickableImage item={item} className="object-cover" onOpen={openLightbox} />
-                      </div>
-                    </div>
-                  </StaggerItem>
-                ))}
-              </StaggerContainer>
-            </div>
+            {/* Photos grid */}
+            <StaggerContainer className="grid grid-cols-2 gap-4">
+              {englishItems.filter((i) => resolveMediaType(i) === "IMAGE").slice(0, 4).map((item) => (
+                <StaggerItem key={item.id}>
+                  <div className="relative overflow-hidden rounded-2xl bg-slate-800 aspect-video">
+                    <ClickableImage item={item} className="object-cover" onOpen={openLightbox} />
+                  </div>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
 
             {/* Info strip */}
-            <StaggerContainer className="mt-8 grid grid-cols-3 gap-4">
+            <StaggerContainer className="mt-6 grid grid-cols-3 gap-4">
               {[
                 { value: "2h", label: "Every day" },
                 { value: "3mo", label: "For new employees" },
@@ -772,20 +801,55 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
               ))}
             </StaggerContainer>
 
-            <div className="mt-6">
-            </div>
+            {/* Happy Friday */}
+            <FadeIn className="mt-16">
+              <div className="mb-6">
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-3 py-1 text-sm text-amber-400">
+                  <PartyPopper className="size-3.5" /> Happy Friday
+                </div>
+                <h3 className="mb-3 text-2xl font-bold text-white">
+                  The whole team gets <span className="text-amber-400">a free morning every Friday</span>
+                </h3>
+                <p className="max-w-2xl text-slate-400">
+                  Every Friday, the entire team is free for the whole morning to enjoy outdoor activities —
+                  archery, SUP paddling, hiking, mountain climbing, and more. No deadlines, no emails.
+                  Just teammates having a great time together.
+                </p>
+              </div>
+            </FadeIn>
 
-            {/* Happy Friday items if any */}
+            {/* Happy Friday videos */}
+            {(happyFridayVideo1 || happyFridayVideo2) && (
+              <StaggerContainer className="mt-6 grid gap-5 sm:grid-cols-2">
+                {([
+                  { item: happyFridayVideo1, label: "Outdoor Trip", desc: "The whole team heads out together" },
+                  { item: happyFridayVideo2, label: "Archery", desc: "Team archery — focus, aim, release" },
+                ] as const).filter((v) => v.item).map(({ item, label, desc }) => (
+                  <StaggerItem key={item!.id}>
+                    <div className="overflow-hidden rounded-2xl border border-amber-500/20 bg-slate-800/50 shadow-lg shadow-amber-900/10">
+                      <div className="relative aspect-video overflow-hidden">
+                        <LazyVideo item={item!} />
+                      </div>
+                      <div className="px-4 py-3">
+                        <p className="text-sm font-semibold text-amber-300">{label}</p>
+                        <p className="text-xs text-slate-500">{desc}</p>
+                      </div>
+                    </div>
+                  </StaggerItem>
+                ))}
+              </StaggerContainer>
+            )}
+
+            {/* Happy Friday photo items */}
             {happyFridayItems.length > 0 && (
-              <StaggerContainer className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {happyFridayItems.map((item) => (
+              <StaggerContainer className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {happyFridayItems
+                  .filter((i) => resolveMediaType(i) === "IMAGE" && i.id !== happyFridayVideo1?.id && i.id !== happyFridayVideo2?.id)
+                  .map((item) => (
                   <StaggerItem key={item.id}>
-                    <div className="overflow-hidden rounded-2xl border border-blue-500/10 bg-slate-800/50">
+                    <div className="overflow-hidden rounded-2xl border border-amber-500/10 bg-slate-800/50">
                       <div className="relative aspect-video overflow-hidden">
                         <ClickableImage item={item} className="object-cover" onOpen={openLightbox} />
-                      </div>
-                      <div className="p-3">
-                        <p className="text-sm font-medium text-white">{item.title}</p>
                       </div>
                     </div>
                   </StaggerItem>
@@ -805,8 +869,8 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-sm text-emerald-400">
                   <Coffee className="size-3.5" /> Employee Lifestyle
                 </div>
-                <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                  Employee Lifestyle at mgm
+                <h2 className="text-3xl font-bold sm:text-4xl">
+                  <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">Employee Lifestyle at mgm</span>
                 </h2>
                 <p className="mt-3 text-slate-400">
                   Not just work — a place where people learn, have fun, and grow together.
@@ -833,11 +897,11 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
                       because when the whole team is strong, everyone wins.
                     </p>
                   </div>
-                  <StaggerContainer className="grid grid-cols-2 gap-3">
+                  <StaggerContainer className="grid grid-cols-2 gap-3 items-start">
                     {[
                       { icon: Languages, title: "Daily English",  desc: "English flows naturally — no pressure, no fear" },
                       { icon: Heart,     title: "Peer Support",   desc: "Colleagues always ready to help each other out" },
-                      { icon: Globe,     title: "Global Mindset", desc: "Cross-cultural thinking from a German-Vietnamese environment" },
+                      { icon: Globe,     title: "Global Mindset", desc: "German-Vietnamese cross-cultural thinking" },
                       { icon: Zap,       title: "Grow Together",  desc: "A strong team starts with every individual growing" },
                     ].map(({ icon: Icon, title, desc }) => (
                       <StaggerItem key={title}>
@@ -853,93 +917,45 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
               </div>
             </FadeIn>
 
-            <div className="grid gap-6 sm:grid-cols-2">
-              {/* Device setup highlight */}
-              <FadeIn>
-                <div className="mb-6 overflow-hidden rounded-2xl border border-sky-500/20 bg-gradient-to-r from-sky-950/30 to-slate-900 p-6">
-                  <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-                    <div className="shrink-0">
-                      <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-sky-500/10">
-                        <Laptop className="size-7 text-sky-400" />
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="mb-1 text-lg font-bold text-white">
-                        Device of your choice — MacBook or ThinkPad
-                      </h3>
-                      <p className="text-sm text-slate-400">
-                        mgm equips every employee with the{" "}
-                        <span className="font-semibold text-sky-300">latest MacBook Pro / Air or Lenovo ThinkPad</span>{" "}
-                        based on personal preference and role. Paired with premium accessories —
-                        mechanical keyboard or Apple Magic Keyboard, and the latest high-end mouse.
-                        No worrying about tools. Just focus on doing great work.
-                      </p>
-                    </div>
-                    <div className="flex shrink-0 flex-col gap-2 sm:items-end">
-                      <div className="flex items-center gap-4">
-                        {[
-                          { icon: Laptop,   label: "MacBook / ThinkPad" },
-                          { icon: Keyboard, label: "Latest keyboard" },
-                          { icon: Mouse,    label: "Premium mouse" },
-                        ].map(({ icon: Icon, label }) => (
-                          <div key={label} className="flex flex-col items-center gap-1">
-                            <div className="rounded-xl border border-sky-500/20 bg-sky-500/10 p-2.5">
-                              <Icon className="size-4 text-sky-400" />
-                            </div>
-                            <span className="text-center text-[10px] text-slate-500">{label}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </FadeIn>
-
+            <div className="grid gap-6 sm:grid-cols-2 items-start">
               {/* Noodles */}
               {noodles && (
                 <FadeIn>
-                  <ScaleOnHover>
-                    <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-800/60">
-                      <div className="relative aspect-video overflow-hidden">
-                        <ClickableImage item={noodles} className="object-cover" onOpen={openLightbox} />
-                      </div>
-                      <div className="p-5">
-                        <div className="mb-2 flex items-center gap-2">
-                          <Coffee className="size-4 text-orange-400" />
-                          <span className="text-xs font-medium uppercase tracking-wide text-orange-400">Kitchen Moments</span>
-                        </div>
-                        <h3 className="font-semibold text-white">{noodles.title}</h3>
-                        <p className="mt-1 text-sm text-slate-400">{noodles.description}</p>
-                      </div>
+                  <div className="overflow-hidden rounded-2xl border border-amber-500/20 bg-slate-800/50 shadow-lg shadow-amber-900/10">
+                    <div className="relative aspect-video overflow-hidden">
+                      <LazyVideo item={noodles} />
                     </div>
-                  </ScaleOnHover>
+                    <div className="px-4 py-3">
+                      <p className="text-sm font-semibold text-amber-300">Instant Noodles at the Office</p>
+                      <p className="text-xs text-slate-500">Late afternoons cooking instant noodles together — the most wholesome moment at mgm.</p>
+                    </div>
+                  </div>
                 </FadeIn>
               )}
 
               {/* Piano */}
               {piano && (
                 <FadeIn>
-                  <ScaleOnHover>
-                    <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-800/60">
-                      <div className="relative aspect-video overflow-hidden">
-                        <ClickableImage item={piano} className="object-cover" onOpen={openLightbox} />
-                      </div>
-                      <div className="p-5">
-                        <div className="mb-2 flex items-center gap-2">
-                          <Music className="size-4 text-violet-400" />
-                          <span className="text-xs font-medium uppercase tracking-wide text-violet-400">Music & Culture</span>
-                        </div>
-                        <h3 className="font-semibold text-white">{piano.title}</h3>
-                        <p className="mt-1 text-sm text-slate-400">{piano.description}</p>
-                      </div>
+                  <div className="overflow-hidden rounded-2xl border border-amber-500/20 bg-slate-800/50 shadow-lg shadow-amber-900/10">
+                    <div className="relative aspect-video overflow-hidden">
+                      <LazyVideo item={piano} />
                     </div>
-                  </ScaleOnHover>
+                    <div className="px-4 py-3">
+                      <p className="text-sm font-semibold text-amber-300">Piano at the Office</p>
+                      <p className="text-xs text-slate-500">The office piano — a place to unwind and share a passion for music with your teammates.</p>
+                    </div>
+                  </div>
                 </FadeIn>
               )}
 
               {/* Extra general items */}
               {generalItems
-                .filter((i) => i.id !== noodles?.id && i.id !== piano?.id)
+                .filter((i) =>
+                  i.id !== noodles?.id &&
+                  i.id !== piano?.id &&
+                  !i.title?.toLowerCase().includes("noodle") &&
+                  !i.title?.toLowerCase().includes("piano")
+                )
                 .map((item) => (
                   <FadeIn key={item.id}>
                     <ScaleOnHover>
@@ -968,8 +984,8 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-violet-500/10 px-3 py-1 text-sm text-violet-400">
               <Heart className="size-3.5" /> Join mgm
             </div>
-            <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
-              Become part of the mgm family
+            <h2 className="mb-4 text-3xl font-bold sm:text-4xl">
+              <span className="bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">Become part of the mgm family</span>
             </h2>
             <p className="mb-8 text-slate-400">
               If you want to work in a truly international environment, improve your English
@@ -977,7 +993,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
               mgm Da Nang is the place for you.
             </p>
             <a
-              href="https://mgm-tp.com/career"
+              href="https://www.mgm-tp.com/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-violet-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-violet-500"
@@ -988,7 +1004,13 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
         </section>
 
       </main>
-      <Footer />
+      <footer className="border-t border-white/5 bg-slate-950">
+        <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
+          <p className="text-center text-sm text-slate-600">
+            &copy; {new Date().getFullYear()} Portfolio. All rights reserved.
+          </p>
+        </div>
+      </footer>
       <LightboxOverlay />
     </div>
   );
