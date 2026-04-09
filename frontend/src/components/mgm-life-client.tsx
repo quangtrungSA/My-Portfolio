@@ -72,12 +72,22 @@ export function driveVideoEmbedUrl(url: string): string {
   return url;
 }
 
-/** Resolve media type — GCS video by extension, Drive by URL pattern, else DB value */
+/** Known video Drive IDs — used as fallback before migration 038 updates mediaType */
+const KNOWN_VIDEO_DRIVE_IDS = new Set([
+  "1cHKeV4QUc72gL2yT67jjIcaWlS7dt3Sa", // Instant Noodles
+  "1qq58Z7xGwiaP31H5ar3lXOZaszFZKBYH", // English Outdoor
+  "1ACxtxOFS9C8RvT4DYFldw4TyuBTeRPI8", // English Class
+  "1GHIaIRqA13a8s9PE5BubeEKzjYoqPwAo", // Piano
+  "1xE8O5NKYhkUWVVdLy58JcoJy4I8q9MYU", // mgm Office
+]);
+
+/** Resolve media type — GCS video by extension, known Drive IDs, or DB value */
 function resolveMediaType(item: MgmLifeItem): "IMAGE" | "VIDEO" {
   const url = item.mediaUrl ?? "";
   if (isGcsVideo(url)) return "VIDEO";
   if (item.mediaType === "VIDEO") return "VIDEO";
-  if (url.includes("/file/d/") && (url.includes("/view") || url.includes("/preview"))) return "VIDEO";
+  const id = extractDriveId(url);
+  if (id && KNOWN_VIDEO_DRIVE_IDS.has(id)) return "VIDEO";
   return "IMAGE";
 }
 
