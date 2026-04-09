@@ -27,8 +27,6 @@ import type { MgmLifeItem } from "@/types";
 // URL helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-// ─── URL helpers ─────────────────────────────────────────────────────────────
-
 function isGcsUrl(url: string): boolean {
   return url?.includes("storage.googleapis.com") || url?.includes("storage.cloud.google.com");
 }
@@ -46,7 +44,6 @@ function extractDriveId(url: string): string | null {
   return null;
 }
 
-/** Normalize image URL — GCS served directly, Drive → lh3 thumbnail */
 export function normalizeDriveUrl(url: string): string {
   if (!url) return url;
   if (isGcsUrl(url)) return url;
@@ -72,22 +69,12 @@ export function driveVideoEmbedUrl(url: string): string {
   return url;
 }
 
-/** Known video Drive IDs — used as fallback before migration 038 updates mediaType */
-const KNOWN_VIDEO_DRIVE_IDS = new Set([
-  "1cHKeV4QUc72gL2yT67jjIcaWlS7dt3Sa", // Instant Noodles
-  "1qq58Z7xGwiaP31H5ar3lXOZaszFZKBYH", // English Outdoor
-  "1ACxtxOFS9C8RvT4DYFldw4TyuBTeRPI8", // English Class
-  "1GHIaIRqA13a8s9PE5BubeEKzjYoqPwAo", // Piano
-  "1xE8O5NKYhkUWVVdLy58JcoJy4I8q9MYU", // mgm Office
-]);
-
-/** Resolve media type — GCS video by extension, known Drive IDs, or DB value */
+/** Resolve media type — GCS by extension, DB value, or Drive URL pattern */
 function resolveMediaType(item: MgmLifeItem): "IMAGE" | "VIDEO" {
   const url = item.mediaUrl ?? "";
   if (isGcsVideo(url)) return "VIDEO";
   if (item.mediaType === "VIDEO") return "VIDEO";
-  const id = extractDriveId(url);
-  if (id && KNOWN_VIDEO_DRIVE_IDS.has(id)) return "VIDEO";
+  if (url.includes("/file/d/") && (url.includes("/view") || url.includes("/preview"))) return "VIDEO";
   return "IMAGE";
 }
 
@@ -169,8 +156,6 @@ export function useLightbox() {
 // Animated wrappers
 // ─────────────────────────────────────────────────────────────────────────────
 
-type FadeVariant = "up" | "down" | "left" | "right" | "blur" | "zoom" | "flip" | "bounce";
-
 export function FadeIn({
   children,
   delay = 0,
@@ -179,29 +164,22 @@ export function FadeIn({
 }: {
   children: React.ReactNode;
   delay?: number;
-  direction?: FadeVariant;
+  direction?: "up" | "down" | "left" | "right";
   className?: string;
 }) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const variants: Record<FadeVariant, { initial: any; animate: any; transition: any }> = {
-    up:     { initial: { opacity: 0, y: 40 },                          animate: { opacity: 1, y: 0 },              transition: { duration: 0.6, ease: "easeOut" } },
-    down:   { initial: { opacity: 0, y: -40 },                         animate: { opacity: 1, y: 0 },              transition: { duration: 0.6, ease: "easeOut" } },
-    left:   { initial: { opacity: 0, x: 40 },                          animate: { opacity: 1, x: 0 },              transition: { duration: 0.6, ease: "easeOut" } },
-    right:  { initial: { opacity: 0, x: -40 },                         animate: { opacity: 1, x: 0 },              transition: { duration: 0.6, ease: "easeOut" } },
-    blur:   { initial: { opacity: 0, filter: "blur(12px)", y: 20 },    animate: { opacity: 1, filter: "blur(0px)", y: 0 }, transition: { duration: 0.7, ease: "easeOut" } },
-    zoom:   { initial: { opacity: 0, scale: 0.85 },                    animate: { opacity: 1, scale: 1 },          transition: { duration: 0.6, ease: [0.34, 1.56, 0.64, 1] } },
-    flip:   { initial: { opacity: 0, rotateX: 25, y: 30 },             animate: { opacity: 1, rotateX: 0, y: 0 }, transition: { duration: 0.65, ease: "easeOut" } },
-    bounce: { initial: { opacity: 0, y: 50 },                          animate: { opacity: 1, y: 0 },              transition: { type: "spring", stiffness: 260, damping: 18 } },
+  const offsets = {
+    up: { y: 40 },
+    down: { y: -40 },
+    left: { x: 40 },
+    right: { x: -40 },
   };
-
-  const v = variants[direction];
 
   return (
     <motion.div
-      initial={v.initial}
-      whileInView={v.animate}
+      initial={{ opacity: 0, ...offsets[direction] }}
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      transition={{ ...v.transition, delay }}
+      transition={{ duration: 0.6, delay, ease: "easeOut" }}
       className={className}
     >
       {children}
@@ -212,11 +190,9 @@ export function FadeIn({
 export function StaggerContainer({
   children,
   className,
-  stagger = 0.1,
 }: {
   children: React.ReactNode;
   className?: string;
-  stagger?: number;
 }) {
   return (
     <motion.div
@@ -225,7 +201,7 @@ export function StaggerContainer({
       viewport={{ once: true, margin: "-80px" }}
       variants={{
         hidden: {},
-        visible: { transition: { staggerChildren: stagger } },
+        visible: { transition: { staggerChildren: 0.1 } },
       }}
       className={className}
     >
@@ -237,23 +213,18 @@ export function StaggerContainer({
 export function StaggerItem({
   children,
   className,
-  variant = "slideUp",
 }: {
   children: React.ReactNode;
   className?: string;
-  variant?: "slideUp" | "slideLeft" | "zoom" | "bounce" | "blur";
 }) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const variants: Record<string, any> = {
-    slideUp:   { hidden: { opacity: 0, y: 30 },                        visible: { opacity: 1, y: 0 } },
-    slideLeft: { hidden: { opacity: 0, x: -30 },                       visible: { opacity: 1, x: 0 } },
-    zoom:      { hidden: { opacity: 0, scale: 0.8 },                   visible: { opacity: 1, scale: 1 } },
-    bounce:    { hidden: { opacity: 0, y: 40 },                        visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 280, damping: 18 } } },
-    blur:      { hidden: { opacity: 0, filter: "blur(8px)", y: 15 },   visible: { opacity: 1, filter: "blur(0px)", y: 0 } },
-  };
-
   return (
-    <motion.div variants={variants[variant]} className={className}>
+    <motion.div
+      variants={{
+        hidden: { opacity: 0, y: 30 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+      }}
+      className={className}
+    >
       {children}
     </motion.div>
   );
@@ -266,15 +237,7 @@ export function ScaleOnHover({
   children: React.ReactNode;
   className?: string;
 }) {
-  return (
-    <motion.div
-      whileHover={{ scale: 1.02, y: -3 }}
-      transition={{ type: "spring", stiffness: 300, damping: 22 }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -285,29 +248,18 @@ function LazyVideo({ item }: { item: MgmLifeItem }) {
   const [open, setOpen] = useState(false);
   const gcsVideo = isGcsVideo(item.mediaUrl);
   const id = extractDriveId(item.mediaUrl);
+  const thumbSrc = gcsVideo ? item.mediaUrl : id ? `https://lh3.googleusercontent.com/d/${id}=w1280` : item.mediaUrl;
   const embedSrc = gcsVideo ? item.mediaUrl : id ? `https://drive.google.com/file/d/${id}/preview` : item.mediaUrl;
 
   return (
     <>
-      {/* Thumbnail — for GCS videos use a muted video as poster, for Drive use lh3 thumbnail */}
+      {/* Thumbnail */}
       <div className="group absolute inset-0 cursor-pointer overflow-hidden" onClick={() => setOpen(true)}>
         {gcsVideo ? (
-          <video
-            src={item.mediaUrl}
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-            muted
-            playsInline
-            preload="metadata"
-          />
+          <video src={thumbSrc} className="pointer-events-none absolute inset-0 h-full w-full object-cover" muted playsInline preload="metadata" />
         ) : (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={id ? `https://lh3.googleusercontent.com/d/${id}=w1280` : item.mediaUrl}
-              alt=""
-              className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-            />
-          </>
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={thumbSrc} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         <div className="absolute inset-0 flex items-center justify-center">
@@ -322,32 +274,14 @@ function LazyVideo({ item }: { item: MgmLifeItem }) {
 
       {/* Popup */}
       {open && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
-          onClick={() => setOpen(false)}
-        >
-          <motion.div
-            initial={{ scale: 0.92, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            transition={{ type: "spring", stiffness: 280, damping: 24 }}
-            className="relative w-full max-w-4xl"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm" onClick={() => setOpen(false)}>
+          <div className="relative w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
             <button className="absolute -right-3 -top-3 z-10 rounded-full bg-white/10 p-2 text-white backdrop-blur-sm hover:bg-white/20" onClick={() => setOpen(false)}>
               <X className="size-5" />
             </button>
             <div className="relative aspect-video overflow-hidden rounded-2xl bg-black">
               {gcsVideo ? (
-                <video
-                  src={embedSrc}
-                  className="h-full w-full"
-                  controls
-                  autoPlay
-                  playsInline
-                />
+                <video src={embedSrc} className="h-full w-full" controls autoPlay playsInline />
               ) : (
                 <>
                   <iframe
@@ -360,8 +294,8 @@ function LazyVideo({ item }: { item: MgmLifeItem }) {
                 </>
               )}
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       )}
     </>
   );
@@ -397,7 +331,7 @@ export function ClickableImage({
         className={className ?? "h-full w-full"}
         allow="autoplay; encrypted-media"
         allowFullScreen
-      />
+      ></iframe>
     );
   }
 
@@ -457,7 +391,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
 
           <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
             {/* Eyebrow */}
-            <FadeIn delay={0} direction="blur">
+            <FadeIn delay={0}>
               <div className="mb-6 flex justify-center">
                 <span className="inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-4 py-1.5 text-sm font-medium text-purple-300">
                   <Globe className="size-4" /> International Technology Company
@@ -466,7 +400,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
             </FadeIn>
 
             {/* Title */}
-            <FadeIn delay={0.1} direction="blur">
+            <FadeIn delay={0.1}>
               <h1 className="mb-6 text-center text-6xl font-extrabold tracking-tight sm:text-7xl">
                 <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-amber-400 bg-clip-text text-transparent">
                   mgm life
@@ -475,7 +409,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
             </FadeIn>
 
             {/* Tagline */}
-            <FadeIn delay={0.2} direction="blur">
+            <FadeIn delay={0.2}>
               <p className="mx-auto mb-4 max-w-3xl text-center text-xl text-slate-300 sm:text-2xl">
                 <span className="font-bold text-white">mgm technology partners</span> — where German engineering meets Vietnamese talent in Da Nang.
               </p>
@@ -487,14 +421,14 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
             </FadeIn>
 
             {/* Stats */}
-            <StaggerContainer className="grid grid-cols-2 gap-4 sm:grid-cols-4" stagger={0.12}>
+            <StaggerContainer className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               {[
                 { value: "1994",  label: "Founded",         icon: Award },
                 { value: "10+",   label: "Global offices",  icon: Globe },
                 { value: "700+",  label: "Employees",       icon: Users },
                 { value: "🇩🇪🇻🇳🇫🇷🇦🇹", label: "Nationalities", icon: Heart },
               ].map(({ value, label, icon: Icon }) => (
-                <StaggerItem key={label} variant="zoom">
+                <StaggerItem key={label}>
                   <ScaleOnHover>
                     <div className="rounded-2xl border border-white/10 bg-white/5 p-5 text-center backdrop-blur-sm">
                       <Icon className="mx-auto mb-2 size-5 text-slate-400" />
@@ -614,7 +548,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
             <div className="grid items-center gap-12 lg:grid-cols-2">
               {/* Card image */}
-              <FadeIn direction="zoom" className="order-2 lg:order-1">
+              <FadeIn direction="left" className="order-2 lg:order-1">
                 {welcomeGift ? (
                   <div className="relative aspect-[3/4] overflow-hidden rounded-3xl border border-amber-500/20 bg-slate-800/50 shadow-2xl shadow-amber-900/20">
                     <Image
@@ -668,7 +602,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
         ══════════════════════════════════════════════════════════════ */}
         <section className="bg-slate-900 py-24">
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <FadeIn direction="flip">
+            <FadeIn>
               <div className="mb-14 text-center">
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-sm text-emerald-400">
                   <Zap className="size-3.5" /> Employee Benefits
@@ -741,7 +675,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
                   tag: "Active lifestyle",
                 },
               ].map(({ icon: Icon, color, title, desc, tag }) => (
-                <StaggerItem key={title} variant="bounce">
+                <StaggerItem key={title}>
                   <ScaleOnHover>
                     <div
                       className={`rounded-2xl border p-6 transition-all hover:border-${color}-500/40 border-${color}-500/20 bg-gradient-to-br from-${color}-950/30 to-slate-900`}
@@ -785,7 +719,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
 
               <StaggerContainer className="grid gap-6 sm:grid-cols-2">
                 {[speaker1, speaker2].filter(Boolean).map((item) => (
-                  <StaggerItem key={item!.id} variant="blur">
+                  <StaggerItem key={item!.id}>
                     <ScaleOnHover>
                       <div className="overflow-hidden rounded-2xl border border-purple-500/20 bg-slate-800/50">
                         <div className="relative aspect-video overflow-hidden">
@@ -830,7 +764,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
             </FadeIn>
 
             {/* Video placeholder or actual video */}
-            <FadeIn delay={0.1} direction="zoom">
+            <FadeIn delay={0.1}>
               <div className="mb-6 overflow-hidden rounded-3xl border border-sky-500/30 bg-slate-900 shadow-2xl shadow-sky-900/20 ring-1 ring-sky-500/10">
                 {officeVideo ? (
                   <div className="relative aspect-video overflow-hidden">
@@ -901,7 +835,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
             </StaggerContainer>
 
             {/* Happy Friday */}
-            <FadeIn className="mt-16" direction="bounce">
+            <FadeIn className="mt-16">
               <div className="mb-6">
                 <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-3 py-1 text-sm text-amber-400">
                   <PartyPopper className="size-3.5" /> Happy Friday
@@ -924,7 +858,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
                   { item: happyFridayVideo1, label: "Outdoor Trip", desc: "The whole team heads out together" },
                   { item: happyFridayVideo2, label: "Archery", desc: "Team archery — focus, aim, release" },
                 ] as const).filter((v) => v.item).map(({ item, label, desc }) => (
-                  <StaggerItem key={item!.id} variant="bounce">
+                  <StaggerItem key={item!.id}>
                     <div className="overflow-hidden rounded-2xl border border-amber-500/20 bg-slate-800/50 shadow-lg shadow-amber-900/10">
                       <div className="relative aspect-video overflow-hidden">
                         <LazyVideo item={item!} />
@@ -963,7 +897,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
         ══════════════════════════════════════════════════════════════ */}
         <section className="bg-gradient-to-b from-slate-950 to-slate-900 py-24">
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <FadeIn direction="flip">
+            <FadeIn>
               <div className="mb-12">
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-sm text-emerald-400">
                   <Coffee className="size-3.5" /> Employee Lifestyle
@@ -1019,7 +953,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
             <div className="grid gap-6 sm:grid-cols-2 items-start">
               {/* Noodles */}
               {noodles && (
-                <FadeIn direction="right">
+                <FadeIn>
                   <div className="overflow-hidden rounded-2xl border border-amber-500/20 bg-slate-800/50 shadow-lg shadow-amber-900/10">
                     <div className="relative aspect-video overflow-hidden">
                       <LazyVideo item={noodles} />
@@ -1034,7 +968,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
 
               {/* Piano */}
               {piano && (
-                <FadeIn direction="left">
+                <FadeIn>
                   <div className="overflow-hidden rounded-2xl border border-amber-500/20 bg-slate-800/50 shadow-lg shadow-amber-900/10">
                     <div className="relative aspect-video overflow-hidden">
                       <LazyVideo item={piano} />
@@ -1079,7 +1013,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
         ══════════════════════════════════════════════════════════════ */}
         <section className="relative overflow-hidden bg-gradient-to-br from-violet-950/60 via-slate-900 to-slate-950 py-24 text-center">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.15),transparent_70%)]" />
-          <FadeIn direction="zoom" className="relative mx-auto max-w-2xl px-4">
+          <FadeIn className="relative mx-auto max-w-2xl px-4">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-violet-500/10 px-3 py-1 text-sm text-violet-400">
               <Heart className="size-3.5" /> Join mgm
             </div>
