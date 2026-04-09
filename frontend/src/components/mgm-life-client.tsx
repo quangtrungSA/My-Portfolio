@@ -503,6 +503,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
                           fill
                           className="object-cover object-top"
                           unoptimized
+                          priority
                         />
                         <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3">
                           <p className="text-xs font-medium text-white">{office1.title}</p>
@@ -522,6 +523,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
                           fill
                           className="object-cover"
                           unoptimized
+                          priority
                         />
                         <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3">
                           <p className="text-xs font-medium text-white">{office2.title}</p>
@@ -557,6 +559,7 @@ export function MgmLifePageContent({ items }: { items: MgmLifeItem[] }) {
                       fill
                       className="object-cover"
                       unoptimized
+                      priority
                     />
                   </div>
                 ) : (
