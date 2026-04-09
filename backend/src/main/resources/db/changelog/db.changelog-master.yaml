@@ -110,3 +110,6 @@ databaseChangeLog:
   - include:
       file: db/changelog/migrations/037_auto_set_video_media_type.sql
       relativeToChangelogFile: false
+  - include:
+      file: db/changelog/migrations/038_migrate_media_to_gcs.sql
+      relativeToChangelogFile: false

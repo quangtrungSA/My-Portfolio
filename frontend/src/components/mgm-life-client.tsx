@@ -27,6 +27,16 @@ import type { MgmLifeItem } from "@/types";
 // URL helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ─── URL helpers ─────────────────────────────────────────────────────────────
+
+function isGcsUrl(url: string): boolean {
+  return url?.includes("storage.googleapis.com") || url?.includes("storage.cloud.google.com");
+}
+
+function isGcsVideo(url: string): boolean {
+  return isGcsUrl(url) && /\.(mp4|webm|mov|avi|mkv)(\?|$)/i.test(url);
+}
+
 function extractDriveId(url: string): string | null {
   if (!url) return null;
   const idParam = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
@@ -36,8 +46,10 @@ function extractDriveId(url: string): string | null {
   return null;
 }
 
+/** Normalize image URL — GCS served directly, Drive → lh3 thumbnail */
 export function normalizeDriveUrl(url: string): string {
   if (!url) return url;
+  if (isGcsUrl(url)) return url;
   const id = extractDriveId(url);
   if (id) return `https://lh3.googleusercontent.com/d/${id}=w1600`;
   return url;
@@ -45,6 +57,7 @@ export function normalizeDriveUrl(url: string): string {
 
 function driveFullUrl(url: string): string {
   if (!url) return url;
+  if (isGcsUrl(url)) return url;
   const id = extractDriveId(url);
   if (id) return `https://lh3.googleusercontent.com/d/${id}=w4000`;
   return url;
@@ -52,16 +65,18 @@ function driveFullUrl(url: string): string {
 
 export function driveVideoEmbedUrl(url: string): string {
   if (!url) return url;
+  if (isGcsUrl(url)) return url;
   if (url.includes("/preview")) return url;
   const id = extractDriveId(url);
   if (id) return `https://drive.google.com/file/d/${id}/preview`;
   return url;
 }
 
-/** Auto-detect VIDEO from URL pattern — overrides DB mediaType if URL is clearly a video */
+/** Resolve media type — GCS video by extension, Drive by URL pattern, else DB value */
 function resolveMediaType(item: MgmLifeItem): "IMAGE" | "VIDEO" {
-  if (item.mediaType === "VIDEO") return "VIDEO";
   const url = item.mediaUrl ?? "";
+  if (isGcsVideo(url)) return "VIDEO";
+  if (item.mediaType === "VIDEO") return "VIDEO";
   if (url.includes("/file/d/") && (url.includes("/view") || url.includes("/preview"))) return "VIDEO";
   return "IMAGE";
 }
@@ -258,16 +273,32 @@ export function ScaleOnHover({
 
 function LazyVideo({ item }: { item: MgmLifeItem }) {
   const [open, setOpen] = useState(false);
+  const gcsVideo = isGcsVideo(item.mediaUrl);
   const id = extractDriveId(item.mediaUrl);
-  const thumbSrc = id ? `https://lh3.googleusercontent.com/d/${id}=w1280` : item.mediaUrl;
-  const embedSrc = id ? `https://drive.google.com/file/d/${id}/preview` : item.mediaUrl;
+  const embedSrc = gcsVideo ? item.mediaUrl : id ? `https://drive.google.com/file/d/${id}/preview` : item.mediaUrl;
 
   return (
     <>
-      {/* Thumbnail */}
+      {/* Thumbnail — for GCS videos use a muted video as poster, for Drive use lh3 thumbnail */}
       <div className="group absolute inset-0 cursor-pointer overflow-hidden" onClick={() => setOpen(true)}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={thumbSrc} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        {gcsVideo ? (
+          <video
+            src={item.mediaUrl}
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+            muted
+            playsInline
+            preload="metadata"
+          />
+        ) : (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={id ? `https://lh3.googleusercontent.com/d/${id}=w1280` : item.mediaUrl}
+              alt=""
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+            />
+          </>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/15 backdrop-blur-md ring-2 ring-white/30 transition-all duration-300 group-hover:scale-110 group-hover:bg-white/25 group-hover:ring-white/60">
@@ -299,13 +330,25 @@ function LazyVideo({ item }: { item: MgmLifeItem }) {
               <X className="size-5" />
             </button>
             <div className="relative aspect-video overflow-hidden rounded-2xl bg-black">
-              <iframe
-                src={embedSrc}
-                className="h-full w-full"
-                allow="autoplay; encrypted-media"
-                allowFullScreen
-              />
-              <div className="pointer-events-none absolute right-0 top-0 h-12 w-16 bg-black" />
+              {gcsVideo ? (
+                <video
+                  src={embedSrc}
+                  className="h-full w-full"
+                  controls
+                  autoPlay
+                  playsInline
+                />
+              ) : (
+                <>
+                  <iframe
+                    src={embedSrc}
+                    className="h-full w-full"
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                  />
+                  <div className="pointer-events-none absolute right-0 top-0 h-12 w-16 bg-black" />
+                </>
+              )}
             </div>
           </motion.div>
         </motion.div>
@@ -328,13 +371,23 @@ export function ClickableImage({
   onOpen: (src: string, alt: string) => void;
 }) {
   if (resolveMediaType(item) === "VIDEO") {
+    if (isGcsVideo(item.mediaUrl)) {
+      return (
+        <video
+          src={item.mediaUrl}
+          className={className ?? "h-full w-full object-cover"}
+          controls
+          playsInline
+        />
+      );
+    }
     return (
       <iframe
         src={driveVideoEmbedUrl(item.mediaUrl)}
         className={className ?? "h-full w-full"}
         allow="autoplay; encrypted-media"
         allowFullScreen
-      ></iframe>
+      />
     );
   }
 
