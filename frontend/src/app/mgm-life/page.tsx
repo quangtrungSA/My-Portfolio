@@ -24,7 +24,7 @@ const STATIC_ITEMS: MgmLifeItem[] = [
 
 async function fetchItems(): Promise<MgmLifeItem[]> {
   try {
-    const res = await fetch(`${API_BASE}/api/mgm-life`, { next: { revalidate: 60 } });
+    const res = await fetch(`${API_BASE}/api/mgm-life`, { next: { revalidate: 3600 } });
     if (!res.ok) return STATIC_ITEMS;
     const json: ApiResponse<MgmLifeItem[]> = await res.json();
     return json.data?.length ? json.data : STATIC_ITEMS;
